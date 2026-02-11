@@ -1039,12 +1039,58 @@
         // TAB SWITCHING
         // ==============================================
         function switchTab(tabName) {
-            // Check password for coordinator, combined, and editor tabs
-            if (['coordinator', 'combined', 'editor'].includes(tabName)) {
-                const password = prompt('הכנס סיסמה:');
-                if (password !== '5522') {
-                    showToast('סיסמה שגויה', 'danger');
-                    return;
+            // משתנה שיזכור אם המשתמש כבר הקיש סיסמה נכונה
+let isAuthorized = false;
+
+async function switchTab(tabName) {
+    // אלו הטאבים שאנחנו רוצים לנעול
+    const privateTabs = ['coordinator', 'combined', 'editor'];
+
+    // בדיקה: האם המשתמש מנסה להיכנס לטאב נעול ועדיין לא הזדהה?
+    if (privateTabs.includes(tabName) && !isAuthorized) {
+        const userPass = prompt("זהו אזור מוגן. נא להזין סיסמה:");
+        
+        if (!userPass) return; // אם המשתמש לחץ ביטול
+
+        try {
+            // ניגשים ל-Firebase לבדוק מה הסיסמה ששמרנו בשלב 1
+            const snapshot = await db.ref('admin_password').once('value');
+            const realPassword = snapshot.val();
+
+            if (userPass === realPassword) {
+                isAuthorized = true; // סיסמה נכונה!
+            } else {
+                alert("סיסמה שגויה, הגישה נחסמה.");
+                return;
+            }
+        } catch (error) {
+            console.error("שגיאה בבדיקת סיסמה:", error);
+            alert("חלה שגיאה בחיבור ל-Firebase.");
+            return;
+        }
+    }
+
+    // --- החלק המקורי של הקוד שלך שמחליף טאבים ---
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    const targetTab = document.getElementById(tabName + '-tab');
+    if (targetTab) targetTab.classList.add('active');
+    
+    // מוסיף עיצוב לטאב הלחוץ
+    if (event && event.currentTarget) {
+        event.currentTarget.classList.add('active');
+    }
+
+    // הפעלת פונקציות הטעינה המקוריות שלך
+    if (tabName === 'coordinator') loadSubmissions();
+    if (tabName === 'combined') loadCombinedView();
+    if (tabName === 'editor') renderStructureEditor();
+}
                 }
             }
 
