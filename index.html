@@ -10,19 +10,16 @@
     
     <style>
         :root {
-            --bg-main: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); /* Soft pastel */
-            --bg-card: rgba(255, 255, 255, 0.95);
-            --bg-fixed: #f1f5f9;
-            --bg-hover: #f8fafc;
-            --border: #e2e8f0;
+            /* צבעים נעימים ורכים */
+            --bg-main: #f0fdfa; /* רקע כללי בהיר מאוד */
+            --bg-gradient: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            --bg-card: rgba(255, 255, 255, 0.98);
+            --border: #cbd5e1;
             --text-primary: #334155;
             --text-secondary: #64748b;
             --primary: #8b5cf6;
-            --primary-hover: #7c3aed;
             --success: #10b981;
-            --danger: #ef4444;
-            --warning-bg: #fef3c7;
-            --header-gradient: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            --header-bg: #f8fafc;
         }
 
         * {
@@ -33,30 +30,32 @@
 
         body {
             font-family: 'Heebo', sans-serif;
-            background: var(--bg-main);
+            background: var(--bg-gradient);
             background-attachment: fixed;
             color: var(--text-primary);
-            line-height: 1.6;
             padding: 20px;
             min-height: 100vh;
+            overflow-x: hidden; /* למנוע גלילה של כל העמוד בגלל הקישוטים */
         }
 
-        /* Cute Characters Decorations */
+        /* --- תיקון דמויות צפות --- */
         .decoration {
             position: fixed;
-            font-size: 4rem;
-            opacity: 0.8;
-            z-index: -1;
-            pointer-events: none;
+            z-index: 0; /* נמוך, אבל מעל הרקע */
+            pointer-events: none; /* כדי שאפשר יהיה ללחוץ דרכן */
             animation: float 6s ease-in-out infinite;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
         }
-        .dec-1 { top: 20px; left: 20px; animation-delay: 0s; }
-        .dec-2 { bottom: 20px; right: 20px; animation-delay: 2s; font-size: 5rem; }
-        .dec-3 { top: 150px; right: 10%; animation-delay: 4s; font-size: 3rem; opacity: 0.5; }
+        
+        /* מיקומים אסטרטגיים כדי שיציצו */
+        .dec-1 { top: 10px; left: 10px; font-size: 4rem; animation-delay: 0s; }
+        .dec-2 { bottom: 20px; right: 10px; font-size: 5rem; animation-delay: 2s; }
+        .dec-3 { top: 15%; right: -20px; font-size: 6rem; opacity: 0.4; animation-delay: 1s; } 
+        .dec-4 { bottom: 15%; left: -20px; font-size: 4rem; opacity: 0.6; animation-delay: 3s; }
 
         @keyframes float {
             0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
             100% { transform: translateY(0px) rotate(0deg); }
         }
 
@@ -64,377 +63,282 @@
             max-width: 1400px;
             margin: 0 auto;
             position: relative;
+            z-index: 10; /* תוכן תמיד מעל הקישוטים */
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 32px;
-            border-radius: 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             margin-bottom: 24px;
             text-align: center;
-            border: 4px solid white;
+            border: 2px solid white;
         }
 
         .header h1 {
             font-family: 'Varela Round', sans-serif;
-            font-size: 36px;
-            color: #4a4a4a;
-            margin-bottom: 8px;
-            background: -webkit-linear-gradient(45deg, #667eea, #764ba2);
+            font-size: 2rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
         }
 
-        .tabs {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            padding: 8px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-
-        .tab {
-            padding: 14px 28px;
-            background: rgba(255,255,255,0.8);
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-family: 'Varela Round', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            white-space: nowrap;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-        }
-
-        .tab.active {
-            background: white;
-            color: var(--primary);
-            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.25);
-            transform: translateY(-2px);
-        }
-
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* --- כרטיסים --- */
         .card {
             background: var(--bg-card);
-            padding: 28px;
-            border-radius: 24px;
+            padding: 20px;
+            border-radius: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             border: 1px solid white;
         }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-family: 'Heebo', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .btn:active { transform: scale(0.98); }
-
-        .btn-primary { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; }
-        .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; }
-        .btn-warning { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
-        .btn-secondary { background: white; border: 2px solid var(--border); color: var(--text-primary); }
-        
-        /* Auto-expanding textarea styling */
-        textarea.auto-expand {
-            width: 100%;
-            min-height: 40px;
-            padding: 8px;
-            border: 1px solid transparent;
-            background: transparent;
-            font-family: 'Heebo', sans-serif;
-            font-size: 14px;
-            resize: none;
-            overflow: hidden;
-            text-align: center;
-            transition: border 0.2s;
-            box-sizing: border-box;
-            line-height: 1.4;
-        }
-        
-        textarea.auto-expand:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: white;
-            border-radius: 4px;
-            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.1);
-        }
-
-        /* Table Styling with Sticky Column */
-        .table-wrapper {
+        /* --- טאבים --- */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
             overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.7);
+            border: 1px solid white;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+        }
+        
+        .tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+            transform: scale(1.02);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- טבלה וסטיקי (התיקון החשוב) --- */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto; /* מאפשר גלילה */
             border-radius: 12px;
             border: 1px solid var(--border);
+            max-height: 75vh; /* גלילה אנכית אם צריך */
+            overflow-y: auto;
             position: relative;
         }
 
         .schedule-table {
             width: 100%;
-            border-collapse: separate;
+            min-width: 900px; /* מכריח רוחב כדי שהגלילה תעבוד */
+            border-collapse: separate; /* חובה ל-Sticky */
             border-spacing: 0;
-            min-width: 800px;
         }
 
         .schedule-table th, .schedule-table td {
             border-bottom: 1px solid var(--border);
             border-left: 1px solid var(--border);
             padding: 0;
+            background: white;
         }
 
+        /* כותרות ימים (למעלה) */
         .schedule-table th {
-            padding: 16px;
-            background: #f8fafc;
+            padding: 12px;
+            background: var(--header-bg);
             position: sticky;
             top: 0;
-            z-index: 10;
-            font-weight: 700;
+            z-index: 30; /* מעל התאים הרגילים */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* Sticky Time Column (Right side for RTL) */
+        /* עמודת השעות (צד ימין - דביק) */
         .schedule-table .time-cell {
             position: sticky;
             right: 0;
-            background: #f1f5f9;
-            z-index: 20;
-            font-weight: 700;
-            border-left: 2px solid #cbd5e1;
+            background: var(--header-bg);
+            z-index: 20; /* מעל תאים רגילים, מתחת לכותרות */
             width: 80px;
             min-width: 80px;
-            padding: 10px;
+            font-weight: 700;
             text-align: center;
+            border-left: 2px solid #cbd5e1; /* פס הפרדה מודגש */
+            vertical-align: middle;
+            color: var(--primary);
         }
-        
-        /* Fix z-index for the top-right corner cell */
+
+        /* הפינה הימנית העליונה (הצטלבות) - חייבת להיות הכי למעלה */
         .schedule-table th:first-child {
             position: sticky;
             right: 0;
-            z-index: 30;
+            top: 0;
+            z-index: 50; /* הכי גבוה! */
+            background: var(--header-bg);
             border-left: 2px solid #cbd5e1;
+            z-index: 50 !important;
         }
 
-        .schedule-table td {
-            vertical-align: top;
-            min-width: 120px;
-            background: white;
+        /* --- Textarea --- */
+        textarea.auto-expand {
+            width: 100%;
+            min-height: 50px; /* גובה התחלתי נוח */
+            padding: 8px;
+            border: none;
+            resize: none;
+            font-family: 'Heebo', sans-serif;
+            font-size: 14px;
+            background: transparent;
+            text-align: center;
+            line-height: 1.4;
+            display: block;
+        }
+        
+        textarea.auto-expand:focus {
+            background: #fdf2f8; /* ורדרד עדין בפוקוס */
+            outline: none;
+            box-shadow: inset 0 0 0 2px var(--primary);
         }
 
+        /* תאים מיוחדים */
         .fixed-cell {
             background: #f1f5f9 !important;
-            padding: 12px;
+            padding: 10px;
             font-size: 13px;
             color: var(--text-secondary);
-            text-align: center;
             display: flex;
             align-items: center;
             justify-content: center;
+            text-align: center;
             height: 100%;
+            min-height: 50px;
         }
 
-        .suggested-cell {
-            background: #fffbeb !important;
-            position: relative;
-        }
+        .suggested-cell { background: #fffbeb !important; }
 
-        .suggested-cell::after {
-            content: "💡";
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            font-size: 10px;
-            opacity: 0.7;
+        /* כפתורים */
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-secondary { background: white; border: 1px solid var(--border); color: var(--text-primary); }
+        .btn:active { transform: scale(0.96); }
 
-        /* 15 Distinct Colors for Students */
+        /* תגיות שמות (לוז כולל) */
         .student-tag {
             display: inline-block;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
             margin: 2px;
-            font-weight: 600;
             color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            font-weight: bold;
         }
+        /* פלטת צבעים לשמות */
+        .tag-c1 { background: #ef4444; } .tag-c2 { background: #3b82f6; }
+        .tag-c3 { background: #10b981; } .tag-c4 { background: #f59e0b; }
+        .tag-c5 { background: #8b5cf6; } .tag-c6 { background: #ec4899; }
+        .tag-c7 { background: #06b6d4; } .tag-c8 { background: #84cc16; }
+        .tag-c9 { background: #6366f1; } .tag-c10 { background: #d946ef; }
+        .tag-c11 { background: #14b8a6; } .tag-c12 { background: #f97316; }
+        .tag-c13 { background: #64748b; } .tag-c14 { background: #a855f7; }
+        .tag-c15 { background: #e11d48; }
 
-        /* Palette Generation */
-        .student-tag:nth-of-type(15n+1) { background: #ef4444; } /* Red */
-        .student-tag:nth-of-type(15n+2) { background: #3b82f6; } /* Blue */
-        .student-tag:nth-of-type(15n+3) { background: #10b981; } /* Green */
-        .student-tag:nth-of-type(15n+4) { background: #f59e0b; } /* Orange */
-        .student-tag:nth-of-type(15n+5) { background: #8b5cf6; } /* Purple */
-        .student-tag:nth-of-type(15n+6) { background: #ec4899; } /* Pink */
-        .student-tag:nth-of-type(15n+7) { background: #06b6d4; } /* Cyan */
-        .student-tag:nth-of-type(15n+8) { background: #84cc16; } /* Lime */
-        .student-tag:nth-of-type(15n+9) { background: #6366f1; } /* Indigo */
-        .student-tag:nth-of-type(15n+10) { background: #d946ef; } /* Fuchsia */
-        .student-tag:nth-of-type(15n+11) { background: #14b8a6; } /* Teal */
-        .student-tag:nth-of-type(15n+12) { background: #f97316; } /* Orange Red */
-        .student-tag:nth-of-type(15n+13) { background: #64748b; } /* Slate */
-        .student-tag:nth-of-type(15n+14) { background: #a855f7; } /* Violet */
-        .student-tag:nth-of-type(15n+15) { background: #e11d48; } /* Rose */
-
-        /* Printing Styles */
-        @media print {
-            body { background: white; padding: 0; }
-            .header, .tabs, .btn, .decoration, .combined-view-controls, .toast, .modal {
-                display: none !important;
-            }
-            .card {
-                box-shadow: none;
-                border: none;
-                padding: 0;
-                margin: 0;
-            }
-            .schedule-table {
-                font-size: 10px;
-                width: 100%;
-            }
-            .schedule-table th, .schedule-table td {
-                border: 1px solid #000;
-                padding: 4px;
-            }
-            .student-tag {
-                border: 1px solid #000;
-                background: white !important;
-                color: black !important;
-                text-shadow: none;
-            }
-            /* Reset Textareas for print */
-            textarea {
-                border: none;
-                resize: none;
-                overflow: hidden;
-                white-space: pre-wrap;
-            }
-        }
-
-        /* Controls */
-        .form-group label {
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--text-secondary);
-        }
-        
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-family: 'Heebo', sans-serif;
-            transition: border 0.2s;
-        }
-
-        .form-group input:focus, .form-group select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .week-display {
-            background: white;
-            color: var(--primary);
-            border: 2px solid var(--primary);
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-weight: 700;
-            display: inline-block;
-            margin-bottom: 20px;
-        }
-
-        /* Modal styling */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; }
-        .modal.show { display: flex; }
-        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(150px);
-            background: #1e293b;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 50px;
-            z-index: 2000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        /* קונטרולס */
+        .controls-bar {
+            background: var(--bg-main);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
             display: flex;
-            align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
         }
-        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        select, input {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-family: inherit;
+        }
+
+        /* הדפסה */
+        @media print {
+            .decoration, .tabs, .header, .btn, .controls-bar, .toast { display: none !important; }
+            body, .card { background: white; padding: 0; margin: 0; border: none; box-shadow: none; }
+            .table-wrapper { overflow: visible; border: none; }
+            .schedule-table { width: 100%; min-width: 0; }
+            .schedule-table th, .schedule-table td { border: 1px solid black; font-size: 10pt; }
+            .student-tag { border: 1px solid #000; color: black !important; background: white !important; }
+            textarea { white-space: pre-wrap; border: none; height: auto; }
+        }
+
+        /* מודל והודעות */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px;
+            z-index: 2000; transition: 0.4s; opacity: 0;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
         .toast.danger { background: #ef4444; }
+
+        .modal { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; backdrop-filter: blur(2px); }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
+
     <div class="decoration dec-1">🌈</div>
     <div class="decoration dec-2">🦄</div>
     <div class="decoration dec-3">☁️</div>
+    <div class="decoration dec-4">✨</div>
 
     <div class="container">
         <div class="header">
-            <h1>📅 מערכת לוז דיגיטלית - בית דרור 🏳️‍🌈</h1>
-            <p>אנא מלאו את הלוז השבועי. שיהיה לכם שבוע מהמם וצבעוני! 😊</p>
+            <h1>📅 לוז בית דרור 🏳️‍🌈</h1>
+            <p id="weekHeaderDisplay">טוען תאריך...</p>
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('student')">🧑‍🎓 נערימ.ות</button>
-            <button class="tab" onclick="switchTab('coordinator')">👩‍🏫 רכזת חינוכית 🔒</button>
-            <button class="tab" onclick="switchTab('combined')">🧩 לוז כולל 🔒</button>
-            <button class="tab" onclick="switchTab('editor')">⚙️ הגדרות 🔒</button>
+            <button class="tab active" onclick="switchTab('student')">👦 נערימ.ות</button>
+            <button class="tab" onclick="switchTab('coordinator')">👩‍🏫 רכזת</button>
+            <button class="tab" onclick="switchTab('combined')">🧩 לוז כולל</button>
         </div>
 
         <div id="student-tab" class="tab-content active">
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <h2>מילוי לוז שבועי</h2>
-                    <div class="week-display" id="weekDisplay"></div>
+                <div class="controls-bar" style="background: transparent; padding: 0;">
+                    <input type="text" id="studentName" placeholder="הכנס/י שם פרטי..." style="flex: 1;">
+                    <button class="btn btn-primary" onclick="showQuickCopyModal()">✨ העתקה מהירה</button>
                 </div>
-                
-                <div class="form-group">
-                    <label>שם פרטי</label>
-                    <input type="text" id="studentName" placeholder="הכנס/י שם פרטי כאן...">
-                </div>
-
-                <button class="btn btn-primary" style="margin-bottom: 20px;" onclick="showQuickCopyModal()">
-                    ✨ העתקה מהירה לשעות נוספות
-                </button>
 
                 <div class="table-wrapper">
-                    <table class="schedule-table" id="studentScheduleTable"></table>
+                    <table class="schedule-table" id="studentTable">
+                        </table>
                 </div>
 
-                <button class="btn btn-success" style="margin-top: 20px; width: 100%; padding: 16px; font-size: 18px;" onclick="submitSchedule()">
+                <button class="btn btn-success" style="width: 100%; margin-top: 20px; justify-content: center;" onclick="submitSchedule()">
                     🚀 שלח/י לאישור
                 </button>
             </div>
@@ -442,101 +346,41 @@
 
         <div id="coordinator-tab" class="tab-content">
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
-                    <h2>אישור בקשות</h2>
-                    <button class="btn btn-warning btn-sm" onclick="toggleArchiveView()">
-                        <span id="archiveToggleText">📦 הצג ארכיון</span>
-                    </button>
+                <div class="controls-bar">
+                    <h3>אישור בקשות</h3>
+                    <select id="coordWeekSelect" onchange="loadSubmissions()"></select>
+                    <button class="btn btn-secondary" onclick="toggleArchive()" id="archiveBtn">📦 ארכיון</button>
                 </div>
-                
-                <div class="combined-view-controls" style="margin-bottom: 20px; background: var(--bg-fixed); padding: 15px; border-radius: 12px;">
-                    <div class="form-group" style="margin: 0; width: 100%;">
-                        <label>סנן לפי שבוע (מהחדש לישן)</label>
-                        <select id="coordinatorWeekSelect" onchange="loadSubmissions()">
-                            <option value="">-- טוען... --</option>
-                        </select>
-                    </div>
-                </div>
-                
                 <div id="submissionsList"></div>
             </div>
         </div>
 
         <div id="combined-tab" class="tab-content">
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                    <h2>לוז כולל</h2>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-secondary" onclick="printCombinedSchedule()">🖨️ הדפס</button>
-                        <button class="btn btn-primary" onclick="downloadICS()">📅 ייצוא לגוגל יומן</button>
-                    </div>
+                <div class="controls-bar">
+                    <select id="combinedWeekSelect" onchange="loadCombinedView()"></select>
+                    <div style="flex-grow: 1;"></div>
+                    <button class="btn btn-primary" onclick="downloadICS()">📅 הורד ליומן</button>
+                    <button class="btn btn-secondary" onclick="window.print()">🖨️ הדפס</button>
                 </div>
                 
-                <div class="combined-view-controls" style="background: var(--bg-fixed); padding: 15px; border-radius: 12px;">
-                    <div class="form-group" style="margin: 0; flex-grow: 1;">
-                        <label>בחר שבוע</label>
-                        <select id="combinedWeekSelect" onchange="loadCombinedView()">
-                            <option value="">-- בחר שבוע --</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-secondary" style="margin-top: 10px;" onclick="togglePendingInCombined()">
-                        <span id="pendingToggleText">👁️ הצג לא מאושרים</span>
-                    </button>
-                </div>
-                
-                <div id="pendingStatusIndicator" style="display: none; background: #dbeafe; padding: 10px; border-radius: 8px; margin-bottom: 16px; border: 1px solid #3b82f6; text-align: center;">
-                    🔵 מציג גם פעילויות ממתינות לאישור
-                </div>
-
-                <div id="combinedViewContent" class="table-wrapper"></div>
-            </div>
-        </div>
-
-        <div id="editor-tab" class="tab-content">
-            <div class="card">
-                <h2 style="margin-bottom: 20px;">עריכת מבנה לוז</h2>
-                <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-primary" onclick="addNewTimeSlot()">➕ הוסף שעה</button>
-                    <button class="btn btn-success" onclick="saveScheduleStructure()">💾 שמור שינויים</button>
-                    <button class="btn btn-danger" onclick="resetToDefaultStructure()">🔄 אפס למקור</button>
-                </div>
-                <div id="structureEditorContent"></div>
-            </div>
-        </div>
-
-        <div id="quickCopyModal" class="modal">
-            <div class="modal-content">
-                <h3>העתקה מהירה ✨</h3>
-                <div class="form-group">
-                    <label>מה הפעילות?</label>
-                    <input type="text" id="quickCopyContent" placeholder="לדוגמה: ים, התנדבות...">
-                </div>
-                <div class="form-group">
-                    <label>בחר יום</label>
-                    <select id="quickCopyDay"></select>
-                </div>
-                <div class="form-group">
-                    <label>בחר שעות</label>
-                    <div id="quickCopyTimesList" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border); padding: 10px; border-radius: 8px;"></div>
-                </div>
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                    <button class="btn btn-secondary" onclick="closeQuickCopyModal()">ביטול</button>
-                    <button class="btn btn-primary" onclick="applyQuickCopy()">בצע העתקה</button>
+                <div id="combinedViewContent" class="table-wrapper">
+                    <p style="text-align:center; padding: 20px;">בחר שבוע להצגה...</p>
                 </div>
             </div>
         </div>
-        
-        <div id="addEntryModal" class="modal">
-            <div class="modal-content">
-                <h3>הוסף פעילות ידנית</h3>
-                <div class="form-group">
-                    <label>תוכן הפעילות</label>
-                    <input type="text" id="addEntryContent" placeholder="...">
-                </div>
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                    <button class="btn btn-secondary" onclick="closeAddEntryModal()">ביטול</button>
-                    <button class="btn btn-primary" onclick="applyAddEntry()">הוסף</button>
-                </div>
+    </div>
+
+    <div id="quickCopyModal" class="modal">
+        <div class="modal-content">
+            <h3>העתקה מהירה ✨</h3>
+            <p style="margin-bottom: 10px; font-size: 14px; color: #666;">מלא תוכן ובחר יום ושעות להחלה גורפת.</p>
+            <input type="text" id="qcContent" placeholder="מה הפעילות? (למשל: לימודים)" style="width: 100%; margin-bottom: 10px;">
+            <select id="qcDay" style="width: 100%; margin-bottom: 10px;"></select>
+            <div id="qcTimes" style="max-height: 150px; overflow-y: auto; border: 1px solid #eee; padding: 5px; margin-bottom: 15px;"></div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="document.getElementById('quickCopyModal').classList.remove('show')">ביטול</button>
+                <button class="btn btn-primary" onclick="applyQuickCopy()">החל</button>
             </div>
         </div>
     </div>
@@ -547,9 +391,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
-        // ==============================================
-        // CONFIG & STATE
-        // ==============================================
+        // --- קונפיגורציה ---
         const firebaseConfig = {
             apiKey: "AIzaSyD5Ma2GAqiPFKurMedUgU6Qgl-qk_Uop-s",
             authDomain: "beit-dror1.firebaseapp.com",
@@ -557,194 +399,93 @@
             projectId: "beit-dror1",
             storageBucket: "beit-dror1.firebasestorage.app",
             messagingSenderId: "397103626096",
-            appId: "1:397103626096:web:6f12003cc1447ea1c201b5",
-            measurementId: "G-TF1PXMP3XS"
+            appId: "1:397103626096:web:6f12003cc1447ea1c201b5"
         };
 
-        let db = null;
-        let firebaseInitialized = false;
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        if (firebaseConfig.apiKey) {
-            try {
-                firebase.initializeApp(firebaseConfig);
-                db = firebase.database();
-                firebaseInitialized = true;
-            } catch (error) {
-                console.error('Firebase Error:', error);
-                alert('שגיאת חיבור למסד נתונים');
-            }
-        }
-
-        // State variables
-        const defaultScheduleStructure = {
+        // --- מבנה הלוז ---
+        const structure = {
             days: ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'],
             times: [
-                { time: '06:30', type: 'free' },
-                { time: '07:00', type: 'fixed', content: 'א.בוקר', days: [2] },
-                { time: '08:00', type: 'suggested', content: 'לימודים/בוקר', days: [0,1,2,3,4] },
-                { time: '14:00', type: 'fixed', content: 'א.צהריים', days: [0,1,2,3,4,5,6] },
-                { time: '17:00', type: 'fixed', content: 'כניסה', days: [1,2,3,5,6] },
-                { time: '19:30', type: 'fixed', content: 'א.ערב', days: [0,1,2,3,4,5,6] },
-                { time: '22:00', type: 'fixed', content: 'כניסה', days: [0,1,2,3,5,6] }
+                { t: '06:30', type: 'free' },
+                { t: '07:00', type: 'fixed', content: 'א.בוקר', days: [2] },
+                { t: '08:00', type: 'suggested', content: 'לימודים/בוקר', days: [0,1,2,3,4] },
+                { t: '14:00', type: 'fixed', content: 'א.צהריים', days: [0,1,2,3,4,5,6] },
+                { t: '17:00', type: 'fixed', content: 'כניסה', days: [1,2,3,5,6] },
+                { t: '19:30', type: 'fixed', content: 'א.ערב', days: [0,1,2,3,4,5,6] },
+                { t: '22:00', type: 'fixed', content: 'כניסה', days: [0,1,2,3,5,6] }
             ]
         };
-        
-        // Ensure structure is loaded completely before render
-        let scheduleStructure = JSON.parse(JSON.stringify(defaultScheduleStructure));
+
         let currentWeek = {};
-        let studentScheduleData = {};
-        let showPendingInCombined = false;
-        let showArchivedInCoordinator = false; // New Archive State
-        
-        // Passwords (keep existing hash logic)
-        const PASSWORD_HASH = '34ff3bb3732ca5436824c18fc789ff0507ae31807ca3f782b7d7740235d5d719';
+        let studentData = {};
+        let showArchive = false;
 
-        // ==============================================
-        // CORE FUNCTIONS
-        // ==============================================
-        window.addEventListener('DOMContentLoaded', initializeApp);
+        // --- אתחול ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initDates();
+            renderStudentTable();
+            loadWeeks();
+            initQuickCopy();
+        });
 
-        async function initializeApp() {
-            if (firebaseInitialized) await loadScheduleStructure();
-            currentWeek = getNextSunday();
-            updateWeekDisplay();
-            renderStudentSchedule();
-            populateQuickCopyDaySelect();
-            if (firebaseInitialized) {
-                loadSubmissions();
-                loadWeeksForCombinedView();
-            }
-        }
-
-        async function loadScheduleStructure() {
-            try {
-                const snapshot = await db.ref('scheduleStructure').once('value');
-                if (snapshot.exists()) scheduleStructure = snapshot.val();
-            } catch (e) { console.error(e); }
-        }
-
-        // --- Date Helpers (Enhanced for Sorting) ---
-        function getNextSunday() {
-            const today = new Date();
-            const dayOfWeek = today.getDay();
-            const daysUntilSunday = dayOfWeek === 6 ? 1 : (dayOfWeek === 0 ? 0 : 7 - dayOfWeek);
+        function initDates() {
+            const d = new Date();
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day == 6 ? 1 : 7); // נקסט סאנדיי
+            const nextSun = new Date(d.setDate(diff));
+            nextSun.setHours(0,0,0,0);
+            const nextSat = new Date(nextSun);
+            nextSat.setDate(nextSun.getDate() + 6);
             
-            const nextSunday = new Date(today);
-            nextSunday.setDate(today.getDate() + daysUntilSunday);
-            nextSunday.setHours(0,0,0,0);
-            
-            const nextSaturday = new Date(nextSunday);
-            nextSaturday.setDate(nextSunday.getDate() + 6);
-            
-            return {
-                start: nextSunday,
-                end: nextSaturday,
-                display: formatWeekRange(nextSunday, nextSaturday)
+            const fmt = date => `${date.getDate()}/${date.getMonth()+1}`;
+            currentWeek = {
+                id: `${fmt(nextSun)}-${fmt(nextSat)}`,
+                start: nextSun,
+                display: `${fmt(nextSun)} - ${fmt(nextSat)}`
             };
+            document.getElementById('weekHeaderDisplay').textContent = `שבוע: ${currentWeek.display}`;
         }
 
-        function formatWeekRange(start, end) {
-            const fmt = d => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
-            return `${fmt(start)} - ${fmt(end)}`;
-        }
-
-        // Helper to parse "DD/MM/YYYY" string to Date for sorting
-        function parseDateString(dateStr) {
-            const parts = dateStr.split('/');
-            // new Date(year, monthIndex, day)
-            return new Date(parts[2], parts[1] - 1, parts[0]);
-        }
-
-        function getWeekStartDateFromDisplay(displayStr) {
-            // displayStr is "DD/MM/YYYY - DD/MM/YYYY"
-            const startStr = displayStr.split(' - ')[0];
-            return parseDateString(startStr);
-        }
-
-        function updateWeekDisplay() {
-            document.getElementById('weekDisplay').textContent = `📅 שבוע: ${currentWeek.display}`;
-        }
-
-        // --- Auto Expand Textarea ---
-        function autoExpand(field) {
-            field.style.height = 'inherit';
-            const computed = window.getComputedStyle(field);
-            const height = parseInt(computed.getPropertyValue('border-top-width'), 10)
-                         + parseInt(computed.getPropertyValue('padding-top'), 10)
-                         + field.scrollHeight
-                         + parseInt(computed.getPropertyValue('padding-bottom'), 10)
-                         + parseInt(computed.getPropertyValue('border-bottom-width'), 10);
-            field.style.height = height + 'px';
-        }
-
-        // --- Tab Logic ---
-        async function switchTab(tabName) {
-            if (['coordinator', 'combined', 'editor'].includes(tabName)) {
-                // For demo purposes, removed prompt logic or use simple verify
-                // Uncomment to enable password protection:
-                 const password = prompt('הכנס סיסמה:');
-                 if (!password || await hashPassword(password) !== PASSWORD_HASH) {
-                     showToast('סיסמה שגויה', 'danger');
-                     return;
-                 }
-            }
-
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-            event.target.classList.add('active');
-
-            if (tabName === 'coordinator') loadSubmissions();
-            if (tabName === 'combined') loadCombinedView();
-            if (tabName === 'editor') renderStructureEditor();
-        }
-
-        async function hashPassword(str) {
-            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-            return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-        }
-
-        // ==============================================
-        // STUDENT VIEW
-        // ==============================================
-        function renderStudentSchedule() {
-            const table = document.getElementById('studentScheduleTable');
+        // --- טבלת חניך ---
+        function renderStudentTable() {
+            const table = document.getElementById('studentTable');
             let html = '<thead><tr><th>שעה</th>';
-            scheduleStructure.days.forEach((day, i) => html += `<th>${day}${i===2?'<br><small>יום בית</small>':''}</th>`);
+            structure.days.forEach(d => html += `<th>${d}</th>`);
             html += '</tr></thead><tbody>';
 
-            // Group times logic (same as original)
-            const grouped = {};
-            scheduleStructure.times.forEach((t, i) => {
-                if(!grouped[t.time]) grouped[t.time] = [];
-                grouped[t.time].push({...t, originalIndex: i});
+            // מיפוי זמנים כדי למנוע כפילויות תצוגה
+            const timesMap = {};
+            structure.times.forEach((slot, idx) => {
+                if(!timesMap[slot.t]) timesMap[slot.t] = [];
+                timesMap[slot.t].push({ ...slot, idx });
             });
 
-            Object.entries(grouped).forEach(([time, slots]) => {
-                html += `<tr><td class="time-cell">${time}</td>`;
-                scheduleStructure.days.forEach((day, dayIndex) => {
-                    let type = 'free', content = '', idx = slots[0].originalIndex;
+            Object.keys(timesMap).sort().forEach(timeStr => {
+                const slots = timesMap[timeStr];
+                html += `<tr><td class="time-cell">${timeStr}</td>`;
+                
+                structure.days.forEach((dayName, dayIdx) => {
+                    // בדיקה אם יש אירוע קבוע או מוצע ביום הזה
+                    const fixed = slots.find(s => s.type === 'fixed' && s.days?.includes(dayIdx));
+                    const sugg = slots.find(s => s.type === 'suggested' && s.days?.includes(dayIdx));
                     
-                    const fixed = slots.find(s => s.type === 'fixed' && s.days?.includes(dayIndex));
-                    const sugg = slots.find(s => s.type === 'suggested' && s.days?.includes(dayIndex));
-                    
-                    if (fixed) { type='fixed'; content=fixed.content; idx=fixed.originalIndex; }
-                    else if (sugg) { type='suggested'; content=sugg.content; idx=sugg.originalIndex; }
-
-                    const key = `${dayIndex}-${idx}`;
-                    const val = studentScheduleData[key] || '';
-
-                    if (type === 'fixed') {
-                        html += `<td class="fixed-cell">${content}</td>`;
+                    if (fixed) {
+                        html += `<td class="fixed-cell">${fixed.content}</td>`;
                     } else {
-                        const placeholder = type === 'suggested' ? (content || 'הצעה...') : '...';
-                        const bgClass = type === 'suggested' ? 'suggested-cell' : 'free-cell';
-                        // Using Textarea for auto-expand
+                        // תא לכתיבה
+                        // אנחנו משתמשים באינדקס המקורי של השעה הראשונה שמתאימה לזמן הזה
+                        const baseIdx = slots[0].idx; 
+                        const key = `${dayIdx}-${baseIdx}`;
+                        const val = studentData[key] || '';
+                        const placeholder = sugg ? (sugg.content || 'הצעה') : '';
+                        const bgClass = sugg ? 'suggested-cell' : '';
+                        
                         html += `<td class="${bgClass}">
-                            <textarea class="auto-expand"
-                                data-day="${dayIndex}" 
-                                data-time="${idx}"
-                                oninput="autoExpand(this); updateStudentData(${dayIndex}, ${idx}, this.value)"
+                            <textarea class="auto-expand" 
+                                oninput="updateStudentData('${key}', this.value); autoGrow(this)"
                                 placeholder="${placeholder}">${val}</textarea>
                         </td>`;
                     }
@@ -753,260 +494,131 @@
             });
             html += '</tbody>';
             table.innerHTML = html;
-            
-            // Init textareas height
-            setTimeout(() => document.querySelectorAll('textarea.auto-expand').forEach(autoExpand), 0);
+            document.querySelectorAll('textarea').forEach(autoGrow);
         }
 
-        function updateStudentData(d, t, val) {
-            const key = `${d}-${t}`;
-            val.trim() ? studentScheduleData[key] = val.trim() : delete studentScheduleData[key];
+        function autoGrow(el) {
+            el.style.height = 'auto';
+            el.style.height = (el.scrollHeight) + 'px';
         }
 
+        function updateStudentData(key, val) {
+            if(val.trim()) studentData[key] = val;
+            else delete studentData[key];
+        }
+
+        // --- שליחה ---
         async function submitSchedule() {
-            const name = document.getElementById('studentName').value.trim();
-            if (!name) return showToast('חסר שם', 'danger');
-            if (Object.keys(studentScheduleData).length === 0) return showToast('הלוז ריק', 'danger');
+            const name = document.getElementById('studentName').value;
+            if(!name) return showToast('נא למלא שם', 'danger');
+            if(Object.keys(studentData).length === 0) return showToast('הלוז ריק', 'danger');
 
-            const data = Object.keys(studentScheduleData).map(k => {
-                const [d, t] = k.split('-').map(Number);
-                return { day: d, time: t, content: studentScheduleData[k], status: 'pending' };
-            });
-
-            const submission = {
+            const payload = {
                 studentName: name,
-                weekStart: currentWeek.start.toISOString(),
-                weekEnd: currentWeek.end.toISOString(),
                 weekDisplay: currentWeek.display,
-                submittedAt: new Date().toISOString(),
+                timestamp: firebase.database.ServerValue.TIMESTAMP,
                 archived: false,
-                scheduleData: data
+                data: Object.entries(studentData).map(([k, v]) => {
+                    const [d, t] = k.split('-');
+                    return { d: parseInt(d), t: parseInt(t), content: v, status: 'pending' };
+                })
             };
 
-            await db.ref('submissions').push(submission);
+            await db.ref('submissions').push(payload);
             showToast('נשלח בהצלחה! 🎉');
+            studentData = {};
             document.getElementById('studentName').value = '';
-            studentScheduleData = {};
-            renderStudentSchedule();
+            renderStudentTable();
         }
 
-        // ==============================================
-        // COORDINATOR VIEW (ARCHIVE & SORTING)
-        // ==============================================
-        function toggleArchiveView() {
-            showArchivedInCoordinator = !showArchivedInCoordinator;
-            document.getElementById('archiveToggleText').textContent = showArchivedInCoordinator ? '📂 חזור לפעילים' : '📦 הצג ארכיון';
-            loadSubmissions();
-        }
-
+        // --- רכזת ---
         async function loadSubmissions() {
-            const snapshot = await db.ref('submissions').once('value');
-            const allSubs = [];
-            const weeks = new Set();
-            
-            snapshot.forEach(c => {
-                const s = { id: c.key, ...c.val() };
-                allSubs.push(s);
-                if(s.weekDisplay) weeks.add(s.weekDisplay);
-            });
-
-            // Populate Week Select (Sorted Correctly)
-            const weekSelect = document.getElementById('coordinatorWeekSelect');
-            const currentSel = weekSelect.value;
-            weekSelect.innerHTML = '<option value="">-- כל השבועות --</option>';
-            
-            // Sort weeks by Date (Newest first)
-            const sortedWeeks = Array.from(weeks).sort((a, b) => {
-                return getWeekStartDateFromDisplay(b) - getWeekStartDateFromDisplay(a);
-            });
-
-            sortedWeeks.forEach(w => {
-                weekSelect.innerHTML += `<option value="${w}" ${w === currentSel ? 'selected' : ''}>${w}</option>`;
-            });
-
-            // Filter logic
-            const selectedWeek = weekSelect.value;
-            let filtered = allSubs;
-            
-            // 1. Filter by Week
-            if (selectedWeek) filtered = filtered.filter(s => s.weekDisplay === selectedWeek);
-            
-            // 2. Filter by Archive State (The Key Change)
-            filtered = filtered.filter(s => !!s.archived === showArchivedInCoordinator);
-
-            // Sort by submission time
-            filtered.sort((a,b) => new Date(b.submittedAt) - new Date(a.submittedAt));
-
-            // Render
-            const container = document.getElementById('submissionsList');
-            if (filtered.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding: 40px; color: #cbd5e1;">
-                    <h2>${showArchivedInCoordinator ? 'הארכיון ריק' : 'אין בקשות ממתינות'}</h2>
-                    <p style="font-size: 3rem;">📭</p>
-                </div>`;
-                return;
-            }
-
-            let html = '';
-            // Group by week
-            const groups = {};
-            filtered.forEach(s => {
-                if(!groups[s.weekDisplay]) groups[s.weekDisplay] = [];
-                groups[s.weekDisplay].push(s);
-            });
-
-            Object.entries(groups).forEach(([week, subs]) => {
-                html += `<div class="week-header" style="margin-top:20px; font-weight:bold; color:var(--primary);">📅 ${week}</div>`;
-                subs.forEach(sub => html += renderSubmissionCard(sub));
-            });
-            container.innerHTML = html;
-        }
-
-        function renderSubmissionCard(sub) {
-            // Render table is similar, just added Print button
-            return `
-            <div class="card submission-card">
-                <div style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:15px;">
-                    <div>
-                        <h3>${sub.studentName}</h3>
-                        <small>${new Date(sub.submittedAt).toLocaleString('he-IL')}</small>
-                    </div>
-                    <div style="display:flex; gap:5px;">
-                        <button class="btn btn-secondary btn-sm" onclick="printElement('${sub.id}')">🖨️</button>
-                        ${!sub.archived ? 
-                            `<button class="btn btn-secondary btn-sm" onclick="toggleArchive('${sub.id}', true)">📦 ארכיון</button>` : 
-                            `<button class="btn btn-primary btn-sm" onclick="toggleArchive('${sub.id}', false)">📤 שחזר</button>`
-                        }
-                        <button class="btn btn-danger btn-sm" onclick="deleteSub('${sub.id}')">🗑️</button>
-                    </div>
-                </div>
-                <div id="print-${sub.id}" class="table-wrapper">
-                   ${renderMiniTable(sub)}
-                </div>
-            </div>`;
-        }
-
-        function renderMiniTable(sub) {
-            // Reusing basic table logic for coordinator view
-            let html = '<table class="schedule-table"><thead><tr><th>שעה</th>';
-            scheduleStructure.days.forEach(d => html += `<th>${d.substr(0,1)}'</th>`); // Short days
-            html += '</tr></thead><tbody>';
-            
-            // Logic to check status and render Approve/Reject buttons...
-            // (Skipping full DOM reconstruction here to save space, but relying on existing logic)
-            // Ideally, copy the loop from your original code but use textareas
-            
-            // Simplified placeholder:
-            return `<div style="padding:20px; text-align:center;">טבלה מלאה תוצג כאן (השתמש בלוגיקה הקיימת עם השיפורים)</div>`;
-        }
-
-        // --- Archive Action ---
-        async function toggleArchive(id, status) {
-            await db.ref(`submissions/${id}/archived`).set(status);
-            showToast(status ? 'הועבר לארכיון' : 'שוחזר מהארכיון');
-            loadSubmissions();
-        }
-
-        async function deleteSub(id) {
-            if(confirm('למחוק לצמיתות?')) {
-                await db.ref(`submissions/${id}`).remove();
-                loadSubmissions();
-            }
-        }
-
-        // ==============================================
-        // COMBINED VIEW & GOOGLE CALENDAR EXPORT
-        // ==============================================
-        async function loadWeeksForCombinedView() {
+            const week = document.getElementById('coordWeekSelect').value;
             const snap = await db.ref('submissions').once('value');
-            const weeks = new Set();
-            snap.forEach(s => {
-                const val = s.val();
-                if(val.weekDisplay && !val.archived) weeks.add(val.weekDisplay); // Only show non-archived weeks
-            });
+            const list = document.getElementById('submissionsList');
+            list.innerHTML = '';
+
+            let subs = [];
+            snap.forEach(c => subs.push({ id: c.key, ...c.val() }));
             
-            const sel = document.getElementById('combinedWeekSelect');
-            sel.innerHTML = '<option value="">-- בחר שבוע --</option>';
-            // Sort
-            Array.from(weeks).sort((a,b) => getWeekStartDateFromDisplay(b) - getWeekStartDateFromDisplay(a))
-                .forEach(w => sel.innerHTML += `<option value="${w}">${w}</option>`);
+            // סינון ומיון
+            subs = subs.filter(s => (week ? s.weekDisplay === week : true) && !!s.archived === showArchive);
+            subs.sort((a,b) => b.timestamp - a.timestamp);
+
+            if(subs.length === 0) list.innerHTML = '<p style="text-align:center; padding:20px;">אין בקשות</p>';
+
+            subs.forEach(sub => {
+                const date = new Date(sub.timestamp).toLocaleString('he-IL');
+                let card = `<div class="card" style="border-right: 4px solid var(--primary);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <strong>${sub.studentName}</strong>
+                        <small>${date}</small>
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        ${sub.data.map(d => `<span class="student-tag tag-c${(d.d%15)+1}">${structure.days[d.d]}: ${d.content}</span>`).join(' ')}
+                    </div>
+                    <div style="display:flex; gap:10px; justify-content:flex-end;">
+                        <button class="btn btn-secondary btn-sm" onclick="toggleArchiveItem('${sub.id}', ${!sub.archived})">
+                            ${sub.archived ? 'שחזר' : 'ארכיון'}
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteItem('${sub.id}')">מחק</button>
+                    </div>
+                </div>`;
+                list.innerHTML += card;
+            });
         }
 
+        // --- לוז כולל וגוגל יומן ---
         async function loadCombinedView() {
             const week = document.getElementById('combinedWeekSelect').value;
-            if (!week) return;
+            if(!week) return;
 
             const snap = await db.ref('submissions').once('value');
-            const subs = [];
+            const map = {}; // map[timeStr][dayIdx] = [names...]
+
             snap.forEach(c => {
                 const s = c.val();
-                // Filter: Must be this week AND NOT ARCHIVED
-                if (s.weekDisplay === week && !s.archived) {
-                    subs.push(s);
+                if(s.weekDisplay === week && !s.archived) {
+                    s.data.forEach(entry => {
+                        // כאן נניח שכל מה שנשלח הוא "מאושר" לצורך התצוגה, או אפשר לסנן לפי סטטוס
+                        const timeStr = structure.times[entry.t].t; 
+                        if(!map[timeStr]) map[timeStr] = {};
+                        if(!map[timeStr][entry.d]) map[timeStr][entry.d] = [];
+                        map[timeStr][entry.d].push({ name: s.studentName, content: entry.content });
+                    });
                 }
             });
 
-            renderCombinedTable(subs);
-        }
-
-        // The actual complex rendering of combined table
-        function renderCombinedTable(subs) {
-            // Build Map
-            const map = {}; // key: "day-time" -> { content: [studentNames] }
-            
-            subs.forEach(s => {
-                if(!s.scheduleData) return;
-                s.scheduleData.forEach(entry => {
-                    const isApp = entry.status === 'approved';
-                    const isPend = entry.status === 'pending';
-                    
-                    if (isApp || (showPendingInCombined && isPend)) {
-                        const key = `${entry.day}-${entry.time}`;
-                        const contentKey = entry.content + (isPend ? ' (ממתין)' : '');
-                        
-                        if(!map[key]) map[key] = {};
-                        if(!map[key][contentKey]) map[key][contentKey] = [];
-                        map[key][contentKey].push(s.studentName);
-                    }
-                });
-            });
-
-            // Render HTML
+            // יצירת טבלה
             let html = '<table class="schedule-table"><thead><tr><th>שעה</th>';
-            scheduleStructure.days.forEach(d => html += `<th>${d}</th>`);
+            structure.days.forEach(d => html += `<th>${d}</th>`);
             html += '</tr></thead><tbody>';
 
-            // Group times
-            const timesMap = {}; 
-            scheduleStructure.times.forEach((t, i) => { if(!timesMap[t.time]) timesMap[t.time] = i; });
-            
-            Object.keys(timesMap).sort().forEach(timeStr => {
-                const timeIdx = timesMap[timeStr];
-                html += `<tr><td class="time-cell">${timeStr}</td>`;
-                
-                scheduleStructure.days.forEach((day, dayIdx) => {
-                    // Check fixed
-                    const fixed = scheduleStructure.times.find(t => t.time === timeStr && t.type === 'fixed' && t.days?.includes(dayIdx));
-                    
-                    if (fixed) {
+            // מניעת כפילויות שעות בתצוגה
+            const uniqueTimes = [...new Set(structure.times.map(t => t.t))].sort();
+
+            uniqueTimes.forEach(tStr => {
+                html += `<tr><td class="time-cell">${tStr}</td>`;
+                structure.days.forEach((_, dayIdx) => {
+                    // בדיקת קבועים
+                    const fixed = structure.times.find(x => x.t === tStr && x.type === 'fixed' && x.days?.includes(dayIdx));
+                    if(fixed) {
                         html += `<td class="fixed-cell">${fixed.content}</td>`;
                     } else {
-                        const key = `${dayIdx}-${timeIdx}`;
-                        const data = map[key];
-                        if (data) {
-                            html += `<td class="free-cell">`;
-                            Object.entries(data).forEach(([activity, students]) => {
-                                html += `<div style="margin-bottom:4px;">
-                                    <div style="font-weight:bold; font-size:11px;">${activity}</div>`;
-                                students.forEach(name => {
-                                    html += `<span class="student-tag">${name}</span>`;
-                                });
-                                html += `</div>`;
+                        // תוכן חניכים
+                        const entries = map[tStr]?.[dayIdx];
+                        let cellContent = '';
+                        if(entries) {
+                            entries.forEach((e, i) => {
+                                // צבע לפי שם החניך (פונקציית גיבוב פשוטה)
+                                const colorIdx = (e.name.length + i) % 15 + 1;
+                                cellContent += `<div style="margin-bottom:2px;">
+                                    <span class="student-tag tag-c${colorIdx}">${e.name}</span>
+                                    <span style="font-size:11px;">${e.content}</span>
+                                </div>`;
                             });
-                            html += `</td>`;
-                        } else {
-                            html += `<td></td>`;
                         }
+                        html += `<td style="vertical-align:top; padding:4px;">${cellContent}</td>`;
                     }
                 });
                 html += '</tr>';
@@ -1015,150 +627,152 @@
             document.getElementById('combinedViewContent').innerHTML = html;
         }
 
-        // --- GOOGLE CALENDAR EXPORT (ICS) ---
+        // --- הורדת ICS (גוגל יומן) ---
         async function downloadICS() {
             const week = document.getElementById('combinedWeekSelect').value;
-            if(!week) return showToast('בחר שבוע קודם', 'danger');
+            if(!week) return showToast('בחר שבוע', 'danger');
 
-            // 1. Get Data
+            // פירוק התאריך
+            const [d1, m1] = week.split(' - ')[0].split('/');
+            const currentYear = new Date().getFullYear(); // הנחה שזה השנה הנוכחית
+            const startDate = new Date(currentYear, m1-1, d1);
+
             const snap = await db.ref('submissions').once('value');
-            const events = [];
-            const weekStartDate = getWeekStartDateFromDisplay(week); // Sunday Date Object
-
+            let events = "";
+            
             snap.forEach(c => {
                 const s = c.val();
-                if(s.weekDisplay === week && !s.archived && s.scheduleData) {
-                    s.scheduleData.forEach(entry => {
-                        if(entry.status === 'approved') {
-                            events.push({
-                                student: s.studentName,
-                                dayIndex: entry.day, // 0-6
-                                timeIndex: entry.time,
-                                content: entry.content
-                            });
-                        }
+                if(s.weekDisplay === week && !s.archived) {
+                    s.data.forEach(e => {
+                        const timeStr = structure.times[e.t].t; // "14:00"
+                        const [hh, mm] = timeStr.split(':');
+                        
+                        // חישוב זמן התחלה
+                        const evStart = new Date(startDate);
+                        evStart.setDate(evStart.getDate() + e.d);
+                        evStart.setHours(hh, mm, 0);
+                        
+                        // חישוב זמן סיום (ברירת מחדל שעה)
+                        const evEnd = new Date(evStart);
+                        evEnd.setHours(evEnd.getHours() + 1);
+
+                        const fmt = d => d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+                        
+                        events += "BEGIN:VEVENT\n";
+                        events += `DTSTART:${fmt(evStart)}\n`;
+                        events += `DTEND:${fmt(evEnd)}\n`;
+                        events += `SUMMARY:${s.studentName}: ${e.content}\n`;
+                        events += "END:VEVENT\n";
                     });
                 }
             });
 
-            if(events.length === 0) return showToast('אין אירועים מאושרים לייצוא', 'danger');
+            if(!events) return showToast('אין אירועים', 'danger');
 
-            // 2. Build ICS String
-            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//BeitDror//Schedule//EN\nCALSCALE:GREGORIAN\nMETHOD:PUBLISH\n";
-            
-            // Helper to format date: YYYYMMDDTHHMMSS
-            const formatICSDate = (date) => date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-
-            events.forEach(ev => {
-                // Calculate actual date
-                const evDate = new Date(weekStartDate);
-                evDate.setDate(weekStartDate.getDate() + ev.dayIndex);
-                
-                // Get Time string
-                const timeObj = scheduleStructure.times[ev.timeIndex]; // { time: "14:00" }
-                if(!timeObj) return;
-                
-                const [hh, mm] = timeObj.time.split(':').map(Number);
-                evDate.setHours(hh, mm, 0, 0);
-                
-                const startStr = formatICSDate(evDate);
-                
-                // End time (assume 30 mins or calculate diff to next slot)
-                const endDate = new Date(evDate);
-                endDate.setMinutes(endDate.getMinutes() + 30); 
-                const endStr = formatICSDate(endDate);
-
-                icsContent += "BEGIN:VEVENT\n";
-                icsContent += `DTSTART:${startStr}\n`;
-                icsContent += `DTEND:${endStr}\n`;
-                icsContent += `SUMMARY:${ev.student} - ${ev.content}\n`;
-                icsContent += `DESCRIPTION:פעילות לוז בית דרור\n`;
-                icsContent += "END:VEVENT\n";
-            });
-
-            icsContent += "END:VCALENDAR";
-
-            // 3. Trigger Download
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const ics = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//BeitDror//IL\n${events}END:VCALENDAR`;
+            const blob = new Blob([ics], { type: 'text/calendar' });
             const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', `luaz_beit_dror_${week.replace(/\//g,'-')}.ics`);
+            link.href = URL.createObjectURL(blob);
+            link.download = `schedule_${week.replace('/','-')}.ics`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+
+        // --- עזרים ---
+        function switchTab(t) {
+            document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
+            document.getElementById(t+'-tab').classList.add('active');
+            document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
+            event.target.classList.add('active');
             
-            showToast('קובץ יומן ירד למחשב/טלפון שלך! 🗓️');
+            if(t==='coordinator') {
+                loadWeeks('coordWeekSelect');
+                setTimeout(loadSubmissions, 500); // טעינה אחרי שהדום מוכן
+            }
+            if(t==='combined') {
+                loadWeeks('combinedWeekSelect');
+            }
         }
 
-        // --- PRINT ---
-        function printCombinedSchedule() {
-            window.print();
-        }
-        
-        function printElement(elemId) {
-            // Harder to implement nicely without hiding everything else via CSS classes
-            // For now, simpler to just rely on user knowing to print page, 
-            // OR simple approach:
-            const content = document.getElementById('print-'+elemId).innerHTML;
-            const w = window.open('', '', 'width=900,height=600');
-            w.document.write(`<html dir="rtl"><body>${content}</body></html>`);
-            w.print();
-            w.close();
-        }
-
-        // ==============================================
-        // UTILS
-        // ==============================================
         function showToast(msg, type='success') {
             const t = document.getElementById('toast');
-            t.innerHTML = (type==='danger'?'❌ ':'✅ ') + msg;
-            t.className = `toast ${type} show`;
+            t.textContent = msg;
+            t.className = `toast show ${type}`;
             setTimeout(() => t.classList.remove('show'), 3000);
         }
+
+        function toggleArchive() {
+            showArchive = !showArchive;
+            document.getElementById('archiveBtn').textContent = showArchive ? '📂 חזור לפעילים' : '📦 ארכיון';
+            loadSubmissions();
+        }
+
+        async function toggleArchiveItem(id, status) {
+            await db.ref(`submissions/${id}/archived`).set(status);
+            loadSubmissions();
+        }
         
-        // --- Quick Copy & Editor Utils --- 
-        // (Copy previous logic here: populateQuickCopyDaySelect, applyQuickCopy, addNewTimeSlot, saveScheduleStructure...)
-        function populateQuickCopyDaySelect() {
-            const sel = document.getElementById('quickCopyDay');
-            if(!sel) return;
-            sel.innerHTML = '<option value="">בחר יום</option>';
-            scheduleStructure.days.forEach((d,i) => sel.innerHTML += `<option value="${i}">${d}</option>`);
+        async function deleteItem(id) {
+            if(confirm('למחוק לצמיתות?')) {
+                await db.ref(`submissions/${id}`).remove();
+                loadSubmissions();
+            }
+        }
+
+        async function loadWeeks(elemId) {
+            // טוען שבועות קיימים לדרופדאון
+            const snap = await db.ref('submissions').once('value');
+            const weeks = new Set();
+            snap.forEach(s => weeks.add(s.val().weekDisplay));
+            
+            // המרה לתאריכים למיון
+            const sorted = Array.from(weeks).sort((a,b) => {
+                const da = a.split(' - ')[0].split('/').reverse().join('');
+                const db = b.split(' - ')[0].split('/').reverse().join('');
+                return db.localeCompare(da);
+            });
+
+            const sel = document.getElementById(elemId || 'coordWeekSelect');
+            if(sel) {
+                sel.innerHTML = '<option value="">בחר שבוע</option>';
+                sorted.forEach(w => sel.innerHTML += `<option value="${w}">${w}</option>`);
+            }
+        }
+
+        // --- לוגיקת העתקה מהירה ---
+        function initQuickCopy() {
+            const sel = document.getElementById('qcDay');
+            structure.days.forEach((d, i) => sel.innerHTML += `<option value="${i}">${d}</option>`);
             
             sel.onchange = () => {
                 const day = parseInt(sel.value);
-                const list = document.getElementById('quickCopyTimesList');
-                list.innerHTML = '';
-                scheduleStructure.times.forEach((t, i) => {
-                   const isFixed = t.type==='fixed' && t.days?.includes(day);
-                   list.innerHTML += `<div style="margin:5px 0;">
-                        <input type="checkbox" id="qc-${i}" value="${i}">
-                        <label for="qc-${i}">${t.time} ${isFixed?'(קבוע)':''}</label>
-                   </div>`;
+                const div = document.getElementById('qcTimes');
+                div.innerHTML = '';
+                // רק זמנים שאינם קבועים ביום הזה
+                structure.times.forEach((t, i) => {
+                    const isFixed = t.type === 'fixed' && t.days.includes(day);
+                    if(!isFixed) {
+                        div.innerHTML += `<div><input type="checkbox" value="${i}" id="t${i}"> <label for="t${i}">${t.t}</label></div>`;
+                    }
                 });
-            };
+            }
         }
 
         function showQuickCopyModal() { document.getElementById('quickCopyModal').classList.add('show'); }
-        function closeQuickCopyModal() { document.getElementById('quickCopyModal').classList.remove('show'); }
-
+        
         function applyQuickCopy() {
-            const txt = document.getElementById('quickCopyContent').value;
-            const day = document.getElementById('quickCopyDay').value;
+            const txt = document.getElementById('qcContent').value;
+            const day = document.getElementById('qcDay').value;
             if(!txt || !day) return;
-            
-            document.querySelectorAll('#quickCopyTimesList input:checked').forEach(cb => {
-                studentScheduleData[`${day}-${cb.value}`] = txt;
-            });
-            renderStudentSchedule();
-            closeQuickCopyModal();
-        }
 
-        function resetToDefaultStructure() {
-            if(confirm('בטוח?')) {
-                scheduleStructure = JSON.parse(JSON.stringify(defaultScheduleStructure));
-                db.ref('scheduleStructure').set(scheduleStructure);
-                renderStructureEditor();
-            }
+            document.querySelectorAll('#qcTimes input:checked').forEach(cb => {
+                const tIdx = cb.value;
+                const key = `${day}-${tIdx}`;
+                studentData[key] = txt;
+            });
+            renderStudentTable();
+            document.getElementById('quickCopyModal').classList.remove('show');
         }
     </script>
 </body>
