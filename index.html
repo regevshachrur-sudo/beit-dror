@@ -1053,15 +1053,38 @@
         // ==============================================
         // TAB SWITCHING
         // ==============================================
-        function switchTab(tabName) {
+        
+        // פונקציה להצפנת הסיסמה עם SHA-256
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+        
+        // ה-hash של הסיסמה 5522 (מוצפן!)
+        // כדי לשנות סיסמה: פתח קונסול והרץ: hashPassword('הסיסמה_החדשה').then(console.log)
+        const PASSWORD_HASH = '34ff3bb3732ca5436824c18fc789ff0507ae31807ca3f782b7d7740235d5d719';
+        
+        async function switchTab(tabName) {
             console.log('🔄 Switching to tab:', tabName);
             
             // Check password for coordinator, combined, and editor tabs
             if (['coordinator', 'combined', 'editor'].includes(tabName)) {
                 const password = prompt('הכנס סיסמה:');
+                
+                if (!password) {
+                    return; // ביטול
+                }
+                
                 console.log('🔐 Password check for:', tabName);
                 
-                if (password !== '5522') {
+                // השוואת hash של הסיסמה שהוזנה עם ה-hash השמור
+                const inputHash = await hashPassword(password);
+                
+                if (inputHash !== PASSWORD_HASH) {
                     console.log('❌ Wrong password');
                     showToast('סיסמה שגויה', 'danger');
                     return;
