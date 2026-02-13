@@ -3,518 +3,580 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת לוז דיגיטלית - בית דרור 2000🏳️‍🌈</title>
+    <title>Beit Dror Schedule 🖤🌈</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Y2K / Early 2000s Palette */
-            --bg-main: #e0e0e0;
-            --bg-pattern: repeating-linear-gradient(45deg, #dcdcdc 0px, #dcdcdc 2px, #e0e0e0 2px, #e0e0e0 8px);
-            --surface: #f0f0f0;
-            --primary: #5d5cd6;
-            --primary-light: #7a79e0;
-            --primary-dark: #403fb5;
-            --text-main: #000000;
-            --border-light: #ffffff;
-            --border-dark: #808080;
-            --border-darker: #404040;
+            /* Palette: Dark Pastel Goth / Cyber Chic */
+            --bg-dark: #121218;       /* כהה מאוד */
+            --bg-card: #1e1e26;       /* אפור כהה-כחלחל */
+            --bg-input: #2a2a35;
             
-            /* Status Colors */
-            --success: #00aa00;
-            --danger: #cc0000;
-            --warning: #ffcc00;
+            /* Accents */
+            --neon-pink: #ff7eb6;
+            --neon-purple: #be95ff;
+            --neon-cyan: #82cfff;
+            --neon-green: #42be65;
+            --neon-orange: #ffab70;
+            --danger: #ff5c5c;
+            
+            --text-main: #ffffff;
+            --text-muted: #a0a0b0;
+            
+            --border-radius: 16px;
+            --border-width: 2px;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            scrollbar-width: thin;
+            scrollbar-color: var(--neon-purple) var(--bg-dark);
         }
 
         body {
-            font-family: 'Heebo', sans-serif;
-            background-color: var(--bg-main);
-            background-image: var(--bg-pattern);
+            font-family: 'Rubik', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(var(--bg-input) 1px, transparent 1px);
+            background-size: 20px 20px;
             color: var(--text-main);
-            line-height: 1.5;
-            padding: 10px;
+            padding: 20px;
             min-height: 100vh;
         }
 
-        /* 3D Container Style */
-        .win-box {
-            background: var(--surface);
-            border: 2px solid;
-            border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-            padding: 4px;
-            margin-bottom: 20px;
+        /* --- Layout & Containers --- */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
 
-        .win-header {
-            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 8px 12px;
+        .header-section {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .header-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+            display: inline-block;
+        }
+
+        .header-decor {
+            font-size: 1.5rem;
+            position: absolute;
+            top: -10px;
+            animation: float 3s ease-in-out infinite;
+        }
+        .decor-left { left: 10%; transform: rotate(-15deg); }
+        .decor-right { right: 10%; transform: rotate(15deg); }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-15deg); }
+            50% { transform: translateY(-10px) rotate(-10deg); }
+        }
+
+        /* --- Custom Tabs --- */
+        .tabs-container {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background: var(--bg-card);
+            color: var(--text-muted);
+            border: var(--border-width) solid transparent;
+            padding: 12px 24px;
+            border-radius: 50px;
             font-weight: 700;
-            font-size: 1.1em;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn:hover {
+            background: var(--bg-input);
+            color: var(--text-main);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            background: var(--bg-card);
+            color: var(--text-main);
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 15px rgba(190, 149, 255, 0.2);
+        }
+        
+        .tab-btn.active::after {
+            content: '✨';
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            font-size: 10px;
+        }
+
+        /* --- Content Cards --- */
+        .main-card {
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .main-card.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid;
-            border-color: var(--primary-light) var(--primary-dark) var(--primary-dark) var(--primary-light);
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--bg-input);
         }
 
-        .win-content {
-            padding: 15px;
-            background: white;
-            border: 2px solid;
-            border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark); /* Inset look */
-        }
-
-        /* Tabs Y2K Style */
-        .tabs {
-            display: flex;
-            gap: 4px;
-            margin-bottom: -2px; /* Connect to container */
-            padding-right: 8px;
-            z-index: 10;
-            position: relative;
-            overflow-x: auto;
-        }
-
-        .tab {
-            padding: 8px 20px;
-            background: #d4d4d4;
-            border: 2px solid;
-            border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
-            border-bottom: none;
-            border-radius: 8px 8px 0 0;
-            cursor: pointer;
+        .card-title {
+            font-size: 1.4rem;
             font-weight: 700;
-            color: #555;
-            transition: all 0.1s;
-            margin-bottom: 0;
+            color: var(--neon-cyan);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .tab.active {
-            background: white;
-            color: black;
-            padding-top: 10px;
-            margin-top: -2px;
-            border-bottom: 2px solid white; /* Hide bottom border */
-            z-index: 11;
+        /* --- Forms & Inputs --- */
+        .input-group {
+            margin-bottom: 15px;
         }
 
-        .tab:hover:not(.active) {
-            background: #e6e6e6;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
+        label {
             display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 0.9rem;
         }
 
-        /* Form Elements 2000s Style */
-        input[type="text"], 
-        input[type="time"],
-        select,
-        textarea {
+        input, select, textarea {
             width: 100%;
-            padding: 6px;
-            border: 2px solid;
-            border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);
-            background: #fff;
-            font-family: 'Heebo', sans-serif;
-            font-size: 14px;
-            outline: none;
+            background: var(--bg-input);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: white;
+            font-family: 'Rubik', sans-serif;
+            font-size: 1rem;
+            transition: 0.3s;
         }
 
         input:focus, select:focus, textarea:focus {
-            background: #ffffe0;
+            outline: none;
+            border-color: var(--neon-pink);
+            background: #30303c;
+            box-shadow: 0 0 0 4px rgba(255, 126, 182, 0.1);
         }
 
         textarea {
             resize: none;
             overflow: hidden;
-            min-height: 34px;
-            height: 34px;
-            line-height: 1.3;
+            min-height: 44px;
+            line-height: 1.4;
         }
 
-        /* Buttons Y2K Style */
+        /* --- Buttons --- */
         .btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-family: 'Rubik', sans-serif;
+            cursor: pointer;
+            transition: transform 0.2s, filter 0.2s;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 6px 16px;
-            font-family: 'Heebo', sans-serif;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            text-decoration: none;
-            border: 2px solid;
-            border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
-            background: #e0e0e0;
-            color: black;
-            box-shadow: 1px 1px 0px black;
+            gap: 8px;
+            font-size: 0.95rem;
         }
 
-        .btn:active {
-            border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);
-            transform: translate(1px, 1px);
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+        .btn:active { transform: translateY(0); }
+
+        .btn-primary { background: linear-gradient(135deg, var(--neon-purple), #9d6eff); color: #fff; }
+        .btn-action { background: linear-gradient(135deg, var(--neon-cyan), #0099ff); color: #000; }
+        .btn-success { background: linear-gradient(135deg, var(--neon-green), #2da04e); color: #000; }
+        .btn-danger { background: linear-gradient(135deg, var(--danger), #d32f2f); color: white; }
+        .btn-ghost { background: transparent; border: 2px solid var(--text-muted); color: var(--text-muted); }
+        .btn-ghost:hover { border-color: var(--text-main); color: var(--text-main); }
+
+        /* --- The Table (The centerpiece) --- */
+        .table-container {
+            overflow: auto;
+            border-radius: 12px;
+            border: 2px solid var(--bg-input);
+            max-height: 75vh;
+            background: var(--bg-card);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 900px;
+        }
+
+        th {
+            background: #252530;
+            color: var(--neon-pink);
+            padding: 15px;
+            font-weight: 700;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 2px solid var(--neon-purple);
+        }
+
+        td {
+            padding: 0; /* Padding inside textarea */
+            border-bottom: 1px solid var(--bg-input);
+            border-right: 1px solid var(--bg-input);
+            vertical-align: top;
+            min-width: 130px;
+        }
+
+        /* Sticky Time Column */
+        td:first-child, th:first-child {
+            position: sticky;
+            right: 0;
+            background: #252530;
+            z-index: 20;
+            border-left: 2px solid var(--neon-purple);
+            color: var(--text-main);
+            font-weight: 700;
+            text-align: center;
+            width: 70px;
+            min-width: 70px;
+            vertical-align: middle;
+        }
+        
+        /* Fix corner z-index */
+        th:first-child { z-index: 30; background: #2a2a35; }
+
+        /* Cell Types */
+        .cell-fixed {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-muted);
+            padding: 12px;
+            font-size: 0.85rem;
+            text-align: center;
+            font-style: italic;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 50px;
+        }
+
+        .cell-free textarea {
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            color: white;
+            width: 100%;
+            height: 100%;
+            min-height: 50px;
+        }
+        
+        .cell-free textarea:focus {
+            background: rgba(130, 207, 255, 0.1);
             box-shadow: none;
         }
 
-        .btn-primary { background: var(--primary-light); color: white; }
-        .btn-success { background: #4caf50; color: white; }
-        .btn-danger { background: #ff5252; color: white; }
-        .btn-warning { background: #ffcc00; color: black; }
-        .btn-info { background: #2196f3; color: white; }
-
-        /* Table Styling with Sticky Headers */
-        .table-wrapper {
-            overflow: auto;
-            max-height: 75vh;
-            border: 2px solid;
-            border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);
-            background: white;
-            position: relative;
+        .cell-suggested textarea {
+            background: rgba(255, 171, 112, 0.05);
+            border: 1px dashed rgba(255, 171, 112, 0.3);
         }
-
-        .schedule-table {
-            width: 100%;
-            border-collapse: separate; /* Required for sticky */
-            border-spacing: 0;
-            min-width: 800px;
-        }
-
-        .schedule-table th, .schedule-table td {
-            border-right: 1px solid #ccc;
-            border-bottom: 1px solid #ccc;
-            padding: 6px;
-            text-align: center;
-            vertical-align: top;
-        }
-
-        /* Sticky Logic */
-        .schedule-table thead {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-        }
-
-        .schedule-table th {
-            background: #e0e0e0;
-            border-bottom: 2px solid #999;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-
-        /* Time Column Sticky (RTL -> Right side) */
-        .schedule-table td:first-child, 
-        .schedule-table th:first-child {
-            position: sticky;
-            right: 0;
-            background: #f0f0f0;
-            z-index: 10;
-            border-left: 2px solid #999;
-            font-weight: 700;
-        }
-
-        /* Fix corner overlap */
-        .schedule-table thead th:first-child {
-            z-index: 30;
-            background: #d0d0d0;
-        }
-
-        .suggested-cell {
-            background: #fff9db;
-            position: relative;
-        }
-
-        .suggested-cell::after {
-            content: "✎";
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            font-size: 10px;
-            color: #f39c12;
-        }
-
-        .fixed-cell {
-            background: #f0f0f0;
-            color: #666;
-            font-size: 12px;
-            vertical-align: middle;
-            font-style: italic;
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #333;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 4px;
-            z-index: 9999;
-            transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-            border: 2px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        .toast.show { transform: translateX(-50%) translateY(0); }
-        .toast.danger { background: #d32f2f; }
-
-        /* Helpers */
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 4px; font-weight: 700; font-size: 13px; }
         
-        .student-tag {
+        .cell-suggested::before {
+            content: '💡';
+            font-size: 10px;
+            float: left;
+            margin: 2px;
+            opacity: 0.5;
+        }
+
+        /* --- Status Badges --- */
+        .badge {
             display: inline-block;
             padding: 2px 6px;
-            border: 1px solid #999;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-pending { background: rgba(255, 171, 112, 0.2); color: var(--neon-orange); border: 1px solid var(--neon-orange); }
+        .badge-approved { background: rgba(66, 190, 101, 0.2); color: var(--neon-green); border: 1px solid var(--neon-green); }
+        .badge-rejected { background: rgba(255, 92, 92, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+
+        .submission-card {
+            background: #252530;
+            border: 1px solid var(--bg-input);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: 0.2s;
+        }
+        .submission-card:hover { border-color: var(--neon-purple); }
+
+        .sub-header {
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- Tags & Chips --- */
+        .student-chip {
+            display: inline-block;
+            background: linear-gradient(45deg, #3a3a4a, #45455a);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
             margin: 2px;
-            background: #eee;
-            box-shadow: 1px 1px 0 #ccc;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        .status-badge {
-            font-size: 11px;
-            padding: 2px 5px;
-            border-radius: 3px;
-            color: white;
-            font-weight: bold;
-        }
-        .status-pending { background: var(--warning); color: black; }
-        .status-approved { background: var(--success); }
-        .status-rejected { background: var(--danger); }
-
-        /* Modal 2000s */
+        /* --- Modals --- */
         .modal {
             display: none;
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
             z-index: 1000;
-            align-items: center;
             justify-content: center;
-            backdrop-filter: blur(2px);
+            align-items: center;
         }
-        .modal.show { display: flex; }
-        .modal-window {
+        .modal.show { display: flex; animation: fadeIn 0.3s; }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border: 2px solid var(--neon-purple);
+            border-radius: 20px;
             width: 90%;
             max-width: 500px;
-            background: var(--surface);
-            border: 2px solid;
-            border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
-            box-shadow: 10px 10px 0 rgba(0,0,0,0.2);
+            padding: 25px;
+            box-shadow: 0 0 50px rgba(190, 149, 255, 0.2);
         }
 
-        /* Print Styles */
+        /* --- Print --- */
         @media print {
-            body { background: white; padding: 0; }
-            .tabs, .win-header button, .btn, .header-desc, .toast, .controls-area { display: none !important; }
-            .win-box { border: none; box-shadow: none; margin: 0; padding: 0; }
-            .win-content { border: none; padding: 0; }
-            .win-header { background: none; color: black; border: none; padding: 0; margin-bottom: 10px; text-align: center; justify-content: center;}
-            .table-wrapper { border: 1px solid #000; max-height: none; }
-            .schedule-table th, .schedule-table td { border: 1px solid #000; font-size: 11px; }
-            .suggested-cell { background: none !important; border: 1px solid #000; }
-            .fixed-cell { background: #eee !important; -webkit-print-color-adjust: exact; }
-            textarea { border: none; resize: none; overflow: hidden; font-size: 11px; padding: 0; }
-            
-            /* Hide sticky behavior for print */
-            .schedule-table thead, .schedule-table th, .schedule-table td {
-                position: static !important;
-            }
+            body { background: white; color: black; padding: 0; }
+            .tabs-container, .btn, .header-decor, .toast, .card-header button { display: none !important; }
+            .main-card { box-shadow: none; border: none; padding: 0; margin: 0; display: block !important; }
+            .table-container { border: 1px solid #ccc; max-height: none; }
+            th { background: #eee !important; color: black !important; border: 1px solid #000; }
+            td { border: 1px solid #000; color: black !important; }
+            textarea { color: black !important; border: none; font-size: 10px; }
+            .cell-fixed { background: #f0f0f0 !important; color: #000; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
-        
-        .controls-area {
-            display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; background: #ddd; padding: 10px; border: 1px solid #999;
+
+        /* --- Toast --- */
+        .toast {
+            position: fixed;
+            bottom: 30px; left: 50%;
+            transform: translate(-50%, 50px);
+            background: var(--bg-card);
+            border: 1px solid var(--neon-green);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        .toast.show { transform: translate(-50%, 0); opacity: 1; }
+        .toast.danger { border-color: var(--danger); }
+        .toast.danger::before { content: '💀'; }
+        .toast::before { content: '✨'; }
+
     </style>
 </head>
 <body>
 
-    <div class="container" style="max-width: 1400px; margin: 0 auto;">
-        
-        <div class="win-box" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-color: #fff #666 #666 #fff;">
-            <div style="padding: 20px; color: white;">
-                <h1 style="text-shadow: 2px 2px 0px rgba(0,0,0,0.3);">📅 מערכת לוז דיגיטלית - בית דרור🏳️‍🌈</h1>
-                <p class="header-desc" style="opacity: 0.9; margin-top: 5px;">אנא תמלאו את הלוז השבועי שלכם פעם אחת ותלחצו "שלח לאישור"</p>
+    <div class="container">
+        <div class="header-section">
+            <span class="header-decor decor-left">🦇</span>
+            <span class="header-decor decor-right">🕸️</span>
+            <div class="header-title">BEIT DROR SCHEDULE</div>
+            <p style="color: var(--text-muted); margin-top: 5px;">תמלאו פעם אחת, שלחו לאישור, ותהיו מהממים.</p>
+        </div>
+
+        <div class="tabs-container">
+            <button class="tab-btn active" onclick="switchTab('student')">🦄 חניכים.ות</button>
+            <button class="tab-btn" onclick="switchTab('coordinator')">🔒 רכזת</button>
+            <button class="tab-btn" onclick="switchTab('combined')">🔒 לוז כולל</button>
+            <button class="tab-btn" onclick="switchTab('editor')">🔒 הגדרות</button>
+        </div>
+
+        <div id="student-tab" class="main-card active">
+            <div class="card-header">
+                <div class="card-title">📝 מילוי לוז</div>
+                <button class="btn btn-ghost" onclick="window.print()">🖨️ הדפסה</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr auto; gap: 15px; margin-bottom: 20px; align-items: end;">
+                <div class="input-group" style="margin:0;">
+                    <label>שם (חובה)</label>
+                    <input type="text" id="studentName" placeholder="איך קוראים לך?">
+                </div>
+                <div style="background: var(--bg-input); padding: 10px 20px; border-radius: 12px; color: var(--neon-cyan); font-weight: bold; border: 1px solid var(--neon-cyan);">
+                    <span id="weekDisplay">...</span> 📅
+                </div>
+            </div>
+
+            <button class="btn btn-action" onclick="showQuickCopyModal()" style="width:100%; margin-bottom: 15px; justify-content: center;">
+                ⚡ העתקה מהירה לשעות נוספות
+            </button>
+
+            <div class="table-container">
+                <table id="studentScheduleTable"></table>
+            </div>
+
+            <button class="btn btn-primary" onclick="submitSchedule()" style="width: 100%; margin-top: 20px; padding: 15px; justify-content: center; font-size: 1.1rem;">
+                🚀 שליחה לאישור
+            </button>
+        </div>
+
+        <div id="coordinator-tab" class="main-card">
+            <div class="card-header">
+                <div class="card-title">👑 ניהול בקשות</div>
+                <button class="btn btn-ghost" id="archiveToggleBtn" onclick="toggleArchiveView()">🗄️ ארכיון</button>
+            </div>
+            
+            <div class="input-group">
+                <select id="coordinatorWeekSelect" onchange="loadSubmissions()">
+                    <option value="">טוען רשימה...</option>
+                </select>
+            </div>
+            
+            <div id="submissionsList"></div>
+        </div>
+
+        <div id="combined-tab" class="main-card">
+            <div class="card-header">
+                <div class="card-title">🗓️ תמונה מלאה</div>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-action" onclick="downloadICS()">📅 יומן Google</button>
+                    <button class="btn btn-ghost" onclick="window.print()">🖨️ הדפסה</button>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-bottom: 20px; flex-wrap: wrap;">
+                <select id="combinedWeekSelect" onchange="loadCombinedView()" style="flex:1;">
+                    <option value="">בחר שבוע...</option>
+                </select>
+                <button class="btn btn-ghost" onclick="togglePendingInCombined()" id="pendingToggleText">
+                    👁️ הצג הכל
+                </button>
+            </div>
+
+            <div id="pendingStatusIndicator" style="display:none; background: rgba(0,153,255,0.15); color: var(--neon-cyan); padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
+                מציג גם פעילויות ממתינות (מסומנות ב-⏳)
+            </div>
+
+            <div id="combinedViewContent" class="table-container"></div>
+            
+            <div style="margin-top: 15px; display: flex; gap: 15px; justify-content: center; font-size: 0.8rem; color: var(--text-muted);">
+                <span>🟨 חפיפה</span>
+                <span>⬜ פנוי</span>
+                <span>💡 מוצע</span>
+                <span>🔒 קבוע</span>
             </div>
         </div>
 
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('student')">נערימ.ות 👱</button>
-            <button class="tab" onclick="switchTab('coordinator')">רכזת חינוכית 👩‍🏫🔒</button>
-            <button class="tab" onclick="switchTab('combined')">לוז כולל 🗓️🔒</button>
-            <button class="tab" onclick="switchTab('editor')">הגדרות ⚙️🔒</button>
-        </div>
-
-        <div id="student-tab" class="tab-content active">
-            <div class="win-box">
-                <div class="win-header">
-                    <span>✏️ מילוי לוז שבועי</span>
-                    <button class="btn btn-info btn-sm" onclick="window.print()">🖨️ הדפס</button>
-                </div>
-                <div class="win-content">
-                    
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px; align-items: flex-end;">
-                        <div class="form-group" style="flex: 1; margin: 0;">
-                            <label>שם פרטי</label>
-                            <input type="text" id="studentName" placeholder="הכנס שם פרטי..." style="font-weight: bold;">
-                        </div>
-                        <div class="win-box" style="margin: 0; padding: 5px 15px; background: #e0f7fa; color: #006064; font-weight: bold;">
-                             <span id="weekDisplay">טוען שבוע...</span>
-                        </div>
-                    </div>
-
-                    <div class="controls-area">
-                        <button class="btn" onclick="showQuickCopyModal()">📋 העתק לשעות נוספות</button>
-                    </div>
-
-                    <div class="table-wrapper">
-                        <table class="schedule-table" id="studentScheduleTable"></table>
-                    </div>
-
-                    <button class="btn btn-success" style="margin-top: 20px; width: 100%; padding: 12px; font-size: 1.2em;" onclick="submitSchedule()">
-                        📤 שלח לאישור
-                    </button>
-                </div>
+        <div id="editor-tab" class="main-card">
+            <div class="card-header">
+                <div class="card-title">🛠️ עריכת מבנה</div>
             </div>
-        </div>
-
-        <div id="coordinator-tab" class="tab-content">
-            <div class="win-box">
-                <div class="win-header">
-                    <span>👩‍🏫 ניהול בקשות</span>
-                    <div style="display: flex; gap: 5px;">
-                        <button class="btn btn-warning btn-sm" id="archiveToggleBtn" onclick="toggleArchiveView()">🗄️ צפייה בארכיון</button>
-                    </div>
-                </div>
-                <div class="win-content">
-                    <div class="controls-area">
-                        <div class="form-group" style="margin: 0; min-width: 200px;">
-                            <label>סנן לפי שבוע</label>
-                            <select id="coordinatorWeekSelect" onchange="loadSubmissions()">
-                                <option value="">-- טוען --</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div id="submissionsList"></div>
-                </div>
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button class="btn btn-action" onclick="addNewTimeSlot()">➕ שעה</button>
+                <button class="btn btn-success" onclick="saveScheduleStructure()">💾 שמירה</button>
+                <button class="btn btn-danger" onclick="resetToDefaultStructure()">⚠️ איפוס</button>
             </div>
-        </div>
-
-        <div id="combined-tab" class="tab-content">
-            <div class="win-box">
-                <div class="win-header">
-                    <span>🗓️ לוז כולל</span>
-                    <div style="display: flex; gap: 5px;">
-                         <button class="btn btn-info btn-sm" onclick="downloadICS()">📅 הורד ליומן</button>
-                         <button class="btn btn-info btn-sm" onclick="window.print()">🖨️ הדפס</button>
-                    </div>
-                </div>
-                <div class="win-content">
-                    <div class="controls-area">
-                        <div class="form-group" style="margin: 0; min-width: 250px;">
-                            <label>בחר שבוע:</label>
-                            <select id="combinedWeekSelect" onchange="loadCombinedView()">
-                                <option value="">-- בחר שבוע --</option>
-                            </select>
-                        </div>
-                        <button class="btn" onclick="togglePendingInCombined()">
-                            <span id="pendingToggleText">👁️ הצג לא מאושרים</span>
-                        </button>
-                    </div>
-                    
-                    <div id="pendingStatusIndicator" style="display: none; background: #e3f2fd; padding: 10px; border: 1px solid #2196f3; margin-bottom: 15px; color: #0d47a1;">
-                        <strong>ℹ️ מצב תצוגה:</strong> כולל פעילויות הממתינות לאישור (מסומנות ב-⏳)
-                    </div>
-
-                    <div id="combinedViewContent" class="table-wrapper" style="min-height: 400px;"></div>
-
-                    <div style="margin-top: 15px; padding: 10px; background: #eee; border: 1px inset;">
-                        <strong>מקרא:</strong>
-                        <span style="margin-right: 15px;">⬜ ריק: פנוי</span>
-                        <span style="margin-right: 15px;">🟨 צהוב: חפיפה</span>
-                        <span style="margin-right: 15px;">🌫️ אפור: קבוע</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="editor-tab" class="tab-content">
-            <div class="win-box">
-                <div class="win-header">⚙️ עריכת מבנה לוז</div>
-                <div class="win-content">
-                    <div class="controls-area">
-                        <button class="btn btn-primary" onclick="addNewTimeSlot()">➕ הוסף שעה</button>
-                        <button class="btn btn-success" onclick="saveScheduleStructure()">💾 שמור שינויים</button>
-                        <button class="btn btn-danger" onclick="resetToDefaultStructure()">🔄 אפס למקור</button>
-                    </div>
-                    <div id="structureEditorContent"></div>
-                </div>
-            </div>
+            <div id="structureEditorContent"></div>
         </div>
     </div>
 
     <div id="quickCopyModal" class="modal">
-        <div class="modal-window">
-            <div class="win-header">
-                <span>📋 העתקה מהירה</span>
-                <button class="btn btn-danger btn-sm" onclick="closeQuickCopyModal()">X</button>
+        <div class="modal-content">
+            <h3 style="color: var(--neon-pink); margin-bottom: 15px;">⚡ העתקה מהירה</h3>
+            <div class="input-group">
+                <label>מה הפעילות?</label>
+                <input type="text" id="quickCopyContent" placeholder="ים, שינה, לימודים...">
             </div>
-            <div class="win-content">
-                <div class="form-group">
-                    <label>תוכן:</label>
-                    <input type="text" id="quickCopyContent" placeholder="מה עושים?">
-                </div>
-                <div class="form-group">
-                    <label>יום:</label>
-                    <select id="quickCopyDay"></select>
-                </div>
-                <div class="form-group">
-                    <label>שעות:</label>
-                    <div id="quickCopyTimesList" style="max-height: 200px; overflow-y: auto; border: 1px inset; padding: 5px;"></div>
-                </div>
-                <div style="text-align: left; margin-top: 10px;">
-                    <button class="btn btn-primary" onclick="applyQuickCopy()">בצע העתקה</button>
-                </div>
+            <div class="input-group">
+                <label>באיזה יום?</label>
+                <select id="quickCopyDay"></select>
+            </div>
+            <div class="input-group">
+                <label>באילו שעות?</label>
+                <div id="quickCopyTimesList" style="max-height: 150px; overflow-y: auto; background: var(--bg-input); padding: 10px; border-radius: 8px;"></div>
+            </div>
+            <div style="display:flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-ghost" onclick="closeQuickCopyModal()">ביטול</button>
+                <button class="btn btn-primary" onclick="applyQuickCopy()">בצע!</button>
             </div>
         </div>
     </div>
-    
+
     <div id="moveEntryModal" class="modal">
-        <div class="modal-window">
-            <div class="win-header">הזזת פעילות <button class="btn btn-danger btn-sm" onclick="closeMoveEntryModal()" style="float:left">X</button></div>
-            <div class="win-content">
-                <div class="form-group"><label>יום חדש</label><select id="moveEntryDay"></select></div>
-                <div class="form-group"><label>שעה חדשה</label><select id="moveEntryTime"></select></div>
+        <div class="modal-content">
+            <h3>הזזת פעילות</h3>
+            <div class="input-group"><label>יום חדש</label><select id="moveEntryDay"></select></div>
+            <div class="input-group"><label>שעה חדשה</label><select id="moveEntryTime"></select></div>
+            <div style="display:flex; justify-content: flex-end; gap:10px; margin-top:15px;">
+                <button class="btn btn-ghost" onclick="closeMoveEntryModal()">ביטול</button>
                 <button class="btn btn-primary" onclick="applyMoveEntry()">העבר</button>
             </div>
         </div>
     </div>
 
     <div id="addEntryModal" class="modal">
-         <div class="modal-window">
-            <div class="win-header">הוספה ידנית <button class="btn btn-danger btn-sm" onclick="closeAddEntryModal()" style="float:left">X</button></div>
-            <div class="win-content">
-                <div class="form-group"><label>תוכן</label><input type="text" id="addEntryContent"></div>
+         <div class="modal-content">
+            <h3>הוספה ידנית</h3>
+            <div class="input-group"><label>תוכן</label><input type="text" id="addEntryContent"></div>
+            <div style="display:flex; justify-content: flex-end; gap:10px; margin-top:15px;">
+                <button class="btn btn-ghost" onclick="closeAddEntryModal()">ביטול</button>
                 <button class="btn btn-primary" onclick="applyAddEntry()">הוסף</button>
             </div>
         </div>
@@ -526,9 +588,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
-        // ==============================================
-        // CONFIGURATION
-        // ==============================================
+        // --- Same Logic, New Look ---
+        
         const firebaseConfig = {
             apiKey: "AIzaSyD5Ma2GAqiPFKurMedUgU6Qgl-qk_Uop-s",
             authDomain: "beit-dror1.firebaseapp.com",
@@ -543,23 +604,22 @@
         let db = null;
         let firebaseInitialized = false;
 
-        // Default Structure
         const defaultScheduleStructure = {
             days: ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'],
             times: [
                 { time: '06:30', type: 'free' },
                 { time: '07:00', type: 'fixed', content: 'א.בוקר 🍳', days: [2] },
                 { time: '07:30', type: 'free' },
-                { time: '08:00', type: 'suggested', content: 'לימודים / פעילות בוקר', days: [0,1,2,3,4] },
+                { time: '08:00', type: 'suggested', content: 'לימודים / בוקר', days: [0,1,2,3,4] },
                 { time: '08:30', type: 'free' },
                 { time: '09:00', type: 'fixed', content: 'א.בוקר 🍳', days: [5] },
                 { time: '10:00', type: 'suggested', content: 'לימודים / פעילות', days: [0,1,2,3,4] },
-                { time: '12:00', type: 'suggested', content: 'א.צהריים / פנאי', days: [5,6] },
+                { time: '12:00', type: 'suggested', content: 'צהריים / פנאי', days: [5,6] },
                 { time: '14:00', type: 'fixed', content: 'א.צהריים 🥘', days: [0,1,2,3,4,5,6] },
                 { time: '14:30', type: 'suggested', content: 'מנוחה / חופשי', days: [0,1,2,3,4,5,6] },
                 { time: '16:00', type: 'fixed', content: 'קבוצת בית 🏠', days: [2] },
                 { time: '17:00', type: 'fixed', content: 'כניסה', days: [1,2,3,5,6] },
-                { time: '18:00', type: 'fixed', content: 'יום בית', days: [2] },
+                { time: '18:00', type: 'fixed', content: 'יום בית 🛋️', days: [2] },
                 { time: '19:30', type: 'fixed', content: 'א.ערב 🥗', days: [0,1,2,3,4,5,6] },
                 { time: '20:00', type: 'suggested', content: 'ערב / חברים', days: [0,1,2,3,4,5,6] },
                 { time: '22:00', type: 'fixed', content: 'כניסה', days: [0,1,2,3,5,6] },
@@ -572,22 +632,18 @@
         let studentScheduleData = {};
         let showPendingInCombined = false;
         let showArchivedInCoordinator = false;
-        let allSubmissionsCache = []; // Store locally for filtering
+        let allSubmissionsCache = [];
 
-        // ==============================================
-        // INIT
-        // ==============================================
         window.addEventListener('DOMContentLoaded', async () => {
             if (firebaseConfig.apiKey) {
                 try {
                     firebase.initializeApp(firebaseConfig);
                     db = firebase.database();
                     firebaseInitialized = true;
-                    console.log("Firebase Connected");
                     await loadScheduleStructure();
                 } catch (e) {
                     console.error(e);
-                    alert("שגיאת חיבור ל-Firebase");
+                    showToast("אין חיבור לדאטהבייס", "danger");
                 }
             }
             
@@ -599,27 +655,21 @@
             populateMoveEntrySelects();
             
             if (firebaseInitialized) {
-                loadSubmissions(); // Load initial cache
+                loadSubmissions();
                 loadWeeksForCombinedView();
             }
         });
 
-        // ==============================================
-        // LOGIC & UTILS
-        // ==============================================
-
+        // Utils
         function getNextSunday() {
             const today = new Date();
             const dayOfWeek = today.getDay();
             let daysUntilSunday = dayOfWeek === 6 ? 1 : (dayOfWeek === 0 ? 0 : 7 - dayOfWeek);
-            
             const nextSunday = new Date(today);
             nextSunday.setDate(today.getDate() + daysUntilSunday);
             nextSunday.setHours(0,0,0,0);
-            
             const nextSaturday = new Date(nextSunday);
             nextSaturday.setDate(nextSunday.getDate() + 6);
-            
             return {
                 start: nextSunday,
                 end: nextSaturday,
@@ -628,28 +678,23 @@
         }
 
         function formatDate(date) {
-            return `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()}`;
+            return `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}`;
         }
 
-        // Auto-Resize Textarea
         function autoResize(textarea) {
             textarea.style.height = 'auto';
             textarea.style.height = textarea.scrollHeight + 'px';
         }
 
-        // Hash Password
         async function checkPassword() {
-            const p = prompt("סיסמה:");
+            const p = prompt("🔑 סיסמה:");
             if(!p) return false;
-            // Simple hash check (SHA-256 for 5522)
             const encoder = new TextEncoder();
             const data = encoder.encode(p);
             const hash = await crypto.subtle.digest('SHA-256', data);
             const hex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
-            
             if(hex === '34ff3bb3732ca5436824c18fc789ff0507ae31807ca3f782b7d7740235d5d719') return true;
-            
-            showToast("סיסמה שגויה", "danger");
+            showToast("אופסי, סיסמה לא נכונה", "danger");
             return false;
         }
 
@@ -657,28 +702,23 @@
             if(['coordinator', 'combined', 'editor'].includes(tabName)) {
                 if(!(await checkPassword())) return;
             }
-
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            
+            document.querySelectorAll('.main-card').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
             document.getElementById(`${tabName}-tab`).classList.add('active');
-            event.target.classList.add('active'); // Assumes triggered by click
+            event.target.classList.add('active');
             
             if(tabName === 'coordinator') loadSubmissions();
             if(tabName === 'combined') loadWeeksForCombinedView();
             if(tabName === 'editor') renderStructureEditor();
         }
 
-        // ==============================================
-        // STUDENT VIEW
-        // ==============================================
+        // Student Schedule
         function renderStudentSchedule() {
             const table = document.getElementById('studentScheduleTable');
-            let html = '<thead><tr><th>שעה</th>';
+            let html = '<thead><tr><th>⏰</th>';
             scheduleStructure.days.forEach(d => html += `<th>${d}</th>`);
             html += '</tr></thead><tbody>';
 
-            // Merge Logic
             const timeMap = new Map();
             scheduleStructure.times.forEach((t, i) => {
                 if(!timeMap.has(t.time)) timeMap.set(t.time, []);
@@ -686,10 +726,9 @@
             });
 
             timeMap.forEach((slots, time) => {
-                html += `<tr><td class="time-cell">${time}</td>`;
+                html += `<tr><td>${time}</td>`;
                 scheduleStructure.days.forEach((day, dIdx) => {
                     let type = 'free', content = '', tIdx = slots[0].originalIndex;
-                    
                     const fixed = slots.find(s => s.type === 'fixed' && s.days?.includes(dIdx));
                     const sugg = slots.find(s => s.type === 'suggested' && s.days?.includes(dIdx));
                     
@@ -700,10 +739,10 @@
                     const val = studentScheduleData[key] || '';
                     
                     if(type === 'fixed') {
-                        html += `<td class="fixed-cell">${content}</td>`;
+                        html += `<td class="cell-fixed"><span>${content}</span></td>`;
                     } else {
-                        const ph = type === 'suggested' ? (content || 'הצעה...') : '...';
-                        const cls = type === 'suggested' ? 'suggested-cell' : 'free-cell';
+                        const ph = type === 'suggested' ? (content || 'הצעה...') : '';
+                        const cls = type === 'suggested' ? 'cell-suggested' : 'cell-free';
                         html += `<td class="${cls}">
                             <textarea oninput="autoResize(this); updateStudentData(${dIdx}, ${tIdx}, this.value)" 
                                       placeholder="${ph}">${val}</textarea>
@@ -714,8 +753,7 @@
             });
             html += '</tbody>';
             table.innerHTML = html;
-            // Init resize
-            setTimeout(() => document.querySelectorAll('textarea').forEach(autoResize), 100);
+            setTimeout(() => document.querySelectorAll('#studentScheduleTable textarea').forEach(autoResize), 100);
         }
 
         function updateStudentData(day, time, val) {
@@ -726,15 +764,15 @@
 
         async function submitSchedule() {
             const name = document.getElementById('studentName').value.trim();
-            if(!name) return showToast("חובה להזין שם", "danger");
-            if(Object.keys(studentScheduleData).length === 0) return showToast("הלוז ריק", "danger");
+            if(!name) return showToast("חייב/ת לכתוב שם!", "danger");
+            if(Object.keys(studentScheduleData).length === 0) return showToast("הלוז ריק...", "danger");
 
             const data = Object.keys(studentScheduleData).map(k => {
                 const [d, t] = k.split('-');
                 return { day: Number(d), time: Number(t), content: studentScheduleData[k], status: 'pending' };
             });
 
-            const submission = {
+            await db.ref('submissions').push({
                 studentName: name,
                 weekStart: currentWeek.start.toISOString(),
                 weekEnd: currentWeek.end.toISOString(),
@@ -742,49 +780,43 @@
                 submittedAt: new Date().toISOString(),
                 archived: false,
                 scheduleData: data
-            };
+            });
 
-            await db.ref('submissions').push(submission);
-            showToast("נשלח בהצלחה!");
+            showToast("נשלח! תודה נשמה ✨");
             document.getElementById('studentName').value = '';
             studentScheduleData = {};
             renderStudentSchedule();
         }
 
-        // ==============================================
-        // COORDINATOR VIEW (ARCHIVE & SORTING)
-        // ==============================================
+        // Coordinator
         async function loadSubmissions() {
             if(!firebaseInitialized) return;
-            
             const snap = await db.ref('submissions').once('value');
             allSubmissionsCache = [];
-            
             snap.forEach(c => allSubmissionsCache.push({ id: c.key, ...c.val() }));
             
-            // Populate Week Select (Sorted Descending by Date)
+            // Sort Weeks Newest First
             const weeks = [...new Set(allSubmissionsCache.map(s => s.weekDisplay))];
             weeks.sort((a,b) => {
-                // Parse "DD/MM/YYYY" from start of string
-                const dateA = new Date(a.split('/')[2].substring(0,4), a.split('/')[1]-1, a.split('/')[0]);
-                const dateB = new Date(b.split('/')[2].substring(0,4), b.split('/')[1]-1, b.split('/')[0]);
-                return dateB - dateA;
+                const da = a.split(' - ')[0].split('/'); // DD/MM
+                const db = b.split(' - ')[0].split('/');
+                // Approximate sort by month/day (assuming same year for simplicity or full date parsing)
+                return (db[1] - da[1]) || (db[0] - da[0]);
             });
 
             const sel = document.getElementById('coordinatorWeekSelect');
             const currentVal = sel.value;
-            sel.innerHTML = '<option value="">-- כל השבועות --</option>';
+            sel.innerHTML = '<option value="">-- הצג הכל --</option>';
             weeks.forEach(w => sel.innerHTML += `<option value="${w}">${w}</option>`);
             if(currentVal) sel.value = currentVal;
-
             renderCoordinatorList();
         }
 
         function toggleArchiveView() {
             showArchivedInCoordinator = !showArchivedInCoordinator;
             const btn = document.getElementById('archiveToggleBtn');
-            btn.textContent = showArchivedInCoordinator ? "📂 חזור ללוז פעיל" : "🗄️ צפייה בארכיון";
-            btn.className = showArchivedInCoordinator ? "btn btn-primary btn-sm" : "btn btn-warning btn-sm";
+            btn.textContent = showArchivedInCoordinator ? "📂 לחזור לפעיל" : "🗄️ ארכיון";
+            btn.className = showArchivedInCoordinator ? "btn btn-primary" : "btn btn-ghost";
             renderCoordinatorList();
         }
 
@@ -792,7 +824,6 @@
             const weekFilter = document.getElementById('coordinatorWeekSelect').value;
             const container = document.getElementById('submissionsList');
             
-            // Filter: 1. Archive Status, 2. Week Select
             let filtered = allSubmissionsCache.filter(s => {
                 const isArchived = s.archived === true;
                 if(showArchivedInCoordinator && !isArchived) return false;
@@ -801,125 +832,102 @@
                 return true;
             });
 
-            // Sort by submission date
             filtered.sort((a,b) => new Date(b.submittedAt) - new Date(a.submittedAt));
 
             if(filtered.length === 0) {
-                container.innerHTML = `<div style="text-align:center; padding:20px;">אין ${showArchivedInCoordinator ? 'פריטים בארכיון' : 'בקשות פעילות'}</div>`;
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-muted);">
+                    ${showArchivedInCoordinator ? 'הארכיון ריק' : 'אין בקשות חדשות'} 🕸️
+                </div>`;
                 return;
             }
 
-            let html = '';
-            filtered.forEach(sub => {
-                html += renderSubmissionCard(sub);
-            });
-            container.innerHTML = html;
-        }
-
-        function renderSubmissionCard(sub) {
-            // Simplified table render for brevity - similar to original but with textarea
-            const dateStr = new Date(sub.submittedAt).toLocaleDateString('he-IL');
-            return `
-            <div class="win-box" style="border-color: #999;">
-                <div class="win-header" style="background: #ccc; color: black; font-size: 0.9em;">
-                    <div>${sub.studentName} (${dateStr}) - ${sub.weekDisplay}</div>
-                    <div>
-                        ${!sub.archived ? 
-                            `<button class="btn btn-warning btn-sm" onclick="toggleArchiveStatus('${sub.id}', true)">🗄️ ארכב</button>` : 
-                            `<button class="btn btn-primary btn-sm" onclick="toggleArchiveStatus('${sub.id}', false)">📂 שחזר</button>`
-                        }
-                        <button class="btn btn-danger btn-sm" onclick="deleteSubmission('${sub.id}')">🗑️</button>
+            container.innerHTML = filtered.map(sub => `
+                <div class="submission-card">
+                    <div class="sub-header">
+                        <div>
+                            <span style="font-weight:900; color:var(--neon-pink); font-size:1.1rem;">${sub.studentName}</span>
+                            <span style="font-size:0.8rem; color:var(--text-muted); margin-right:10px;">${sub.weekDisplay}</span>
+                        </div>
+                        <div style="display:flex; gap:5px;">
+                            <button class="btn btn-ghost" style="padding:4px 10px; font-size:0.8rem;" onclick="toggleArchiveStatus('${sub.id}', ${!sub.archived})">
+                                ${sub.archived ? '📂 שחזר' : '🗄️'}
+                            </button>
+                            <button class="btn btn-ghost" style="padding:4px 10px; color:var(--danger); border-color:var(--danger);" onclick="deleteSubmission('${sub.id}')">🗑️</button>
+                        </div>
+                    </div>
+                    <div class="table-container" style="max-height: 300px; border:none; border-radius:0;">
+                        ${renderMiniTable(sub)}
                     </div>
                 </div>
-                <div class="win-content">
-                   ${renderMiniTable(sub)}
-                </div>
-            </div>`;
+            `).join('');
         }
 
         function renderMiniTable(sub) {
-            // Generates the table for the coordinator card
-            let h = '<div class="table-wrapper" style="max-height: 300px;"><table class="schedule-table">';
-            h += '<thead><tr><th>שעה</th>' + scheduleStructure.days.map(d=>`<th>${d}</th>`).join('') + '</tr></thead><tbody>';
-            
-            // Group times same as student view
+            let h = '<table><thead><tr><th>⏰</th>' + scheduleStructure.days.map(d=>`<th>${d}</th>`).join('') + '</tr></thead><tbody>';
             const timeMap = new Map();
-            scheduleStructure.times.forEach((t, i) => {
-                if(!timeMap.has(t.time)) timeMap.set(t.time, i);
-            });
+            scheduleStructure.times.forEach((t, i) => { if(!timeMap.has(t.time)) timeMap.set(t.time, i); });
 
             timeMap.forEach((idx, time) => {
-                h += `<tr><td class="time-cell">${time}</td>`;
+                h += `<tr><td>${time}</td>`;
                 scheduleStructure.days.forEach((d, dIdx) => {
                     const entry = sub.scheduleData?.find(e => e.day === dIdx && e.time === idx);
                     if(entry) {
-                         let statusClass = `status-${entry.status}`;
-                         h += `<td>
-                            <div style="font-size:12px; margin-bottom:4px;">${entry.content}</div>
-                            <span class="status-badge ${statusClass}">${entry.status === 'pending' ? '?' : (entry.status==='approved'?'V':'X')}</span>
-                            <div style="margin-top:4px; display:flex; gap:2px; justify-content:center;">
-                                <button onclick="updateStatus('${sub.id}', ${dIdx}, ${idx}, 'approved')" style="color:green; cursor:pointer;">✓</button>
-                                <button onclick="updateStatus('${sub.id}', ${dIdx}, ${idx}, 'rejected')" style="color:red; cursor:pointer;">✗</button>
+                         const statusCls = `badge-${entry.status}`;
+                         const statusTxt = entry.status === 'pending' ? '?' : (entry.status==='approved'?'V':'X');
+                         h += `<td style="padding:5px;">
+                            <div style="font-size:0.85rem; margin-bottom:4px;">${entry.content}</div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <span class="badge ${statusCls}">${statusTxt}</span>
+                                <div>
+                                    <button onclick="updateStatus('${sub.id}', ${dIdx}, ${idx}, 'approved')" style="border:none; background:none; cursor:pointer; font-size:1rem;">✅</button>
+                                    <button onclick="updateStatus('${sub.id}', ${dIdx}, ${idx}, 'rejected')" style="border:none; background:none; cursor:pointer; font-size:1rem;">❌</button>
+                                </div>
                             </div>
                          </td>`;
-                    } else {
-                        h += '<td></td>';
-                    }
+                    } else { h += '<td></td>'; }
                 });
                 h += '</tr>';
             });
-            h += '</tbody></table></div>';
-            return h;
+            return h + '</tbody></table>';
         }
 
         async function toggleArchiveStatus(id, newStatus) {
-            if(!confirm(newStatus ? "להעביר לארכיון? (ייעלם מהלוז הכולל)" : "להחזיר לפעילות?")) return;
+            if(!confirm(newStatus ? "להעביר לארכיון?" : "להחזיר לפעילות?")) return;
             await db.ref(`submissions/${id}/archived`).set(newStatus);
-            loadSubmissions(); // reload
+            loadSubmissions();
         }
 
         async function updateStatus(subId, day, time, status) {
-            // Need to find the index in the array or update by filtering
             const snap = await db.ref(`submissions/${subId}`).once('value');
             const sub = snap.val();
-            const newData = sub.scheduleData.map(e => {
-                if(e.day === day && e.time === time) return {...e, status: status};
-                return e;
-            });
+            const newData = sub.scheduleData.map(e => (e.day === day && e.time === time) ? {...e, status: status} : e);
             await db.ref(`submissions/${subId}/scheduleData`).set(newData);
             loadSubmissions();
-            showToast("עודכן");
         }
         
         async function deleteSubmission(id) {
-            if(confirm("למחוק לצמיתות?")) {
+            if(confirm("בטוח למחוק? זה סופי.")) {
                 await db.ref(`submissions/${id}`).remove();
                 loadSubmissions();
             }
         }
 
-        // ==============================================
-        // COMBINED VIEW & ICS EXPORT
-        // ==============================================
+        // Combined
         async function loadWeeksForCombinedView() {
             if(!firebaseInitialized) return;
             const snap = await db.ref('submissions').once('value');
             const weeks = new Set();
-            snap.forEach(c => {
-                // Only show weeks that have at least one ACTIVE (non-archived) submission
-                if(!c.val().archived) weeks.add(c.val().weekDisplay);
-            });
+            snap.forEach(c => { if(!c.val().archived) weeks.add(c.val().weekDisplay); });
             
-            // Sort
-            const sortedWeeks = [...weeks].sort((a,b) => {
-                const dateA = new Date(a.split('/')[2].substring(0,4), a.split('/')[1]-1, a.split('/')[0]);
-                const dateB = new Date(b.split('/')[2].substring(0,4), b.split('/')[1]-1, b.split('/')[0]);
-                return dateB - dateA;
+            // Sort Descending
+            const sorted = [...weeks].sort((a,b) => {
+                const da = a.split('/')[0]; const db = b.split('/')[0];
+                return db - da; 
             });
 
             const sel = document.getElementById('combinedWeekSelect');
-            sel.innerHTML = '<option value="">-- בחר שבוע --</option>';
-            sortedWeeks.forEach(w => sel.innerHTML += `<option value="${w}">${w}</option>`);
+            sel.innerHTML = '<option value="">בחר שבוע...</option>';
+            sorted.forEach(w => sel.innerHTML += `<option value="${w}">${w}</option>`);
         }
 
         async function loadCombinedView() {
@@ -928,254 +936,169 @@
             if(!week) return container.innerHTML = '';
 
             const snap = await db.ref('submissions').orderByChild('weekDisplay').equalTo(week).once('value');
-            const submissions = [];
+            const grid = {}; 
+
             snap.forEach(c => {
                 const s = c.val();
-                if(!s.archived) submissions.push(s); // Only Active!
-            });
-
-            // Map Data
-            const grid = {}; // key: "day-time" -> array of names+content
-            
-            submissions.forEach(sub => {
-                sub.scheduleData.forEach(entry => {
+                if(s.archived) return;
+                s.scheduleData.forEach(entry => {
                     if(entry.status === 'rejected') return;
                     if(!showPendingInCombined && entry.status === 'pending') return;
-
                     const key = `${entry.day}-${entry.time}`;
                     if(!grid[key]) grid[key] = [];
-                    
-                    grid[key].push({
-                        name: sub.studentName,
-                        content: entry.content,
-                        pending: entry.status === 'pending'
-                    });
+                    grid[key].push({ name: s.studentName, content: entry.content, pending: entry.status === 'pending' });
                 });
             });
 
-            // Render Table
-            let h = '<table class="schedule-table"><thead><tr><th>שעה</th>' + scheduleStructure.days.map(d=>`<th>${d}</th>`).join('') + '</tr></thead><tbody>';
-            
+            let h = '<table><thead><tr><th>⏰</th>' + scheduleStructure.days.map(d=>`<th>${d}</th>`).join('') + '</tr></thead><tbody>';
             const timeMap = new Map();
             scheduleStructure.times.forEach((t, i) => { if(!timeMap.has(t.time)) timeMap.set(t.time, i); });
 
             timeMap.forEach((idx, time) => {
-                h += `<tr><td class="time-cell">${time}</td>`;
+                h += `<tr><td>${time}</td>`;
                 scheduleStructure.days.forEach((d, dIdx) => {
                     const key = `${dIdx}-${idx}`;
                     const items = grid[key] || [];
-                    
-                    // Check Fixed
                     const fixed = scheduleStructure.times.find(t => t.time === time && t.type === 'fixed' && t.days.includes(dIdx));
                     
                     if(fixed) {
-                        h += `<td class="fixed-cell">${fixed.content}</td>`;
+                        h += `<td class="cell-fixed">${fixed.content}</td>`;
                     } else if(items.length > 0) {
-                        const bg = items.length > 1 ? 'background:#fff9c4;' : ''; // Overlap warning
-                        h += `<td style="${bg}">`;
-                        // Group by content
-                        const contentGroups = {};
+                        const style = items.length > 1 ? 'background:rgba(255, 235, 59, 0.1);' : '';
+                        h += `<td style="${style} padding:5px;">`;
+                        const grouped = {};
                         items.forEach(it => {
-                            const cKey = it.content + (it.pending ? ' (ממתין)' : '');
-                            if(!contentGroups[cKey]) contentGroups[cKey] = [];
-                            contentGroups[cKey].push(it.name);
+                            const k = it.content + (it.pending ? ' (⏳)' : '');
+                            if(!grouped[k]) grouped[k] = [];
+                            grouped[k].push(it.name);
                         });
-                        
-                        Object.keys(contentGroups).forEach(cont => {
-                            h += `<div style="margin-bottom:4px;"><strong>${cont}</strong><br>`;
-                            contentGroups[cont].forEach(n => {
-                                h += `<span class="student-tag">${n}</span>`;
-                            });
+                        Object.keys(grouped).forEach(cont => {
+                            h += `<div style="margin-bottom:4px; font-size:0.85rem;"><strong style="color:var(--neon-cyan);">${cont}</strong><br>`;
+                            grouped[cont].forEach(n => h += `<span class="student-chip">${n}</span>`);
                             h += `</div>`;
                         });
                         h += `</td>`;
-                    } else {
-                        h += `<td></td>`;
-                    }
+                    } else { h += `<td></td>`; }
                 });
                 h += `</tr>`;
             });
-            h += '</tbody></table>';
-            container.innerHTML = h;
+            container.innerHTML = h + '</tbody></table>';
         }
 
         function togglePendingInCombined() {
             showPendingInCombined = !showPendingInCombined;
-            document.getElementById('pendingToggleText').textContent = showPendingInCombined ? '👁️‍🗨️ הסתר לא מאושרים' : '👁️ הצג לא מאושרים';
+            document.getElementById('pendingToggleText').textContent = showPendingInCombined ? '🙈 הסתר לא מאושרים' : '👁️ הצג הכל';
             document.getElementById('pendingStatusIndicator').style.display = showPendingInCombined ? 'block' : 'none';
             loadCombinedView();
         }
 
-        // ==============================================
-        // ICS DOWNLOAD FUNCTION
-        // ==============================================
         function downloadICS() {
             const weekStr = document.getElementById('combinedWeekSelect').value;
-            if(!weekStr) return showToast("בחר שבוע קודם", "danger");
+            if(!weekStr) return showToast("קודם תבחר שבוע...", "danger");
+            const dParts = weekStr.split(' - ')[0].split('/');
+            const startDate = new Date(new Date().getFullYear(), dParts[1]-1, dParts[0]);
 
-            // 1. Parse Start Date of the week (DD/MM/YYYY)
-            const startDateParts = weekStr.split(' - ')[0].split('/');
-            const weekStartDate = new Date(startDateParts[2], startDateParts[1]-1, startDateParts[0]);
-
-            // 2. Gather Events from DOM (Or Data) - Easier from Data
-            // We need to re-fetch or use cache. Let's assume we fetch what's visible.
-            // Since `loadCombinedView` logic is complex, let's replicate the data gathering
-            
-            // Hack: Scrape the DOM or Re-run logic? Re-running logic on cache is safer.
-            // We need the data loaded in loadCombinedView. Ideally we'd store it in a var.
-            // Let's just fetch actively.
-            
             db.ref('submissions').orderByChild('weekDisplay').equalTo(weekStr).once('value').then(snap => {
-                let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//BeitDror//Schedule//HE\nCALSCALE:GREGORIAN\nMETHOD:PUBLISH\n";
-                
+                let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//BeitDror//Heebo//HE\nCALSCALE:GREGORIAN\nMETHOD:PUBLISH\n";
                 snap.forEach(c => {
-                    const sub = c.val();
-                    if(sub.archived) return;
-
-                    sub.scheduleData.forEach(entry => {
-                        if(entry.status !== 'approved') return; // Only approved for Calendar
-
-                        // Calculate Event Date
-                        const eventDate = new Date(weekStartDate);
-                        eventDate.setDate(weekStartDate.getDate() + entry.day);
+                    const s = c.val();
+                    if(s.archived) return;
+                    s.scheduleData.forEach(e => {
+                        if(e.status !== 'approved') return;
+                        const evDate = new Date(startDate); evDate.setDate(startDate.getDate() + e.day);
+                        const tObj = scheduleStructure.times.find((t,i)=>i===e.time);
+                        if(!tObj) return;
+                        const [hh, mm] = tObj.time.split(':');
+                        evDate.setHours(hh, mm);
+                        const enDate = new Date(evDate); enDate.setMinutes(enDate.getMinutes() + 45);
                         
-                        // Calculate Time
-                        // entry.time is index. Need to find string time.
-                        const timeObj = scheduleStructure.times.find((t, i) => i === entry.time);
-                        if(!timeObj) return;
-                        
-                        const [hrs, mins] = timeObj.time.split(':');
-                        eventDate.setHours(hrs, mins, 0, 0);
-                        
-                        // End time (Default 30 mins later unless next slot matches)
-                        const endDate = new Date(eventDate);
-                        endDate.setMinutes(endDate.getMinutes() + 30);
-
-                        // Format Dates for ICS (YYYYMMDDTHHmmSS)
-                        const formatICSDate = (d) => {
-                            return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'; 
-                            // Note: This uses UTC. 
-                            // Better to use Floating time or correct TZ. Simple approach:
-                        };
-                        
-                        // Let's use simple local time string without Z for broad compatibility or correct UTC
-                        // The user is likely in Israel. 
-                        
-                        icsContent += "BEGIN:VEVENT\n";
-                        icsContent += "SUMMARY:" + entry.content + " (" + sub.studentName + ")\n";
-                        icsContent += "DTSTART:" + formatICSDate(eventDate) + "\n";
-                        icsContent += "DTEND:" + formatICSDate(endDate) + "\n";
-                        icsContent += "DESCRIPTION:פעילות בבית דרור\n";
-                        icsContent += "END:VEVENT\n";
+                        const fmt = d => d.toISOString().replace(/[-:]/g,'').split('.')[0] + 'Z';
+                        ics += `BEGIN:VEVENT\nSUMMARY:${e.content} (${s.studentName})\nDTSTART:${fmt(evDate)}\nDTEND:${fmt(enDate)}\nEND:VEVENT\n`;
                     });
                 });
-
-                icsContent += "END:VCALENDAR";
-
-                // Trigger Download
-                const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.setAttribute('download', `schedule_${weekStr.replace(/\//g,'-')}.ics`);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                ics += "END:VCALENDAR";
+                const blob = new Blob([ics], {type: 'text/calendar'});
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `schedule_${weekStr.replace('/','-')}.ics`;
+                a.click();
             });
         }
 
-        // ==============================================
-        // EDITOR & HELPERS
-        // ==============================================
+        // Structure & Modals
         async function loadScheduleStructure() {
-            try {
-                const s = await db.ref('scheduleStructure').once('value');
-                if(s.exists()) scheduleStructure = s.val();
-                else await db.ref('scheduleStructure').set(defaultScheduleStructure);
-            } catch(e) { console.error(e); }
+            const s = await db.ref('scheduleStructure').once('value');
+            if(s.exists()) scheduleStructure = s.val();
         }
-
         function renderStructureEditor() {
-            // Simplified for brevity - assumes original logic fits
             const c = document.getElementById('structureEditorContent');
             c.innerHTML = scheduleStructure.times.map((t,i) => `
-                <div class="win-box" style="margin-bottom:5px; padding:10px;">
-                    <b>${t.time}</b> (${t.type}) 
-                    <button class="btn btn-danger btn-sm" onclick="deleteStructureTime(${i})">🗑️</button>
+                <div style="padding:10px; background:var(--bg-input); margin-bottom:5px; border-radius:8px; display:flex; justify-content:space-between;">
+                    <span>${t.time} (${t.type})</span>
+                    <button class="btn btn-danger" style="padding:2px 8px;" onclick="scheduleStructure.times.splice(${i},1); renderStructureEditor();">🗑️</button>
                 </div>
             `).join('');
         }
-        
-        async function saveScheduleStructure() {
-             await db.ref('scheduleStructure').set(scheduleStructure);
-             showToast("נשמר");
+        async function saveScheduleStructure() { await db.ref('scheduleStructure').set(scheduleStructure); showToast("נשמר!"); }
+        async function resetToDefaultStructure() { 
+            if(confirm("לאפס לברירת מחדל?")) {
+                scheduleStructure = JSON.parse(JSON.stringify(defaultScheduleStructure));
+                saveScheduleStructure();
+                renderStructureEditor();
+            }
         }
 
-        // --- Modals Logic (Quick Copy) ---
+        // Quick Copy
         function showQuickCopyModal() { document.getElementById('quickCopyModal').classList.add('show'); populateQuickCopyTimesList(); }
         function closeQuickCopyModal() { document.getElementById('quickCopyModal').classList.remove('show'); }
-        
         function populateQuickCopyDaySelect() {
             const s = document.getElementById('quickCopyDay');
             s.innerHTML = '';
             scheduleStructure.days.forEach((d,i) => s.innerHTML += `<option value="${i}">${d}</option>`);
             s.addEventListener('change', populateQuickCopyTimesList);
         }
-        
         function populateQuickCopyTimesList() {
             const d = parseInt(document.getElementById('quickCopyDay').value) || 0;
             const l = document.getElementById('quickCopyTimesList');
             l.innerHTML = '';
             scheduleStructure.times.forEach((t, i) => {
-                const isFixed = t.type === 'fixed' && t.days?.includes(d);
-                l.innerHTML += `<div><input type="checkbox" value="${i}" ${isFixed?'disabled':''}> ${t.time} ${isFixed?'(קבוע)':''}</div>`;
+                const fixed = t.type === 'fixed' && t.days?.includes(d);
+                l.innerHTML += `<div style="padding:5px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                    <input type="checkbox" value="${i}" ${fixed?'disabled':''} style="width:auto;"> ${t.time}
+                </div>`;
             });
         }
-
         function applyQuickCopy() {
             const txt = document.getElementById('quickCopyContent').value;
             const day = document.getElementById('quickCopyDay').value;
-            const checks = document.querySelectorAll('#quickCopyTimesList input:checked');
-            
-            checks.forEach(c => {
-                updateStudentData(day, c.value, txt);
-            });
-            renderStudentSchedule();
-            closeQuickCopyModal();
+            document.querySelectorAll('#quickCopyTimesList input:checked').forEach(c => updateStudentData(day, c.value, txt));
+            renderStudentSchedule(); closeQuickCopyModal();
         }
 
-        // --- Move/Add Logic ---
+        // Helper Modals
+        let moveData={}, addData={};
         function populateMoveEntrySelects() {
              const ds = document.getElementById('moveEntryDay');
              ds.innerHTML = scheduleStructure.days.map((d,i)=>`<option value="${i}">${d}</option>`).join('');
-             // Populate times dynamically based on day selection...
              ds.addEventListener('change', () => {
                  const d = parseInt(ds.value);
-                 const ts = document.getElementById('moveEntryTime');
-                 ts.innerHTML = scheduleStructure.times.map((t,i) => {
-                     const fixed = t.type==='fixed' && t.days.includes(d);
-                     return `<option value="${i}" ${fixed?'disabled':''}>${t.time} ${fixed?'(סגור)':''}</option>`;
-                 }).join('');
+                 document.getElementById('moveEntryTime').innerHTML = scheduleStructure.times.map((t,i) => 
+                    `<option value="${i}" ${t.type==='fixed'&&t.days.includes(d)?'disabled':''}>${t.time}</option>`
+                 ).join('');
              });
         }
-        
-        let moveData = null;
         function showMoveEntryModal(sid, d, t) { moveData={sid,d,t}; document.getElementById('moveEntryModal').classList.add('show'); }
         function closeMoveEntryModal() { document.getElementById('moveEntryModal').classList.remove('show'); }
         async function applyMoveEntry() {
-            // Implementation of move logic...
-            if(!moveData) return;
             const nd = parseInt(document.getElementById('moveEntryDay').value);
             const nt = parseInt(document.getElementById('moveEntryTime').value);
-            // Fetch, update, save...
             const snap = await db.ref(`submissions/${moveData.sid}`).once('value');
             const sub = snap.val();
             const newData = sub.scheduleData.map(e => (e.day===moveData.d && e.time===moveData.t) ? {...e, day:nd, time:nt} : e);
             await db.ref(`submissions/${moveData.sid}/scheduleData`).set(newData);
-            closeMoveEntryModal();
-            loadSubmissions();
+            closeMoveEntryModal(); loadSubmissions();
         }
 
-        let addData = null;
         function showAddEntryModal(sid, d, t) { addData={sid,d,t}; document.getElementById('addEntryModal').classList.add('show'); }
         function closeAddEntryModal() { document.getElementById('addEntryModal').classList.remove('show'); }
         async function applyAddEntry() {
@@ -1186,8 +1109,7 @@
              const arr = sub.scheduleData || [];
              arr.push({day: addData.d, time: addData.t, content: c, status: 'approved'});
              await db.ref(`submissions/${addData.sid}/scheduleData`).set(arr);
-             closeAddEntryModal();
-             loadSubmissions();
+             closeAddEntryModal(); loadSubmissions();
         }
 
         function showToast(msg, type='success') {
@@ -1196,7 +1118,6 @@
             t.className = `toast ${type} show`;
             setTimeout(() => t.classList.remove('show'), 3000);
         }
-
     </script>
 </body>
 </html>
