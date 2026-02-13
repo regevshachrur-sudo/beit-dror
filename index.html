@@ -699,14 +699,14 @@
     <div class="container">
         <div class="header">
             <h1>📅 מערכת לוז דיגיטלית - בית דרור🏳️‍🌈</h1>
-            <p>מילוי ואישור לוזים שבועיים</p>
+            <p>אנא תמלאו את הלוז השבועי שלכם פעם אחת ותלחצו"שלח לאישור" מקווים שיהיה לכם שבוע מצוין😊</p>
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('student')">נער</button>
-            <button class="tab" onclick="switchTab('coordinator')">רכזת חינוכית</button>
-            <button class="tab" onclick="switchTab('combined')">לוז כולל</button>
-            <button class="tab" onclick="switchTab('editor')">⚙️ עריכת לוז</button>
+            <button class="tab active" onclick="switchTab('student')">נערימ.ות</button>
+            <button class="tab" onclick="switchTab('coordinator')">רכזת חינוכית🔒</button>
+            <button class="tab" onclick="switchTab('combined')">לוז כולל🔒</button>
+            <button class="tab" onclick="switchTab('editor')">עריכת לוז⚙️🔒</button>
         </div>
 
         <!-- TAB 1: Student View -->
@@ -821,7 +821,7 @@
                 
                 <div class="form-group">
                     <label>מה תעשה?</label>
-                    <input type="text" id="quickCopyContent" placeholder="לדוגמה: ים, קניון, בית">
+                    <input type="text" id="quickCopyContent" placeholder="לדוגמה: ים, התנדבות, לימודים">
                 </div>
 
                 <div class="form-group">
@@ -2232,7 +2232,7 @@
                             </div>
                         ` : timeSlot.type === 'suggested' ? `
                             <div class="form-group">
-                                <label>טקסט הנחיה (מה הנער אמור לכתוב)</label>
+                                <label>טקסט הנחיה (מה הנער/ה אמורים לכתוב)</label>
                                 <input type="text" value="${timeSlot.content || ''}" 
                                        onchange="updateTimeSlot(${index}, 'content', this.value)"
                                        placeholder="לדוגמה: לימודים / פעילות בוקר"
