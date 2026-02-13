@@ -703,7 +703,7 @@
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('student')">נער</button>
+            <button class="tab active" onclick="switchTab('student')">נערימ.ות</button>
             <button class="tab" onclick="switchTab('coordinator')">רכזת חינוכית🔒</button>
             <button class="tab" onclick="switchTab('combined')">לוז כולל🔒</button>
             <button class="tab" onclick="switchTab('editor')">עריכת לוז⚙️🔒</button>
@@ -2232,7 +2232,7 @@
                             </div>
                         ` : timeSlot.type === 'suggested' ? `
                             <div class="form-group">
-                                <label>טקסט הנחיה (מה הנער אמור לכתוב)</label>
+                                <label>טקסט הנחיה (מה הנער/ה אמורים לכתוב)</label>
                                 <input type="text" value="${timeSlot.content || ''}" 
                                        onchange="updateTimeSlot(${index}, 'content', this.value)"
                                        placeholder="לדוגמה: לימודים / פעילות בוקר"
