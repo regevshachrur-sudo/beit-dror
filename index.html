@@ -852,15 +852,15 @@
     <div class="container">
         <div class="header">
             <h1>📅 מערכת לוז דיגיטלית - בית דרור🏳️‍🌈</h1>
-            <p>אנא תמלאו את הלוז השבועי שלכם פעם אחת ותלחצו "שלח לאישור" מקווים שיהיה לכם שבוע מצוין😊</p>
+            <p>מילוי ואישור לוזים שבועיים</p>
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('student')">נערימ.ות</button>
-            <button class="tab" onclick="switchTab('coordinator')">רכזת חינוכית🔒</button>
-            <button class="tab" onclick="switchTab('combined')">לוז כולל🔒</button>
-            <button class="tab" onclick="switchTab('archive')">ארכיון📦🔒</button>
-            <button class="tab" onclick="switchTab('editor')">עריכת לוז⚙️🔒</button>
+            <button class="tab active" onclick="switchTab('student')">נער</button>
+            <button class="tab" onclick="switchTab('coordinator')">רכזת חינוכית</button>
+            <button class="tab" onclick="switchTab('combined')">לוז כולל</button>
+            <button class="tab" onclick="switchTab('archive')">📦 ארכיון</button>
+            <button class="tab" onclick="switchTab('editor')">⚙️ עריכת לוז</button>
         </div>
 
         <!-- TAB 1: Student View -->
@@ -977,6 +977,7 @@
                 
                 <div style="margin-bottom: 20px;">
                     <button class="btn btn-primary" onclick="addNewTimeSlot()">➕ הוסף שעה</button>
+                    <button class="btn btn-primary" onclick="showDuplicateTimeSlotsModal()">📋 שכפל שעות</button>
                     <button class="btn btn-success" onclick="saveScheduleStructure()">💾 שמור שינויים</button>
                     <button class="btn btn-danger" onclick="resetToDefaultStructure()">🔄 אפס למבנה המקורי</button>
                 </div>
@@ -1047,6 +1048,72 @@
                 <div class="modal-footer">
                     <button class="btn btn-secondary" onclick="closeAddEntryModal()">ביטול</button>
                     <button class="btn btn-primary" onclick="applyAddEntry()">הוסף</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coordinator Quick Copy Modal -->
+        <div id="coordinatorQuickCopyModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">העתק לשעות נוספות</div>
+                
+                <div class="form-group">
+                    <label>בחר פעילות קיימת</label>
+                    <select id="coordQuickCopyExisting" onchange="populateCoordQuickCopyFromExisting()">
+                        <option value="">-- בחר פעילות --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>או הכנס פעילות חדשה</label>
+                    <input type="text" id="coordQuickCopyContent" placeholder="לדוגמה: ים, קניון, בית">
+                </div>
+
+                <div class="form-group">
+                    <label>בחר יום</label>
+                    <select id="coordQuickCopyDay"></select>
+                </div>
+
+                <div class="form-group">
+                    <label>בחר שעות</label>
+                    <div class="checkbox-list" id="coordQuickCopyTimesList"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeCoordinatorQuickCopyModal()">ביטול</button>
+                    <button class="btn btn-primary" onclick="applyCoordinatorQuickCopy()">אישור</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Duplicate Time Slots Modal -->
+        <div id="duplicateTimeSlotsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">שכפל שעות</div>
+                
+                <div class="form-group">
+                    <label>בחר שעה לשכפל</label>
+                    <select id="duplicateSourceTime">
+                        <option value="">-- בחר שעה --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>כמה פעמים לשכפל?</label>
+                    <input type="number" id="duplicateCount" min="1" max="10" value="1" placeholder="למשל: 3">
+                </div>
+
+                <div class="form-group">
+                    <label>מרווח זמן (בדקות)</label>
+                    <input type="number" id="duplicateInterval" min="1" max="120" value="30" placeholder="למשל: 30">
+                    <small style="color: var(--text-secondary); display: block; margin-top: 4px;">
+                        כל שעה חדשה תתווסף במרווח זה מהשעה הקודמת
+                    </small>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="closeDuplicateTimeSlotsModal()">ביטול</button>
+                    <button class="btn btn-primary" onclick="applyDuplicateTimeSlots()">שכפל</button>
                 </div>
             </div>
         </div>
@@ -1620,10 +1687,18 @@
                 if (weekSelect) {
                     const currentSelection = weekSelect.value;
                     weekSelect.innerHTML = '<option value="">-- כל השבועות --</option>';
-                    sortWeeksByDate(Array.from(weeks)).forEach(week => {
+                    
+                    const sortedWeeks = sortWeeksByDate(Array.from(weeks));
+                    
+                    sortedWeeks.forEach(week => {
                         const selected = week === currentSelection ? 'selected' : '';
                         weekSelect.innerHTML += `<option value="${week}" ${selected}>${week}</option>`;
                     });
+                    
+                    // בחירה אוטומטית של השבוע הנוכחי (הראשון ברשימה) אם אין בחירה קיימת
+                    if (!currentSelection && sortedWeeks.length > 0) {
+                        weekSelect.value = sortedWeeks[0];
+                    }
                 }
 
                 const selectedWeek = weekSelect ? weekSelect.value : '';
@@ -1702,6 +1777,7 @@
                             <div class="submission-date">נשלח: ${dateStr}</div>
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn btn-primary btn-sm" onclick="showCoordinatorQuickCopy('${submission.id}')">📋 העתק לשעות</button>
                             <button class="btn btn-secondary btn-sm" onclick="renameStudent('${submission.id}', '${submission.studentName}')">✏️ שנה שם</button>
                             <button class="btn btn-secondary btn-sm" onclick="printSingleSchedule('${submission.id}')">🖨️ הדפס</button>
                             <button class="btn btn-secondary btn-sm" onclick="changeSubmissionWeek('${submission.id}', '${submission.weekDisplay}')">📅 שנה תאריכים</button>
@@ -2214,6 +2290,135 @@
         }
 
         // ==============================================
+        // COORDINATOR QUICK COPY
+        // ==============================================
+        let currentCoordQuickCopy = null;
+
+        function showCoordinatorQuickCopy(submissionId) {
+            currentCoordQuickCopy = submissionId;
+            
+            // מילוי רשימת הימים
+            const daySelect = document.getElementById('coordQuickCopyDay');
+            daySelect.innerHTML = '<option value="">-- בחר יום --</option>';
+            scheduleStructure.days.forEach((day, index) => {
+                daySelect.innerHTML += `<option value="${index}">${day}</option>`;
+            });
+            
+            // מילוי רשימת פעילויות קיימות
+            db.ref(`submissions/${submissionId}`).once('value').then(snapshot => {
+                const submission = snapshot.val();
+                const existingSelect = document.getElementById('coordQuickCopyExisting');
+                existingSelect.innerHTML = '<option value="">-- בחר פעילות --</option>';
+                
+                const uniqueActivities = new Set();
+                if (submission.scheduleData) {
+                    submission.scheduleData.forEach(entry => {
+                        uniqueActivities.add(entry.content);
+                    });
+                }
+                
+                Array.from(uniqueActivities).forEach(activity => {
+                    existingSelect.innerHTML += `<option value="${activity}">${activity}</option>`;
+                });
+            });
+            
+            document.getElementById('coordinatorQuickCopyModal').classList.add('show');
+        }
+
+        function closeCoordinatorQuickCopyModal() {
+            document.getElementById('coordinatorQuickCopyModal').classList.remove('show');
+            document.getElementById('coordQuickCopyContent').value = '';
+            document.getElementById('coordQuickCopyDay').value = '';
+            document.getElementById('coordQuickCopyExisting').value = '';
+            currentCoordQuickCopy = null;
+        }
+
+        function populateCoordQuickCopyFromExisting() {
+            const selected = document.getElementById('coordQuickCopyExisting').value;
+            if (selected) {
+                document.getElementById('coordQuickCopyContent').value = selected;
+            }
+        }
+
+        function populateCoordQuickCopyTimesList() {
+            const list = document.getElementById('coordQuickCopyTimesList');
+            const selectedDay = parseInt(document.getElementById('coordQuickCopyDay').value);
+            
+            list.innerHTML = '';
+            
+            scheduleStructure.times.forEach((timeSlot, index) => {
+                const isFixed = timeSlot.type === 'fixed' && 
+                               timeSlot.days && 
+                               !isNaN(selectedDay) && 
+                               timeSlot.days.includes(selectedDay);
+                
+                const label = isFixed ? `${timeSlot.time} (קבוע: ${timeSlot.content})` : timeSlot.time;
+                
+                list.innerHTML += `
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="coord-qc-time-${index}" value="${index}">
+                        <label for="coord-qc-time-${index}">${label}</label>
+                    </div>
+                `;
+            });
+        }
+
+        async function applyCoordinatorQuickCopy() {
+            if (!currentCoordQuickCopy || !firebaseInitialized) return;
+
+            const content = document.getElementById('coordQuickCopyContent').value.trim();
+            const day = document.getElementById('coordQuickCopyDay').value;
+            
+            if (!content || !day) {
+                showToast('יש למלא את כל השדות', 'danger');
+                return;
+            }
+
+            const selectedTimes = [];
+            document.querySelectorAll('#coordQuickCopyTimesList input[type="checkbox"]:checked').forEach(cb => {
+                selectedTimes.push(parseInt(cb.value));
+            });
+
+            if (selectedTimes.length === 0) {
+                showToast('יש לבחור לפחות שעה אחת', 'danger');
+                return;
+            }
+
+            try {
+                const snapshot = await db.ref(`submissions/${currentCoordQuickCopy}`).once('value');
+                const submission = snapshot.val();
+                
+                const newEntries = [];
+                selectedTimes.forEach(timeIndex => {
+                    newEntries.push({
+                        day: parseInt(day),
+                        time: timeIndex,
+                        content: content,
+                        status: 'pending'
+                    });
+                });
+
+                const updatedScheduleData = [...submission.scheduleData, ...newEntries];
+                await db.ref(`submissions/${currentCoordQuickCopy}/scheduleData`).set(updatedScheduleData);
+                
+                showToast(`הועתק ל-${selectedTimes.length} שעות בהצלחה!`);
+                closeCoordinatorQuickCopyModal();
+                loadSubmissions();
+            } catch (error) {
+                console.error('Error applying coordinator quick copy:', error);
+                showToast('שגיאה בהעתקה', 'danger');
+            }
+        }
+
+        // Event listener for day change in coordinator quick copy
+        document.addEventListener('DOMContentLoaded', function() {
+            const coordDaySelect = document.getElementById('coordQuickCopyDay');
+            if (coordDaySelect) {
+                coordDaySelect.addEventListener('change', populateCoordQuickCopyTimesList);
+            }
+        });
+
+        // ==============================================
         // COMBINED VIEW
         // ==============================================
         function togglePendingInCombined() {
@@ -2452,7 +2657,7 @@
                             </div>
                         ` : timeSlot.type === 'suggested' ? `
                             <div class="form-group">
-                                <label>טקסט הנחיה (מה הנער/ה אמורים לכתוב)</label>
+                                <label>טקסט הנחיה (מה הנער אמור לכתוב)</label>
                                 <input type="text" value="${timeSlot.content || ''}" 
                                        onchange="updateTimeSlot(${index}, 'content', this.value)"
                                        placeholder="לדוגמה: לימודים / פעילות בוקר"
@@ -2542,6 +2747,89 @@
             
             renderStructureEditor();
             showToast(`שעה ${timeInput} נוספה בהצלחה`);
+        }
+
+        // ==============================================
+        // DUPLICATE TIME SLOTS
+        // ==============================================
+        function showDuplicateTimeSlotsModal() {
+            const select = document.getElementById('duplicateSourceTime');
+            select.innerHTML = '<option value="">-- בחר שעה --</option>';
+            
+            scheduleStructure.times.forEach((timeSlot, index) => {
+                const label = timeSlot.type === 'fixed' ? 
+                    `${timeSlot.time} (קבוע: ${timeSlot.content})` : 
+                    timeSlot.type === 'suggested' ?
+                    `${timeSlot.time} (מוצע: ${timeSlot.content})` :
+                    `${timeSlot.time} (חופשי)`;
+                select.innerHTML += `<option value="${index}">${label}</option>`;
+            });
+            
+            document.getElementById('duplicateTimeSlotsModal').classList.add('show');
+        }
+
+        function closeDuplicateTimeSlotsModal() {
+            document.getElementById('duplicateTimeSlotsModal').classList.remove('show');
+            document.getElementById('duplicateSourceTime').value = '';
+            document.getElementById('duplicateCount').value = '1';
+            document.getElementById('duplicateInterval').value = '30';
+        }
+
+        function applyDuplicateTimeSlots() {
+            const sourceIndex = parseInt(document.getElementById('duplicateSourceTime').value);
+            const count = parseInt(document.getElementById('duplicateCount').value);
+            const interval = parseInt(document.getElementById('duplicateInterval').value);
+            
+            if (isNaN(sourceIndex) || isNaN(count) || isNaN(interval)) {
+                showToast('יש למלא את כל השדות', 'danger');
+                return;
+            }
+            
+            if (count < 1 || count > 10) {
+                showToast('מספר השכפולים חייב להיות בין 1 ל-10', 'danger');
+                return;
+            }
+            
+            const sourceSlot = scheduleStructure.times[sourceIndex];
+            if (!sourceSlot) {
+                showToast('שעה לא נמצאה', 'danger');
+                return;
+            }
+            
+            // חישוב שעות חדשות
+            const newSlots = [];
+            const [hours, minutes] = sourceSlot.time.split(':').map(Number);
+            
+            for (let i = 1; i <= count; i++) {
+                const totalMinutes = hours * 60 + minutes + (interval * i);
+                const newHours = Math.floor(totalMinutes / 60) % 24;
+                const newMinutes = totalMinutes % 60;
+                const newTime = `${String(newHours).padStart(2, '0')}:${String(newMinutes).padStart(2, '0')}`;
+                
+                // בדיקה אם השעה כבר קיימת
+                const exists = scheduleStructure.times.some(slot => slot.time === newTime);
+                if (!exists) {
+                    newSlots.push({
+                        time: newTime,
+                        type: sourceSlot.type,
+                        content: sourceSlot.content,
+                        days: sourceSlot.days ? [...sourceSlot.days] : undefined
+                    });
+                }
+            }
+            
+            if (newSlots.length === 0) {
+                showToast('כל השעות כבר קיימות', 'danger');
+                return;
+            }
+            
+            // הוספת השעות החדשות
+            scheduleStructure.times.push(...newSlots);
+            scheduleStructure.times.sort((a, b) => a.time.localeCompare(b.time));
+            
+            renderStructureEditor();
+            closeDuplicateTimeSlotsModal();
+            showToast(`${newSlots.length} שעות נוספו בהצלחה!`);
         }
 
         async function saveScheduleStructure() {
@@ -2744,10 +3032,12 @@ END:VEVENT
         // ==============================================
         window.addEventListener('DOMContentLoaded', initializeApp);
 
-        console.log('✅ גרסה 2.4 MOBILE FIX נטענה! (15/02/2026)');
-        console.log('📱 תיקון תצוגת טבלאות בטלפון');
-        console.log('🎨 צבעים ייחודיים ללא כפילויות');
-        console.log('🖨️ הדפסה מתוקנת');
+        console.log('✅ גרסה 2.5 POWER FEATURES נטענה! (15/02/2026)');
+        console.log('📋 העתק מהיר לרכזת - לכל לוז');
+        console.log('🎯 בחירה אוטומטית של השבוע הנוכחי');
+        console.log('🔄 שכפול שעות בעורך הלוז');
+        console.log('📱 תצוגת טבלאות מתוקנת');
+        console.log('🎨 צבעים ייחודיים');
     </script>
 </body>
 </html>
