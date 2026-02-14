@@ -956,7 +956,7 @@
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('student')">נערימ.ות / شباب👥</button>
+            <button class="tab active" onclick="switchTab('student')">נערימ.ות / شباب 👥</button>
             <button class="tab" onclick="switchTab('coordinator')">רכזת חינוכית👩‍💼🔒</button>
             <button class="tab" onclick="switchTab('combined')">לוז כולל🧮🔒</button>
             <button class="tab" onclick="switchTab('archive')">ארכיון📦🔒</button>
@@ -2456,17 +2456,79 @@
         function renderStructureEditor() {
             const container = document.getElementById('structureEditorContent');
             let html = '';
-            scheduleStructure.times.forEach((t, i) => {
-                html += `<div class="structure-editor-item">
-                    <input type="time" value="${t.time}" onchange="updateTimeSlot(${i}, 'time', this.value)">
-                    <select onchange="updateTimeSlot(${i}, 'type', this.value)">
-                        <option value="free" ${t.type === 'free' ? 'selected' : ''}>חופשי</option>
-                        <option value="suggested" ${t.type === 'suggested' ? 'selected' : ''}>מוצע</option>
-                        <option value="fixed" ${t.type === 'fixed' ? 'selected' : ''}>סגור</option>
-                    </select>
-                    <button class="btn btn-danger btn-sm" onclick="deleteTimeSlot(${i})">מחק</button>
-                </div>`;
+
+            scheduleStructure.times.forEach((timeSlot, index) => {
+                html += `
+                    <div class="structure-editor-item" data-index="${index}">
+                        <div class="structure-editor-controls">
+                            <div class="form-group" style="margin: 0;">
+                                <label>שעה</label>
+                                <input type="time" value="${timeSlot.time}" 
+                                       onchange="updateTimeSlot(${index}, 'time', this.value)">
+                            </div>
+                            
+                            <div class="form-group" style="margin: 0;">
+                                <label>סוג</label>
+                                <select onchange="updateTimeSlot(${index}, 'type', this.value)">
+                                    <option value="free" ${timeSlot.type === 'free' ? 'selected' : ''}>חופשי</option>
+                                    <option value="suggested" ${timeSlot.type === 'suggested' ? 'selected' : ''}>מוצע (עם הנחיה)</option>
+                                    <option value="fixed" ${timeSlot.type === 'fixed' ? 'selected' : ''}>סגור (חובה)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        ${timeSlot.type === 'fixed' ? `
+                            <div class="form-group">
+                                <label>תוכן (חובה - לא ניתן לשינוי)</label>
+                                <input type="text" value="${timeSlot.content || ''}" 
+                                       onchange="updateTimeSlot(${index}, 'content', this.value)"
+                                       style="border-color: #dc2626;">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>ימים</label>
+                                <div class="days-selector">
+                                    ${scheduleStructure.days.map((day, dayIndex) => `
+                                        <div class="day-checkbox">
+                                            <input type="checkbox" 
+                                                   id="day-${index}-${dayIndex}"
+                                                   ${timeSlot.days && timeSlot.days.includes(dayIndex) ? 'checked' : ''}
+                                                   onchange="updateTimeSlotDays(${index})">
+                                            <label for="day-${index}-${dayIndex}">${day}</label>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : timeSlot.type === 'suggested' ? `
+                            <div class="form-group">
+                                <label>טקסט הנחיה (מה הנער/ה אמורים לכתוב)</label>
+                                <input type="text" value="${timeSlot.content || ''}" 
+                                       onchange="updateTimeSlot(${index}, 'content', this.value)"
+                                       placeholder="לדוגמה: לימודים / פעילות בוקר"
+                                       style="border-color: #f39c12;">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>ימים</label>
+                                <div class="days-selector">
+                                    ${scheduleStructure.days.map((day, dayIndex) => `
+                                        <div class="day-checkbox">
+                                            <input type="checkbox" 
+                                                   id="day-${index}-${dayIndex}"
+                                                   ${timeSlot.days && timeSlot.days.includes(dayIndex) ? 'checked' : ''}
+                                                   onchange="updateTimeSlotDays(${index})">
+                                            <label for="day-${index}-${dayIndex}">${day}</label>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <button class="btn btn-danger btn-sm" onclick="deleteTimeSlot(${index})">🗑️ מחק שעה</button>
+                    </div>
+                `;
             });
+
             container.innerHTML = html;
         }
 
