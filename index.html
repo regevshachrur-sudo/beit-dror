@@ -133,11 +133,7 @@
             border: none;
             margin-bottom: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            /* אנימציה הוסרה */
+            /* אנימציה הוסרה לחלוטין */
         }
 
         .form-group {
@@ -236,16 +232,12 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
-            overflow-x: auto;
             display: block;
+            overflow-x: auto;
         }
 
         .schedule-table thead {
             background: var(--bg-fixed);
-            position: -webkit-sticky;
-            position: sticky;
-            top: 0;
-            z-index: 10;
         }
 
         .schedule-table th {
@@ -253,10 +245,9 @@
             text-align: center;
             font-weight: 600;
             border: 1px solid var(--border);
-            position: -webkit-sticky;
+            background: var(--bg-fixed);
             position: sticky;
             top: 0;
-            background: var(--bg-fixed);
             z-index: 10;
         }
 
@@ -272,7 +263,6 @@
             background: var(--bg-fixed);
             font-weight: 500;
             white-space: nowrap;
-            position: -webkit-sticky;
             position: sticky;
             right: 0;
             z-index: 5;
@@ -342,7 +332,6 @@
             background: #ffffcc;
         }
         
-        /* Auto-grow textarea */
         .schedule-table textarea {
             overflow-y: hidden;
         }
@@ -516,9 +505,8 @@
             font-weight: 600;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             color: white;
+            /* צבע רקע ייקבע דינמית ב-JS */
         }
-        
-        /* הצבעים נקבעים דינמית ב-JS לפי hash של השם */
 
         .location-group {
             margin-bottom: 8px;
@@ -628,29 +616,6 @@
             border: 1px solid var(--border);
         }
 
-        @media (max-width: 768px) {
-            .schedule-table {
-                font-size: 11px;
-            }
-
-            .schedule-table th,
-            .schedule-table td {
-                padding: 6px 4px;
-            }
-
-            .tabs {
-                overflow-x: scroll;
-            }
-
-            .modal-content {
-                width: 95%;
-            }
-
-            .structure-editor-controls {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .firebase-warning {
             background: var(--warning-bg);
             border: 1px solid var(--warning);
@@ -693,6 +658,53 @@
             border-radius: 4px;
             font-family: 'Heebo', sans-serif;
             font-size: 13px;
+        }
+
+        /* תיקון sticky headers למובייל */
+        @media (max-width: 768px) {
+            .schedule-table {
+                font-size: 11px;
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .schedule-table thead {
+                position: sticky;
+                top: 0;
+                z-index: 20;
+            }
+
+            .schedule-table th {
+                position: sticky;
+                top: 0;
+                z-index: 20;
+                background: var(--bg-fixed);
+            }
+
+            .schedule-table .time-cell {
+                position: sticky;
+                right: 0;
+                z-index: 15;
+                background: var(--bg-fixed);
+            }
+
+            .schedule-table th,
+            .schedule-table td {
+                padding: 6px 4px;
+            }
+
+            .tabs {
+                overflow-x: scroll;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+
+            .structure-editor-controls {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* הדפסה */
@@ -783,6 +795,7 @@
             <button class="tab active" onclick="switchTab('student')">נער</button>
             <button class="tab" onclick="switchTab('coordinator')">רכזת חינוכית</button>
             <button class="tab" onclick="switchTab('combined')">לוז כולל</button>
+            <button class="tab" onclick="switchTab('archive')">📦 ארכיון</button>
             <button class="tab" onclick="switchTab('editor')">⚙️ עריכת לוז</button>
         </div>
 
@@ -830,8 +843,7 @@
             </div>
         </div>
 
-        
-        <!-- TAB: Archive -->
+        <!-- TAB 3: Archive -->
         <div id="archive-tab" class="tab-content">
             <div class="card">
                 <h2 style="margin-bottom: 20px;">📦 ארכיון</h2>
@@ -842,7 +854,7 @@
             </div>
         </div>
 
-        <!-- TAB 3: Combined View -->
+        <!-- TAB 4: Combined View -->
         <div id="combined-tab" class="tab-content">
             <div class="card">
                 <h2 style="margin-bottom: 20px;">לוז כולל</h2>
@@ -894,7 +906,7 @@
             </div>
         </div>
 
-        <!-- TAB 4: Structure Editor -->
+        <!-- TAB 5: Structure Editor -->
         <div id="editor-tab" class="tab-content">
             <div class="card">
                 <h2 style="margin-bottom: 20px;">עריכת מבנה לוז</h2>
@@ -986,8 +998,6 @@
         // ==============================================
         // FIREBASE CONFIGURATION
         // ==============================================
-        // הדבק כאן את ה-Firebase Config שלך:
-        
         const firebaseConfig = {
             apiKey: "AIzaSyD5Ma2GAqiPFKurMedUgU6Qgl-qk_Uop-s",
             authDomain: "beit-dror1.firebaseapp.com",
@@ -999,7 +1009,6 @@
             measurementId: "G-TF1PXMP3XS"
         };
 
-        // בדיקה אם Firebase מוגדר
         let db = null;
         let firebaseInitialized = false;
 
@@ -1009,21 +1018,10 @@
                 db = firebase.database();
                 firebaseInitialized = true;
                 console.log('✅ Firebase initialized successfully');
-                console.log('📡 Database URL:', firebaseConfig.databaseURL);
             } catch (error) {
                 console.error('❌ Error initializing Firebase:', error);
-                firebaseInitialized = false;
-                showFirebaseWarning();
-                alert('⚠️ שגיאה בחיבור ל-Firebase: ' + error.message + '\nאנא רענן את הדף או צור קשר עם התמיכה.');
+                alert('⚠️ שגיאה בחיבור ל-Firebase: ' + error.message);
             }
-        } else {
-            console.error('❌ Firebase config missing');
-            showFirebaseWarning();
-            alert('⚠️ Firebase לא מוגדר! אנא בדוק את הקונפיגורציה.');
-        }
-
-        function showFirebaseWarning() {
-            // Firebase מוגדר - לא צריך אזהרה
         }
 
         // ==============================================
@@ -1077,6 +1075,44 @@
         let showPendingInCombined = false;
 
         // ==============================================
+        // COLOR PALETTE - 15 צבעים שונים ובולטים
+        // ==============================================
+        const STUDENT_COLORS = [
+            '#e74c3c', // אדום
+            '#3498db', // כחול
+            '#2ecc71', // ירוק
+            '#f39c12', // כתום
+            '#9b59b6', // סגול
+            '#1abc9c', // טורקיז
+            '#e91e63', // ורוד
+            '#00bcd4', // ציאן
+            '#ff5722', // כתום כהה
+            '#8bc34a', // ירוק בהיר
+            '#ff9800', // כתום בהיר
+            '#673ab7', // סגול כהה
+            '#009688', // טורקיז כהה
+            '#795548', // חום
+            '#607d8b'  // אפור-כחול
+        ];
+
+        function getColorForStudent(studentName) {
+            let hash = 0;
+            for (let i = 0; i < studentName.length; i++) {
+                hash = ((hash << 5) - hash) + studentName.charCodeAt(i);
+                hash = hash & hash;
+            }
+            const index = Math.abs(hash) % STUDENT_COLORS.length;
+            return STUDENT_COLORS[index];
+        }
+
+        function applyDynamicColors() {
+            document.querySelectorAll('.student-tag').forEach(tag => {
+                const studentName = tag.textContent.trim();
+                tag.style.backgroundColor = getColorForStudent(studentName);
+            });
+        }
+
+        // ==============================================
         // INITIALIZATION
         // ==============================================
         async function initializeApp() {
@@ -1106,7 +1142,6 @@
                 if (snapshot.exists()) {
                     scheduleStructure = snapshot.val();
                 } else {
-                    // אם אין מבנה ב-Firebase, שמור את ברירת המחדל
                     await db.ref('scheduleStructure').set(defaultScheduleStructure);
                     scheduleStructure = JSON.parse(JSON.stringify(defaultScheduleStructure));
                 }
@@ -1121,12 +1156,12 @@
         // ==============================================
         function getNextSunday() {
             const today = new Date();
-            const dayOfWeek = today.getDay(); // 0 = Sunday, 6 = Saturday
+            const dayOfWeek = today.getDay();
             
             let daysUntilSunday;
-            if (dayOfWeek === 6) { // Saturday
+            if (dayOfWeek === 6) {
                 daysUntilSunday = 1;
-            } else if (dayOfWeek === 0) { // Sunday
+            } else if (dayOfWeek === 0) {
                 daysUntilSunday = 0;
             } else {
                 daysUntilSunday = 7 - dayOfWeek;
@@ -1163,8 +1198,6 @@
         // ==============================================
         // TAB SWITCHING
         // ==============================================
-        
-        // פונקציה להצפנת הסיסמה עם SHA-256
         async function hashPassword(password) {
             const encoder = new TextEncoder();
             const data = encoder.encode(password);
@@ -1174,35 +1207,26 @@
             return hashHex;
         }
         
-        // ה-hash של הסיסמה 5522 (מוצפן!)
-        // כדי לשנות סיסמה: פתח קונסול והרץ: hashPassword('הסיסמה_החדשה').then(console.log)
         const PASSWORD_HASH = '34ff3bb3732ca5436824c18fc789ff0507ae31807ca3f782b7d7740235d5d719';
         
         async function switchTab(tabName) {
             console.log('🔄 Switching to tab:', tabName);
             
-            // Check password for coordinator, combined, and editor tabs
             if (['coordinator', 'archive', 'combined', 'editor'].includes(tabName)) {
                 const password = prompt('הכנס סיסמה:');
                 
                 if (!password) {
-                    return; // ביטול
+                    return;
                 }
                 
-                console.log('🔐 Password check for:', tabName);
-                
-                // השוואת hash של הסיסמה שהוזנה עם ה-hash השמור
                 const inputHash = await hashPassword(password);
                 
                 if (inputHash !== PASSWORD_HASH) {
-                    console.log('❌ Wrong password');
                     showToast('סיסמה שגויה', 'danger');
                     return;
                 }
-                console.log('✅ Password correct');
             }
 
-            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
@@ -1210,18 +1234,14 @@
                 tab.classList.remove('active');
             });
 
-            // Show selected tab
             const tabElement = document.getElementById(`${tabName}-tab`);
             if (tabElement) {
                 tabElement.classList.add('active');
-                console.log('✅ Tab element activated:', tabName);
             } else {
-                console.error('❌ Tab element not found:', `${tabName}-tab`);
                 showToast('שגיאה: טאב לא נמצא', 'danger');
                 return;
             }
             
-            // Activate button
             try {
                 if (window.event && window.event.target) {
                     window.event.target.classList.add('active');
@@ -1230,9 +1250,7 @@
                 console.log('⚠️ Could not activate button:', e);
             }
 
-            // Load data for specific tabs
             if (tabName === 'coordinator') {
-                console.log('📊 Loading coordinator data, Firebase:', firebaseInitialized);
                 if (firebaseInitialized) {
                     try {
                         loadSubmissions();
@@ -1241,43 +1259,26 @@
                         document.getElementById('submissionsList').innerHTML = 
                             `<p style="text-align: center; color: red;">⚠️ שגיאה בטעינת נתונים: ${error.message}</p>`;
                     }
-                } else {
-                    console.error('❌ Firebase not initialized');
-                    document.getElementById('submissionsList').innerHTML = 
-                        '<p style="text-align: center; color: red;">⚠️ Firebase לא מחובר. אנא רענן את הדף.</p>';
                 }
             } else if (tabName === 'combined') {
-                console.log('📅 Loading combined view, Firebase:', firebaseInitialized);
                 if (firebaseInitialized) {
                     try {
                         loadWeeksForCombinedView();
                     } catch (error) {
                         console.error('❌ Error loading combined view:', error);
-                        document.getElementById('combinedViewContent').innerHTML = 
-                            `<p style="text-align: center; color: red;">⚠️ שגיאה בטעינת נתונים: ${error.message}</p>`;
                     }
-                } else {
-                    console.error('❌ Firebase not initialized');
-                    document.getElementById('combinedViewContent').innerHTML = 
-                        '<p style="text-align: center; color: red;">⚠️ Firebase לא מחובר. אנא רענן את הדף.</p>';
                 }
             } else if (tabName === 'archive') {
-                console.log('📦 Loading archive');
                 if (firebaseInitialized) {
                     loadArchiveTab();
                 }
             } else if (tabName === 'editor') {
-                console.log('⚙️ Loading structure editor');
                 try {
                     renderStructureEditor();
                 } catch (error) {
                     console.error('❌ Error rendering structure editor:', error);
-                    document.getElementById('structureEditorContent').innerHTML = 
-                        `<p style="text-align: center; color: red;">⚠️ שגיאה בטעינת העורך: ${error.message}</p>`;
                 }
             }
-            
-            console.log('✅ Tab switch completed');
         }
 
         // ==============================================
@@ -1288,7 +1289,7 @@
             let html = '<thead><tr><th>שעה</th>';
             
             scheduleStructure.days.forEach((day, idx) => {
-                if (idx === 2) { // שלישי
+                if (idx === 2) {
                     html += `<th>${day}<br><small style="font-weight: normal;">יום בית🛋️</small></th>`;
                 } else {
                     html += `<th>${day}</th>`;
@@ -1296,7 +1297,6 @@
             });
             html += '</tr></thead><tbody>';
 
-            // מיזוג שעות כפולות
             const mergedTimes = [];
             const timeMap = new Map();
             
@@ -1315,12 +1315,10 @@
                 html += `<tr><td class="time-cell">${time}</td>`;
                 
                 scheduleStructure.days.forEach((day, dayIndex) => {
-                    // בדיקה איזה סוג שעה חל על היום הזה
                     let cellType = 'free';
                     let cellContent = '';
                     let timeIndex = -1;
                     
-                    // קדימות: fixed > suggested > free
                     const fixedSlot = slots.find(s => s.type === 'fixed' && s.days && s.days.includes(dayIndex));
                     const suggestedSlot = slots.find(s => s.type === 'suggested' && s.days && s.days.includes(dayIndex));
                     
@@ -1333,7 +1331,6 @@
                         cellContent = suggestedSlot.content;
                         timeIndex = suggestedSlot.originalIndex;
                     } else {
-                        // חופשי - נשתמש באינדקס הראשון
                         timeIndex = slots[0].originalIndex;
                     }
                     
@@ -1426,7 +1423,6 @@
             });
         }
 
-        // Refresh times list when day changes
         document.addEventListener('DOMContentLoaded', function() {
             const daySelect = document.getElementById('quickCopyDay');
             if (daySelect) {
@@ -1507,7 +1503,6 @@
                 await db.ref('submissions').push(submission);
                 showToast('הלוז נשלח בהצלחה!');
                 
-                // Reset form
                 document.getElementById('studentName').value = '';
                 studentScheduleData = {};
                 renderStudentSchedule();
@@ -1522,17 +1517,13 @@
         // ==============================================
         async function loadSubmissions() {
             if (!firebaseInitialized) {
-                console.error('❌ Cannot load submissions - Firebase not initialized');
                 document.getElementById('submissionsList').innerHTML = 
                     '<p style="text-align: center; color: red;">⚠️ Firebase לא מחובר</p>';
                 return;
             }
 
-            console.log('📥 Loading submissions...');
-            
             try {
                 const snapshot = await db.ref('submissions').once('value');
-                console.log('📊 Snapshot received:', snapshot.exists());
                 
                 const submissions = [];
                 const weeks = new Set();
@@ -1548,9 +1539,6 @@
                     }
                 });
 
-                console.log('✅ Loaded', submissions.length, 'submissions');
-
-                // עדכון רשימת השבועות
                 const weekSelect = document.getElementById('coordinatorWeekSelect');
                 if (weekSelect) {
                     const currentSelection = weekSelect.value;
@@ -1561,18 +1549,13 @@
                     });
                 }
 
-                // סינון לפי שבוע נבחר
                 const selectedWeek = weekSelect ? weekSelect.value : '';
                 const filteredSubmissions = selectedWeek 
                     ? submissions.filter(sub => sub.weekDisplay === selectedWeek)
                     : submissions;
 
-                console.log('📋 Showing', filteredSubmissions.length, 'submissions after filter');
-
-                // Sort by submission date (newest first)
                 filteredSubmissions.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
 
-                // Group by week
                 const weekGroups = {};
                 filteredSubmissions.forEach(sub => {
                     if (!weekGroups[sub.weekDisplay]) {
@@ -1584,9 +1567,8 @@
                 renderSubmissions(weekGroups);
             } catch (error) {
                 console.error('❌ Error loading submissions:', error);
-                console.error('Error details:', error.code, error.message);
                 document.getElementById('submissionsList').innerHTML = 
-                    `<p style="text-align: center; color: red;">⚠️ שגיאה בטעינת נתונים: ${error.message}<br>קוד שגיאה: ${error.code || 'לא ידוע'}</p>`;
+                    `<p style="text-align: center; color: red;">⚠️ שגיאה: ${error.message}</p>`;
             }
         }
 
@@ -1617,11 +1599,8 @@
         function renderSubmissionCard(submission) {
             const date = new Date(submission.submittedAt);
             const dateStr = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
-            const isArchived = submission.archived || false;
             
-            // בדיקה שיש scheduleData
             if (!submission.scheduleData || !Array.isArray(submission.scheduleData)) {
-                console.error('❌ Invalid submission data:', submission);
                 return `
                     <div class="submission-card" style="border: 2px solid red;">
                         <div class="submission-header">
@@ -1639,20 +1618,17 @@
             }
             
             let html = `
-                <div class="submission-card" data-submission-id="${submission.id}" style="${isArchived ? 'opacity: 0.6; border: 2px dashed #9ca3af;' : ''}">
+                <div class="submission-card" data-submission-id="${submission.id}">
                     <div class="submission-header">
                         <div>
-                            <h3>${submission.studentName} ${isArchived ? '📦 (בארכיון)' : ''}</h3>
+                            <h3>${submission.studentName}</h3>
                             <div class="submission-date">נשלח: ${dateStr}</div>
                         </div>
-                        <div style="display: flex; gap: 8px;">
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                             <button class="btn btn-secondary btn-sm" onclick="renameStudent('${submission.id}', '${submission.studentName}')">✏️ שנה שם</button>
                             <button class="btn btn-secondary btn-sm" onclick="printSingleSchedule('${submission.id}')">🖨️ הדפס</button>
                             <button class="btn btn-secondary btn-sm" onclick="changeSubmissionWeek('${submission.id}', '${submission.weekDisplay}')">📅 שנה תאריכים</button>
-                            ${!isArchived ? 
-                                `<button class="btn btn-secondary btn-sm" onclick="archiveSubmission('${submission.id}')">📦 ארכיון</button>` : 
-                                `<button class="btn btn-primary btn-sm" onclick="unarchiveSubmission('${submission.id}')">📤 החזר מארכיון</button>`
-                            }
+                            <button class="btn btn-secondary btn-sm" onclick="archiveSubmission('${submission.id}')">📦 ארכיון</button>
                         </div>
                     </div>
                     <div style="overflow-x: auto;">
@@ -1746,32 +1722,31 @@
         }
 
         // ==============================================
-        // ARCHIVE AND RENAME FUNCTIONS
+        // ARCHIVE FUNCTIONS
         // ==============================================
         async function archiveSubmission(submissionId) {
-            if (!confirm('האם להעביר לוז זה לארכיון?')) return;
+            if (!confirm('האם להעביר לוז זה לארכיון?\nהלוז יוסר מהרשימה ולא יופיע בלוז כולל.')) return;
             if (!firebaseInitialized) return;
 
             try {
-                await db.ref(`submissions/${submissionId}/archived`).set(true);
-                showToast('הועבר לארכיון');
+                const snapshot = await db.ref(`submissions/${submissionId}`).once('value');
+                const data = snapshot.val();
+                if (!data) {
+                    showToast('לוז לא נמצא', 'danger');
+                    return;
+                }
+                
+                await db.ref(`archive/${submissionId}`).set({
+                    ...data,
+                    archivedAt: new Date().toISOString()
+                });
+                
+                await db.ref(`submissions/${submissionId}`).remove();
+                showToast('✅ הועבר לארכיון');
                 loadSubmissions();
             } catch (error) {
                 console.error('Error archiving:', error);
                 showToast('שגיאה בהעברה לארכיון', 'danger');
-            }
-        }
-
-        async function unarchiveSubmission(submissionId) {
-            if (!firebaseInitialized) return;
-
-            try {
-                await db.ref(`submissions/${submissionId}/archived`).set(false);
-                showToast('הוחזר מהארכיון');
-                loadSubmissions();
-            } catch (error) {
-                console.error('Error unarchiving:', error);
-                showToast('שגיאה בהחזרה מארכיון', 'danger');
             }
         }
 
@@ -1806,7 +1781,6 @@
         async function changeSubmissionWeek(submissionId, currentWeek) {
             if (!firebaseInitialized) return;
 
-            // בקשת תאריך התחלה חדש
             const startDateStr = prompt(
                 'הכנס תאריך התחלה של השבוע החדש (פורמט: DD/MM/YYYY)\nלדוגמה: 16/02/2025',
                 currentWeek.split(' - ')[0]
@@ -1814,7 +1788,6 @@
             
             if (!startDateStr) return;
 
-            // בדיקת פורמט
             const dateRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
             const match = startDateStr.match(dateRegex);
             
@@ -1826,14 +1799,12 @@
             const [, day, month, year] = match;
             const startDate = new Date(year, month - 1, day);
             
-            // בדיקה שזה יום ראשון
             if (startDate.getDay() !== 0) {
                 if (!confirm('התאריך שהזנת אינו יום ראשון. להמשיך בכל זאת?')) {
                     return;
                 }
             }
 
-            // חישוב תאריך סיום (שבת)
             const endDate = new Date(startDate);
             endDate.setDate(startDate.getDate() + 6);
 
@@ -1854,6 +1825,122 @@
             } catch (error) {
                 console.error('Error changing week:', error);
                 showToast('שגיאה בשינוי תאריכים', 'danger');
+            }
+        }
+
+        // ==============================================
+        // ARCHIVE TAB
+        // ==============================================
+        async function loadArchiveTab() {
+            if (!firebaseInitialized) {
+                document.getElementById('archiveList').innerHTML = 
+                    '<p style="text-align: center; color: red;">⚠️ Firebase לא מחובר</p>';
+                return;
+            }
+
+            try {
+                const snapshot = await db.ref('archive').once('value');
+                const archived = [];
+                
+                snapshot.forEach(childSnapshot => {
+                    archived.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+
+                archived.sort((a, b) => 
+                    new Date(b.archivedAt || b.submittedAt) - new Date(a.archivedAt || a.submittedAt)
+                );
+
+                const weekGroups = {};
+                archived.forEach(sub => {
+                    if (!weekGroups[sub.weekDisplay]) {
+                        weekGroups[sub.weekDisplay] = [];
+                    }
+                    weekGroups[sub.weekDisplay].push(sub);
+                });
+
+                renderArchiveList(weekGroups);
+            } catch (error) {
+                console.error('Error loading archive:', error);
+                document.getElementById('archiveList').innerHTML = 
+                    '<p style="text-align: center; color: red;">⚠️ שגיאה בטעינת ארכיון</p>';
+            }
+        }
+
+        function renderArchiveList(weekGroups) {
+            const container = document.getElementById('archiveList');
+            
+            if (Object.keys(weekGroups).length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">📦 הארכיון ריק</p>';
+                return;
+            }
+
+            let html = '';
+            
+            Object.keys(weekGroups).forEach(weekDisplay => {
+                html += `<div class="week-section">
+                    <div class="week-header">📦 שבוע: ${weekDisplay}</div>`;
+                
+                weekGroups[weekDisplay].forEach(submission => {
+                    const date = new Date(submission.archivedAt || submission.submittedAt);
+                    const dateStr = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+                    
+                    html += `
+                        <div class="submission-card" style="opacity: 0.85; border: 2px dashed #9ca3af;">
+                            <div class="submission-header">
+                                <div>
+                                    <h3>📦 ${submission.studentName}</h3>
+                                    <div class="submission-date">בארכיון: ${dateStr}</div>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-primary btn-sm" onclick="restoreFromArchive('${submission.id}')">📤 החזר</button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteFromArchive('${submission.id}')">🗑️ מחק</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        async function restoreFromArchive(submissionId) {
+            if (!firebaseInitialized) return;
+
+            try {
+                const snapshot = await db.ref(`archive/${submissionId}`).once('value');
+                const data = snapshot.val();
+                if (!data) return;
+
+                const { archivedAt, ...submissionData } = data;
+                
+                await db.ref(`submissions/${submissionId}`).set(submissionData);
+                await db.ref(`archive/${submissionId}`).remove();
+                
+                showToast('✅ הוחזר מהארכיון');
+                loadArchiveTab();
+            } catch (error) {
+                console.error('Error restoring:', error);
+                showToast('שגיאה', 'danger');
+            }
+        }
+
+        async function deleteFromArchive(submissionId) {
+            if (!confirm('למחוק לצמיתות מהארכיון?')) return;
+            if (!firebaseInitialized) return;
+
+            try {
+                await db.ref(`archive/${submissionId}`).remove();
+                showToast('נמחק');
+                loadArchiveTab();
+            } catch (error) {
+                console.error('Error deleting:', error);
+                showToast('שגיאה', 'danger');
             }
         }
 
@@ -2053,54 +2140,34 @@
         // COMBINED VIEW
         // ==============================================
         function togglePendingInCombined() {
-            console.log('🔄 Toggle pending - before:', showPendingInCombined);
             showPendingInCombined = !showPendingInCombined;
-            console.log('🔄 Toggle pending - after:', showPendingInCombined);
             
             const toggleBtn = document.getElementById('pendingToggleText');
             const indicator = document.getElementById('pendingStatusIndicator');
             
             if (toggleBtn) {
                 toggleBtn.textContent = showPendingInCombined ? '👁️‍🗨️ הסתר לא מאושרים' : '👁️ הצג לא מאושרים';
-                console.log('✅ Updated button text');
-            } else {
-                console.error('❌ pendingToggleText not found');
             }
             
-            // הצגה/הסתרת אינדיקטור
             if (indicator) {
                 indicator.style.display = showPendingInCombined ? 'block' : 'none';
-                console.log('✅ Updated indicator display:', showPendingInCombined ? 'visible' : 'hidden');
-            } else {
-                console.error('❌ pendingStatusIndicator not found');
             }
             
-            // רק אם יש שבוע נבחר
             const selectedWeek = document.getElementById('combinedWeekSelect').value;
-            console.log('📅 Selected week:', selectedWeek || 'none');
             
             if (selectedWeek) {
-                console.log('🔄 Reloading combined view...');
                 loadCombinedView();
             } else {
                 const msg = showPendingInCombined ? 'מצב: מציג גם לא מאושרים' : 'מצב: רק מאושרים';
-                console.log('ℹ️', msg);
                 showToast(msg);
             }
         }
 
         async function loadWeeksForCombinedView() {
-            if (!firebaseInitialized) {
-                console.error('❌ Cannot load weeks - Firebase not initialized');
-                return;
-            }
-
-            console.log('📥 Loading weeks for combined view...');
+            if (!firebaseInitialized) return;
 
             try {
                 const snapshot = await db.ref('submissions').once('value');
-                console.log('📊 Snapshot received:', snapshot.exists());
-                
                 const weeks = new Set();
                 
                 snapshot.forEach(childSnapshot => {
@@ -2110,13 +2177,8 @@
                     }
                 });
 
-                console.log('✅ Found', weeks.size, 'weeks');
-
                 const select = document.getElementById('combinedWeekSelect');
-                if (!select) {
-                    console.error('❌ combinedWeekSelect element not found');
-                    return;
-                }
+                if (!select) return;
                 
                 select.innerHTML = '<option value="">-- בחר שבוע --</option>';
                 
@@ -2124,12 +2186,7 @@
                     select.innerHTML += `<option value="${week}">${week}</option>`;
                 });
             } catch (error) {
-                console.error('❌ Error loading weeks:', error);
-                console.error('Error details:', error.code, error.message);
-                const select = document.getElementById('combinedWeekSelect');
-                if (select) {
-                    select.innerHTML = '<option value="">שגיאה בטעינה</option>';
-                }
+                console.error('Error loading weeks:', error);
             }
         }
 
@@ -2166,10 +2223,6 @@
         }
 
         function renderCombinedView(submissions) {
-            console.log('🎨 Rendering combined view...');
-            console.log('📊 Submissions count:', submissions.length);
-            console.log('👁️ Show pending:', showPendingInCombined);
-            
             const container = document.getElementById('combinedViewContent');
             
             if (submissions.length === 0) {
@@ -2177,22 +2230,14 @@
                 return;
             }
 
-            // Build a map of all entries (approved or pending based on toggle)
             const entriesMap = {};
-            let approvedCount = 0;
-            let pendingCount = 0;
             
             submissions.forEach(submission => {
-                // בדיקה שיש scheduleData
                 if (!submission.scheduleData || !Array.isArray(submission.scheduleData)) {
-                    console.warn('⚠️ Skipping submission with invalid scheduleData:', submission.studentName);
                     return;
                 }
                 
                 submission.scheduleData.forEach(entry => {
-                    if (entry.status === 'approved') approvedCount++;
-                    if (entry.status === 'pending') pendingCount++;
-                    
                     const shouldShow = showPendingInCombined ? 
                         (entry.status === 'approved' || entry.status === 'pending') : 
                         entry.status === 'approved';
@@ -2213,10 +2258,6 @@
                     }
                 });
             });
-            
-            console.log('✅ Approved entries:', approvedCount);
-            console.log('⏳ Pending entries:', pendingCount);
-            console.log('📍 Total entries shown:', Object.keys(entriesMap).length);
 
             let html = '<div style="overflow-x: auto;"><table class="schedule-table"><thead><tr><th>שעה</th>';
             scheduleStructure.days.forEach((day, idx) => {
@@ -2228,7 +2269,6 @@
             });
             html += '</tr></thead><tbody>';
 
-            // מיזוג שעות כפולות גם כאן
             const mergedTimes = [];
             const timeMap = new Map();
             
@@ -2249,7 +2289,6 @@
                     const key = `${dayIndex}-${firstIndex}`;
                     const entries = entriesMap[key];
                     
-                    // בדיקה אם יש שעה קבועה ביום הזה
                     const fixedSlot = scheduleStructure.times.find(s => 
                         s.time === time && s.type === 'fixed' && s.days && s.days.includes(dayIndex)
                     );
@@ -2266,7 +2305,7 @@
                             html += `<div class="location-group">
                                 <div class="location-name" style="${isPending ? 'color: #3b82f6; font-style: italic;' : ''}">${location}</div>`;
                             entries[location].forEach(student => {
-                                html += `<span class="student-tag">${student}</span>`;
+                                html += `<span class="student-tag" data-student="${student}">${student}</span>`;
                             });
                             html += '</div>';
                         });
@@ -2281,7 +2320,8 @@
 
             html += '</tbody></table></div>';
             container.innerHTML = html;
-            applyDynamicColors();
+            
+            setTimeout(applyDynamicColors, 100);
         }
 
         // ==============================================
@@ -2404,14 +2444,12 @@
             
             if (!timeInput) return;
             
-            // בדיקת פורמט
             const timeRegex = /^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/;
             if (!timeRegex.test(timeInput)) {
                 showToast('פורמט שעה לא תקין. השתמש ב-HH:MM (למשל 13:30)', 'danger');
                 return;
             }
             
-            // בדיקה אם השעה כבר קיימת
             const exists = scheduleStructure.times.some(slot => slot.time === timeInput);
             if (exists) {
                 showToast('השעה כבר קיימת', 'danger');
@@ -2423,8 +2461,6 @@
                 type: 'free'
             };
             scheduleStructure.times.push(newSlot);
-            
-            // Sort by time
             scheduleStructure.times.sort((a, b) => a.time.localeCompare(b.time));
             
             renderStructureEditor();
@@ -2467,90 +2503,19 @@
         }
 
         // ==============================================
-        // TOAST NOTIFICATIONS
+        // EXPORT TO GOOGLE CALENDAR
         // ==============================================
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            
-            // הסרת כל הקלאסים הקודמים
-            toast.className = 'toast';
-            
-            // הוספת קלאס לפי סוג
-            if (type === 'danger') {
-                toast.classList.add('danger');
-            }
-            
-            // הצגת ה-toast
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 10);
-            
-            // הסתרה אחרי 4 שניות
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
-        }
-
-        // ==============================================
-        // INITIALIZATION ON LOAD
-        // ==============================================
-        
-        // ========================================
-        // גרסה 2.0 - תכונות חדשות  
-        // ========================================
-
-        // 1. מיון שבועות מהחדש לישן
-        function sortWeeksByDate(weeksArray) {
-            return weeksArray.sort((a, b) => {
-                try {
-                    const [startA] = a.split(' - ');
-                    const [startB] = b.split(' - ');
-                    const [dayA, monthA, yearA] = startA.split('/').map(Number);
-                    const [dayB, monthB, yearB] = startB.split('/').map(Number);
-                    const dateA = new Date(yearA, monthA - 1, dayA);
-                    const dateB = new Date(yearB, monthB - 1, dayB);
-                    return dateB - dateA;
-                } catch (e) {
-                    return 0;
-                }
-            });
-        }
-
-        // 2. ארכיון אמיתי
-        archiveSubmission = async function(submissionId) {
-            if (!confirm('האם להעביר לוז זה לארכיון?\nהלוז יוסר מהרשימה ולא יופיע בלוז כולל.')) return;
-            if (!firebaseInitialized) return;
-            try {
-                const snapshot = await db.ref(`submissions/${submissionId}`).once('value');
-                const data = snapshot.val();
-                if (!data) {
-                    showToast('לוז לא נמצא', 'danger');
-                    return;
-                }
-                await db.ref(`archive/${submissionId}`).set({
-                    ...data,
-                    archivedAt: new Date().toISOString()
-                });
-                await db.ref(`submissions/${submissionId}`).remove();
-                showToast('✅ הועבר לארכיון');
-                loadSubmissions();
-            } catch (error) {
-                console.error('Error archiving:', error);
-                showToast('שגיאה בהעברה לארכיון', 'danger');
-            }
-        };
-
-        // 3. ייצוא ליומן Google (ICS)
         async function exportToGoogleCalendar() {
             const selectedWeek = document.getElementById('combinedWeekSelect').value;
             if (!selectedWeek) {
                 showToast('אנא בחר שבוע תחילה', 'danger');
                 return;
             }
+
             try {
                 const snapshot = await db.ref('submissions').once('value');
                 const events = [];
+                
                 snapshot.forEach(childSnapshot => {
                     const submission = childSnapshot.val();
                     if (submission.weekDisplay === selectedWeek && submission.scheduleData) {
@@ -2567,6 +2532,7 @@
                         });
                     }
                 });
+
                 if (events.length === 0) {
                     showToast('אין אירועים מאושרים לייצוא', 'danger');
                     return;
@@ -2579,17 +2545,24 @@ CALNAME:לוז שבועי - ${selectedWeek}
 X-WR-CALNAME:לוז שבועי - ${selectedWeek}
 X-WR-TIMEZONE:Asia/Jerusalem
 `;
+
                 events.forEach((event, index) => {
                     const weekStartDate = new Date(event.weekStart);
                     const eventDate = new Date(weekStartDate);
                     eventDate.setDate(weekStartDate.getDate() + event.day);
+                    
                     const timeSlot = scheduleStructure.times[event.time];
                     if (!timeSlot) return;
+                    
                     const [hours, minutes] = timeSlot.time.split(':');
                     eventDate.setHours(parseInt(hours), parseInt(minutes), 0);
+                    
                     const endDate = new Date(eventDate);
                     endDate.setHours(eventDate.getHours() + 1);
-                    const formatDateForICS = (date) => date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+                    
+                    const formatDateForICS = (date) => 
+                        date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+                    
                     icsContent += `BEGIN:VEVENT
 UID:${Date.now()}-${index}@beit-dror.hostel
 DTSTAMP:${formatDateForICS(new Date())}
@@ -2602,7 +2575,9 @@ STATUS:CONFIRMED
 END:VEVENT
 `;
                 });
+
                 icsContent += 'END:VCALENDAR';
+                
                 const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
@@ -2610,6 +2585,7 @@ END:VEVENT
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                
                 showToast(`✅ ${events.length} אירועים יוצאו! פתח את הקובץ ביומן Google`);
             } catch (error) {
                 console.error('Error exporting:', error);
@@ -2617,13 +2593,16 @@ END:VEVENT
             }
         }
 
-        // 4. הדפסת לוז בודד
+        // ==============================================
+        // PRINT FUNCTIONS
+        // ==============================================
         function printSingleSchedule(submissionId) {
             const card = document.querySelector(`[data-submission-id="${submissionId}"]`);
             if (!card) {
                 window.print();
                 return;
             }
+
             const printWindow = window.open('', '', 'height=600,width=800');
             printWindow.document.write('<html><head><title>הדפסת לוז</title>');
             printWindow.document.write('<style>');
@@ -2637,177 +2616,58 @@ END:VEVENT
             printWindow.print();
         }
 
-        // 5. הדפסת לוז כולל
         function printCombinedSchedule() {
             window.print();
         }
 
-        // 6. Auto-grow textarea
+        // ==============================================
+        // UTILITIES
+        // ==============================================
         function autoGrowTextarea(element) {
             element.style.height = 'auto';
             element.style.height = element.scrollHeight + 'px';
         }
 
-        
-        // צבעים דינמיים לפי hash של השם
-        const COLORS = [
-            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', // סגול
-            'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', // ורוד-אדום
-            'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', // כחול בהיר
-            'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', // ירוק-טורקיז
-            'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', // ורוד-צהוב
-            'linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%)', // אדום כהה
-            'linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%)', // סגול בהיר
-            'linear-gradient(135deg, #fd79a8 0%, #e84393 100%)', // ורוד פוקסיה
-            'linear-gradient(135deg, #fdcb6e 0%, #e17055 100%)', // כתום
-            'linear-gradient(135deg, #00b894 0%, #00cec9 100%)', // טורקיז
-            'linear-gradient(135deg, #0984e3 0%, #3498db 100%)', // כחול
-            'linear-gradient(135deg, #e17055 0%, #d63031 100%)', // אדום-כתום
-            'linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%)', // סגול לילך
-            'linear-gradient(135deg, #00b894 0%, #55efc4 100%)', // ירוק בהיר
-            'linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%)'  // ורוד-צהוב בהיר
-        ];
-
-        function getColorForName(name) {
-            let hash = 0;
-            for (let i = 0; i < name.length; i++) {
-                hash = ((hash << 5) - hash) + name.charCodeAt(i);
-                hash = hash & hash;
-            }
-            return COLORS[Math.abs(hash) % COLORS.length];
-        }
-
-        function applyDynamicColors() {
-            document.querySelectorAll('.student-tag').forEach(tag => {
-                const name = tag.textContent.trim();
-                tag.style.background = getColorForName(name);
-            });
-        }
-
-        // טעינת ארכיון
-        async function loadArchiveTab() {
-            if (!firebaseInitialized) {
-                document.getElementById('archiveList').innerHTML = '<p style="text-align: center; color: red;">⚠️ Firebase לא מחובר</p>';
-                return;
-            }
-            try {
-                const snapshot = await db.ref('archive').once('value');
-                const archived = [];
-                snapshot.forEach(childSnapshot => {
-                    archived.push({
-                        id: childSnapshot.key,
-                        ...childSnapshot.val()
-                    });
-                });
-                archived.sort((a, b) => new Date(b.archivedAt || b.submittedAt) - new Date(a.archivedAt || a.submittedAt));
-                const weekGroups = {};
-                archived.forEach(sub => {
-                    if (!weekGroups[sub.weekDisplay]) {
-                        weekGroups[sub.weekDisplay] = [];
-                    }
-                    weekGroups[sub.weekDisplay].push(sub);
-                });
-                renderArchiveList(weekGroups);
-            } catch (error) {
-                console.error('Error loading archive:', error);
-                document.getElementById('archiveList').innerHTML = '<p style="text-align: center; color: red;">⚠️ שגיאה</p>';
-            }
-        }
-
-        function renderArchiveList(weekGroups) {
-            const container = document.getElementById('archiveList');
-            if (Object.keys(weekGroups).length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">📦 הארכיון ריק</p>';
-                return;
-            }
-            let html = '';
-            Object.keys(weekGroups).forEach(weekDisplay => {
-                html += `<div class="week-section"><div class="week-header">📦 ${weekDisplay}</div>`;
-                weekGroups[weekDisplay].forEach(submission => {
-                    const date = new Date(submission.archivedAt || submission.submittedAt);
-                    const dateStr = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-                    html += `
-                        <div class="submission-card" style="opacity: 0.85; border: 2px dashed #9ca3af;">
-                            <div class="submission-header">
-                                <div>
-                                    <h3>📦 ${submission.studentName}</h3>
-                                    <div class="submission-date">בארכיון: ${dateStr}</div>
-                                </div>
-                                <div style="display: flex; gap: 8px;">
-                                    <button class="btn btn-primary btn-sm" onclick="restoreFromArchive('${submission.id}')">📤 החזר</button>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteFromArchive('${submission.id}')">🗑️ מחק</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                html += '</div>';
-            });
-            container.innerHTML = html;
-        }
-
-        async function restoreFromArchive(submissionId) {
-            if (!firebaseInitialized) return;
-            try {
-                const snapshot = await db.ref(`archive/${submissionId}`).once('value');
-                const data = snapshot.val();
-                if (!data) return;
-                const { archivedAt, ...submissionData } = data;
-                await db.ref(`submissions/${submissionId}`).set(submissionData);
-                await db.ref(`archive/${submissionId}`).remove();
-                showToast('✅ הוחזר מהארכיון');
-                loadArchiveTab();
-            } catch (error) {
-                showToast('שגיאה', 'danger');
-            }
-        }
-
-        async function deleteFromArchive(submissionId) {
-            if (!confirm('למחוק לצמיתות?')) return;
-            if (!firebaseInitialized) return;
-            try {
-                await db.ref(`archive/${submissionId}`).remove();
-                showToast('נמחק');
-                loadArchiveTab();
-            } catch (error) {
-                showToast('שגיאה', 'danger');
-            }
-        }
-
-        
-        console.log('✅ גרסה 2.1 FIXED נטענה בהצלחה! (15/02/2026)');
-        applyDynamicColors();
-
-        
-        
-        // MutationObserver - יריץ צבעים אוטומטית
-        if (typeof MutationObserver !== 'undefined') {
-            const observer = new MutationObserver((mutations) => {
-                let shouldApplyColors = false;
-                mutations.forEach((mutation) => {
-                    if (mutation.addedNodes.length > 0) {
-                        mutation.addedNodes.forEach((node) => {
-                            if (node.classList && node.classList.contains('student-tag')) {
-                                shouldApplyColors = true;
-                            }
-                        });
-                    }
-                });
-                if (shouldApplyColors) {
-                    setTimeout(applyDynamicColors, 100);
+        function sortWeeksByDate(weeksArray) {
+            return weeksArray.sort((a, b) => {
+                try {
+                    const [startA] = a.split(' - ');
+                    const [startB] = b.split(' - ');
+                    const [dayA, monthA, yearA] = startA.split('/').map(Number);
+                    const [dayB, monthB, yearB] = startB.split('/').map(Number);
+                    const dateA = new Date(yearA, monthA - 1, dayA);
+                    const dateB = new Date(yearB, monthB - 1, dayB);
+                    return dateB - dateA;
+                } catch (e) {
+                    return 0;
                 }
             });
-            
-            // עקוב אחרי כל המסמך
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-            
-            console.log('✅ Color observer פעיל');
         }
-        
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast';
+            
+            if (type === 'danger') {
+                toast.classList.add('danger');
+            }
+            
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // ==============================================
+        // INITIALIZATION ON LOAD
+        // ==============================================
         window.addEventListener('DOMContentLoaded', initializeApp);
+
+        console.log('✅ גרסה 2.2 FIXED נטענה! (15/02/2026 - תיקון צבעים + sticky headers + כפתור ארכיון)');
     </script>
 </body>
 </html>
