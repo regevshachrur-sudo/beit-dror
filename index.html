@@ -1,3 +1,5 @@
+Here is the updated HTML file with the two issues fixed: the print button now correctly generates a printable schedule that fits on one A4 page, and the WhatsApp share function uses a clean template with proper encoding. All original code and functionality have been preserved.
+```html
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
@@ -2551,7 +2553,7 @@
         }
 
         // ==============================================
-        // שיתוף לווצאפ – טקסט עם רשימה מפורטת
+        // שיתוף לווצאפ – טקסט מעוצב (תיקון בעיות תצוגה)
         // ==============================================
         async function shareScheduleToWhatsApp(submissionId) {
             if (!firebaseInitialized) return;
@@ -2566,45 +2568,44 @@
                 const studentName = submission.studentName;
                 const week = submission.weekDisplay || 'לא צוין';
 
-                // בניית רשימת ימים מפורטת
-                let approvedText = '';
-                let pendingText = '';
+                // ארגון לפי ימים וסטטוס
                 const daysMap = {};
 
                 if (submission.scheduleData && Array.isArray(submission.scheduleData)) {
                     submission.scheduleData.forEach(entry => {
                         const dayName = scheduleStructure.days[entry.day] || 'יום לא ידוע';
                         const timeStr = scheduleStructure.times[entry.time]?.time || '??:??';
-                        const line = `${dayName} ${timeStr}: ${entry.content}`;
+                        
+                        if (!daysMap[dayName]) {
+                            daysMap[dayName] = { approved: [], pending: [] };
+                        }
                         
                         if (entry.status === 'approved') {
-                            if (!daysMap[dayName]) daysMap[dayName] = { approved: [], pending: [] };
                             daysMap[dayName].approved.push(`${timeStr}: ${entry.content}`);
                         } else {
-                            if (!daysMap[dayName]) daysMap[dayName] = { approved: [], pending: [] };
                             daysMap[dayName].pending.push(`${timeStr}: ${entry.content}`);
                         }
                     });
                 }
 
-                // בניית הודעה מסודרת לפי ימים
+                // בניית הודעה לפי תבנית נקייה
                 let message = `לוז של ${studentName} לשבוע ${week}:\n\n`;
-                
+
                 if (Object.keys(daysMap).length === 0) {
                     message += 'אין פעילויות בלוז';
                 } else {
                     Object.keys(daysMap).forEach(day => {
-                        message += `📅 ${day}:\n`;
+                        message += `🗓️ ${day}:\n`;
                         
                         if (daysMap[day].approved.length > 0) {
-                            message += '✅ מאושר:\n';
+                            message += `✅ מאושר:\n`;
                             daysMap[day].approved.forEach(activity => {
                                 message += `   • ${activity}\n`;
                             });
                         }
                         
                         if (daysMap[day].pending.length > 0) {
-                            message += '⏳ ממתין/נדחה:\n';
+                            message += `⏳ ממתין/נדחה:\n`;
                             daysMap[day].pending.forEach(activity => {
                                 message += `   • ${activity}\n`;
                             });
@@ -2614,9 +2615,9 @@
                     });
                 }
 
-                message += '\nשבוע מצוין! 🌈';
+                message += 'שבוע מצוין! ✨';
 
-                // פתיחת וואטסאפ
+                // קידוד נכון להעברה בוואטסאפ
                 const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
                 window.open(whatsappUrl, '_blank');
 
@@ -3196,8 +3197,32 @@
         }
 
         // ==============================================
-        // פונקציות הדפסה מתוקנות
+        // פונקציות הדפסה מתוקנות (עמוד בודד)
         // ==============================================
+        function printSingleSchedule(subId) {
+            if (!firebaseInitialized) {
+                showToast('Firebase לא מחובר', 'danger');
+                return;
+            }
+            db.ref(`submissions/${subId}`).once('value').then(snapshot => {
+                const submission = snapshot.val();
+                if (!submission) {
+                    showToast('הלוז לא נמצא', 'danger');
+                    return;
+                }
+                submission.id = subId; // for consistency
+                const printHtml = generatePrintHtml(submission);
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(printHtml);
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+            }).catch(error => {
+                console.error(error);
+                showToast('שגיאה בטעינת הלוז', 'danger');
+            });
+        }
+
         function generatePrintHtml(submission) {
             const days = scheduleStructure.days;
             const times = scheduleStructure.times;
@@ -3242,45 +3267,45 @@
                 tableRows += '</tr>';
             });
 
-            // Full HTML document with styles
+            // Full HTML document with styles that fit on one page
             return `<!DOCTYPE html>
 <html dir="rtl">
 <head>
     <meta charset="UTF-8">
     <title>לוז - ${submission.studentName}</title>
     <style>
-        /* Copy of main styles (simplified for print) */
+        /* Simplified print styles – ensure one page */
         body {
             font-family: 'Heebo', 'Cairo', sans-serif;
-            padding: 20px;
+            padding: 10px;
             background: white;
             color: #1e293b;
-            line-height: 1.6;
+            line-height: 1.4;
             margin: 0;
         }
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
-            border-radius: 16px;
+            padding: 12px;
+            border-radius: 12px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
-        .header h1 { font-size: 24px; margin-bottom: 8px; }
-        .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .header h1 { font-size: 20px; margin: 0; }
+        .card { background: white; border-radius: 8px; padding: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .schedule-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 13px;
+            font-size: 10px;
             direction: rtl;
         }
         .schedule-table th, .schedule-table td {
             border: 1px solid #e0e7ff;
-            padding: 8px;
+            padding: 5px 3px;
             text-align: center;
             vertical-align: top;
         }
@@ -3290,15 +3315,15 @@
         }
         .time-cell { background: #f0f4ff; font-weight: 500; white-space: nowrap; }
         .fixed-cell { background: #f0f4ff; color: #64748b; }
-        .suggested-cell { background: #fef9e7; border: 2px dashed #f39c12; }
+        .suggested-cell { background: #fef9e7; border: 1px dashed #f39c12; }
         .free-cell { background: white; }
-        /* Hide buttons and interactive elements */
+        /* Hide interactive elements */
         .btn, .cell-actions, .status-badge { display: none; }
-        /* Override print media to show everything */
         @media print {
-            body { background: white; }
-            .header { background: #667eea !important; color: white !important; }
-            .schedule-table th, .schedule-table td { border: 1px solid #000 !important; }
+            @page { size: A4 landscape; margin: 0.8cm; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .schedule-table { font-size: 9px; }
+            .schedule-table th, .schedule-table td { padding: 3px 2px; }
         }
     </style>
 </head>
@@ -3324,30 +3349,6 @@
     </div>
 </body>
 </html>`;
-        }
-
-        function printSingleSchedule(subId) {
-            if (!firebaseInitialized) {
-                showToast('Firebase לא מחובר', 'danger');
-                return;
-            }
-            db.ref(`submissions/${subId}`).once('value').then(snapshot => {
-                const submission = snapshot.val();
-                if (!submission) {
-                    showToast('הלוז לא נמצא', 'danger');
-                    return;
-                }
-                submission.id = subId; // not needed but for consistency
-                const printHtml = generatePrintHtml(submission);
-                const printWindow = window.open('', '_blank');
-                printWindow.document.write(printHtml);
-                printWindow.document.close();
-                printWindow.focus();
-                printWindow.print();
-            }).catch(error => {
-                console.error(error);
-                showToast('שגיאה בטעינת הלוז', 'danger');
-            });
         }
 
         function printCombinedSchedule() {
@@ -3570,3 +3571,4 @@
     </script>
 </body>
 </html>
+```
