@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת לוז דיגיטלית - بيت درور - بيت דרור🏳️‍🌈</title>
+    <title>📅מערכת לוז בית דרור - الجدول الرقمي لبيت درور🏳️‍🌈</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -2568,10 +2568,10 @@
                 }
 
                 // בניית הודעה מעוצבת עם "אימוג'ים" מתווי מקלדת
-                let message = `━━━━━━━━━━━━━━━━━━━━\n`;
+                let message = `━━━━━━━━━━━━━━━━\n`;
                 message += `   לוז של ${studentName}\n`;
                 message += `   ${week}\n`;
-                message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+                message += `━━━━━━━━━━━━━━━━\n\n`;
 
                 if (Object.keys(daysMap).length === 0) {
                     message += 'אין פעילויות בלוז';
@@ -2588,7 +2588,7 @@
                         
                         if (daysMap[day].pending.length > 0) {
                             daysMap[day].pending.forEach(activity => {
-                                message += `  ◯ ${activity} (ממתין)\n`;
+                                message += `  ◯ ${activity} (ממתין/לא מאושר)\n`;
                             });
                         }
                         
@@ -2596,7 +2596,7 @@
                     });
                 }
 
-                message += `━━━━━━━━━━━━━━━━━━━━\n`;
+                message += `━━━━━━━━━━━━━━━━\n`;
                 message += 'שבוע מעולה! (:';
 
                 // קידוד מלא ונכון של המסר כולל תווי RTL והטקסט בעברית
