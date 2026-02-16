@@ -2567,31 +2567,28 @@
                     });
                 }
 
-                // בניית הודעה לפי תבנית נקייה - שימוש באימוג'ים UTF-8 סטנדרטיים
-                let message = `לוז של ${studentName} לשבוע ${week}:\n\n`;
+                // בניית הודעה מעוצבת עם "אימוג'ים" מתווי מקלדת
+                let message = `━━━━━━━━━━━━━━━━━━━━\n`;
+                message += `   לוז של ${studentName}\n`;
+                message += `   ${week}\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
 
                 if (Object.keys(daysMap).length === 0) {
                     message += 'אין פעילויות בלוז';
                 } else {
                     Object.keys(daysMap).forEach(day => {
-                        message += `[${day}]
-`;
+                        message += `▪ יום ${day}\n`;
+                        message += `━━━━━━━━━━━\n`;
                         
                         if (daysMap[day].approved.length > 0) {
-                            message += `[V] מאושר:
-`;
                             daysMap[day].approved.forEach(activity => {
-                                message += `  * ${activity}
-`;
+                                message += `  ✓ ${activity}\n`;
                             });
                         }
                         
                         if (daysMap[day].pending.length > 0) {
-                            message += `[...] ממתין/נדחה:
-`;
                             daysMap[day].pending.forEach(activity => {
-                                message += `  * ${activity}
-`;
+                                message += `  ◯ ${activity} (ממתין)\n`;
                             });
                         }
                         
@@ -2599,7 +2596,8 @@
                     });
                 }
 
-                message += 'שבוע מצוין! :)';
+                message += `━━━━━━━━━━━━━━━━━━━━\n`;
+                message += 'שבוע מעולה! (:';
 
                 // קידוד מלא ונכון של המסר כולל תווי RTL והטקסט בעברית
                 const encodedMessage = encodeURIComponent(message);
