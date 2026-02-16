@@ -1683,6 +1683,33 @@
             } else {
                 delete studentScheduleData[key];
             }
+            
+            // עדכון lastStudentSubmission עם הנתונים הנוכחיים
+            if (Object.keys(studentScheduleData).length > 0) {
+                const studentName = document.getElementById('studentName').value.trim();
+                if (studentName) {
+                    const scheduleArray = Object.keys(studentScheduleData).map(k => {
+                        const [d, t] = k.split('-').map(Number);
+                        return {
+                            day: d,
+                            time: t,
+                            content: studentScheduleData[k],
+                            status: 'pending',
+                            submittedAt: new Date().toISOString(),
+                            entryId: `${Date.now()}-${Math.random()}`
+                        };
+                    });
+                    lastStudentSubmission = {
+                        studentName: studentName,
+                        weekDisplay: currentWeek.display,
+                        scheduleData: scheduleArray
+                    };
+                    
+                    // הצגת כפתור הורדה אם יש נתונים
+                    const saveButton = document.getElementById('studentSaveButton');
+                    if (saveButton) saveButton.style.display = 'block';
+                }
+            }
         }
 
         // ==============================================
@@ -1713,9 +1740,35 @@
                 const draft = JSON.parse(draftJson);
                 document.getElementById('studentName').value = draft.name;
                 studentScheduleData = draft.data || {};
+                
+                // עדכון lastStudentSubmission מהדרפט
+                if (draft.data && Object.keys(draft.data).length > 0) {
+                    const scheduleArray = Object.keys(draft.data).map(key => {
+                        const [day, time] = key.split('-').map(Number);
+                        return {
+                            day,
+                            time,
+                            content: draft.data[key],
+                            status: 'pending',
+                            submittedAt: new Date().toISOString(),
+                            entryId: `${Date.now()}-${Math.random()}`
+                        };
+                    });
+                    lastStudentSubmission = {
+                        studentName: draft.name,
+                        weekDisplay: draft.week,
+                        scheduleData: scheduleArray
+                    };
+                    
+                    // הצגת כפתור הורדה
+                    const saveButton = document.getElementById('studentSaveButton');
+                    if (saveButton) saveButton.style.display = 'block';
+                }
+                
                 renderStudentSchedule();
                 showToast('לוז נטען בהצלחה');
             } catch (e) {
+                console.error('Error loading draft:', e);
                 showToast('שגיאה בטעינת הלוז', 'danger');
             }
         }
@@ -1822,7 +1875,7 @@
                 return;
             }
 
-            const scheduleArray = Object.keys(studentScheduleData).map(key => {
+            const scheduleArray = Object.keys(studentScheduleData).map((key, index) => {
                 const [day, time] = key.split('-').map(Number);
                 return {
                     day,
@@ -1830,7 +1883,7 @@
                     content: studentScheduleData[key],
                     status: 'pending',
                     submittedAt: new Date().toISOString(),
-                    entryId: `${Date.now()}-${Math.random()}` // מזהה ייחודי
+                    entryId: `${Date.now()}-${index}-${Math.random()}` // מזהה ייחודי
                 };
             });
 
@@ -1986,6 +2039,27 @@
                 `;
             }
             
+            // וידוא שכל ה-entries יש להם entryId ייחודי
+            let needsUpdate = false;
+            const updatedScheduleData = submission.scheduleData.map((entry, idx) => {
+                if (!entry.entryId) {
+                    needsUpdate = true;
+                    return {
+                        ...entry,
+                        entryId: `${entry.day}-${entry.time}-${entry.submittedAt || submission.submittedAt || Date.now()}-${idx}-${Math.random().toString(36).substr(2, 9)}`
+                    };
+                }
+                return entry;
+            });
+            
+            // אם עדכנו entries, נשמור את זה ב-Firebase
+            if (needsUpdate && firebaseInitialized) {
+                db.ref(`submissions/${submission.id}/scheduleData`).set(updatedScheduleData).catch(err => {
+                    console.error('Error updating entryIds:', err);
+                });
+                submission.scheduleData = updatedScheduleData;
+            }
+            
             const sortedEntries = [...submission.scheduleData].sort((a, b) => 
                 new Date(a.submittedAt || submission.submittedAt) - new Date(b.submittedAt || submission.submittedAt)
             );
@@ -2032,14 +2106,22 @@
                         html += `<td class="fixed-cell">${timeSlot.content}</td>`;
                     } else if (entries.length > 0) {
                         html += `<td class="free-cell">`;
-                        entries.forEach(entry => {
+                        entries.forEach((entry, entryIdx) => {
                             const isNew = entry.submittedAt && submission.mergedSubmissions && 
                                           submission.mergedSubmissions.length > 0 &&
                                           new Date(entry.submittedAt) > new Date(submission.submittedAt);
                             const mergedClass = entry.isMergedNew ? ' merged-new-cell' : '';
                             const newClass = isNew ? ' entry-new' : '';
-                            // וידוא שיש entryId - אם לא, יצירת אחד
-                            const entryId = entry.entryId || `${entry.day}-${entry.time}-${entry.submittedAt || Date.now()}`;
+                            // וידוא שיש entryId ייחודי - אם לא, יצירת אחד ייחודי
+                            // בלוז ממוזג יכול להיות כמה אינטריות באותו יום ושעה, אז נוסיף אינדקס
+                            // חשוב: אם אין entryId, ניצור אחד ונשמור אותו בנתונים
+                            let entryId = entry.entryId;
+                            if (!entryId) {
+                                // יצירת entryId ייחודי עם timestamp ו-random string
+                                entryId = `${entry.day}-${entry.time}-${entry.submittedAt || Date.now()}-${entryIdx}-${Math.random().toString(36).substr(2, 9)}`;
+                                // עדכון entryId בנתונים (אבל רק אם זה לא בלוז ממוזג גדול מדי)
+                                // נשמור את זה רק אם זה entry חדש
+                            }
                             html += `
                                 <div class="cell-content${newClass}${mergedClass}">
                                     <input type="text" 
@@ -2087,32 +2169,90 @@
             try {
                 const snapshot = await db.ref(`submissions/${subId}`).once('value');
                 const sub = snapshot.val();
-                if (!sub || !sub.scheduleData) {
+                if (!sub || !sub.scheduleData || !Array.isArray(sub.scheduleData)) {
                     showToast('שגיאה: נתונים לא תקינים', 'danger');
                     return;
                 }
                 
                 // מציאת האינדקס של האינטריה לעדכון
-                const entryIndex = sub.scheduleData.findIndex(e => 
-                    e.entryId === entryId || 
-                    (e.entryId === undefined && `${e.day}-${e.time}` === entryId)
-                );
+                // בלוז ממוזג יכול להיות כמה אינטריות באותו יום ושעה, אבל כל אחת עם entryId ייחודי
+                let entryIndex = sub.scheduleData.findIndex(e => e.entryId === entryId);
+                
+                // אם לא נמצא לפי entryId מדויק, ננסה לפי day-time (backward compatibility)
+                if (entryIndex === -1) {
+                    // נסה לפרק את entryId אם הוא בפורמט day-time-...
+                    const parts = entryId.split('-');
+                    if (parts.length >= 2) {
+                        const day = parseInt(parts[0]);
+                        const time = parseInt(parts[1]);
+                        if (!isNaN(day) && !isNaN(time)) {
+                            // נחפש את האינטריה הראשונה עם day ו-time תואמים
+                            // אבל רק אם אין לה entryId או שה-entryId תואם חלקית
+                            entryIndex = sub.scheduleData.findIndex(e => {
+                                if (e.day === day && e.time === time) {
+                                    // אם יש entryId תואם או אין entryId בכלל
+                                    return e.entryId === entryId || 
+                                           (!e.entryId && entryId.startsWith(`${day}-${time}-`)) ||
+                                           (e.entryId && entryId.includes(e.entryId));
+                                }
+                                return false;
+                            });
+                        }
+                    }
+                }
+                
+                // אם עדיין לא נמצא, נחפש לפי day-time בלבד (fallback אחרון)
+                if (entryIndex === -1) {
+                    const parts = entryId.split('-');
+                    if (parts.length >= 2) {
+                        const day = parseInt(parts[0]);
+                        const time = parseInt(parts[1]);
+                        if (!isNaN(day) && !isNaN(time)) {
+                            // מצא את האינטריה הראשונה עם day ו-time תואמים ללא entryId
+                            entryIndex = sub.scheduleData.findIndex(e => 
+                                e.day === day && e.time === time && !e.entryId
+                            );
+                        }
+                    }
+                }
                 
                 if (entryIndex === -1) {
-                    showToast('שגיאה: פעילות לא נמצאה', 'danger');
+                    console.error('Entry not found:', { 
+                        entryId, 
+                        scheduleDataLength: sub.scheduleData.length,
+                        sampleEntries: sub.scheduleData.slice(0, 3).map(e => ({ 
+                            day: e.day, 
+                            time: e.time, 
+                            entryId: e.entryId,
+                            content: e.content?.substring(0, 20)
+                        }))
+                    });
+                    showToast('שגיאה: פעילות לא נמצאה. נסה לרענן את הדף.', 'danger');
                     return;
                 }
                 
-                const updated = sub.scheduleData.map((e, idx) => 
-                    idx === entryIndex ? { ...e, status, entryId: e.entryId || entryId } : e
-                );
+                // עדכון הסטטוס ושמירת entryId אם חסר
+                const updated = sub.scheduleData.map((e, idx) => {
+                    if (idx === entryIndex) {
+                        const updatedEntry = { 
+                            ...e, 
+                            status: status
+                        };
+                        // שמירה על entryId קיים או שמירת ה-entryId שנשלח
+                        if (!updatedEntry.entryId) {
+                            updatedEntry.entryId = entryId;
+                        }
+                        return updatedEntry;
+                    }
+                    return e;
+                });
                 
                 await db.ref(`submissions/${subId}/scheduleData`).set(updated);
                 showToast('עודכן בהצלחה');
                 loadSubmissions();
             } catch (error) {
                 console.error('Error updating status:', error);
-                showToast('שגיאה בעדכון', 'danger');
+                showToast('שגיאה בעדכון: ' + (error.message || 'שגיאה לא ידועה'), 'danger');
             }
         }
 
@@ -3063,22 +3203,91 @@
         }
 
         async function downloadStudentCopy() {
-            if (!lastStudentSubmission || !lastStudentSubmission.scheduleData) {
-                showToast('אין לוז לשמור עדיין', 'danger');
+            // נסה לטעון מהלוקל סטורג' אם אין lastStudentSubmission
+            if (!lastStudentSubmission) {
+                const draftJson = localStorage.getItem('studentDraft');
+                if (draftJson) {
+                    try {
+                        const draft = JSON.parse(draftJson);
+                        // יצירת submission מהדרפט
+                        const scheduleArray = Object.keys(draft.data || {}).map(key => {
+                            const [day, time] = key.split('-').map(Number);
+                            return {
+                                day,
+                                time,
+                                content: draft.data[key],
+                                status: 'pending',
+                                submittedAt: new Date().toISOString(),
+                                entryId: `${Date.now()}-${Math.random()}`
+                            };
+                        });
+                        lastStudentSubmission = {
+                            studentName: draft.name,
+                            weekDisplay: draft.week,
+                            scheduleData: scheduleArray
+                        };
+                    } catch (e) {
+                        console.error('Error loading draft:', e);
+                    }
+                }
+            }
+
+            if (!lastStudentSubmission || !lastStudentSubmission.scheduleData || lastStudentSubmission.scheduleData.length === 0) {
+                showToast('אין לוז לשמור. יש למלא לוז ולשלוח אותו קודם.', 'danger');
                 return;
             }
+
             try {
-                const blob = await generateSchedulePdfBlob(lastStudentSubmission);
-                const fileName = `לוז-${lastStudentSubmission.studentName}-${(lastStudentSubmission.weekDisplay || '').replace(/[/\s]/g, '-')}.pdf`;
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = fileName;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                // נסה ליצור PDF אם הספרייה זמינה
+                if (window.jspdf && window.jspdf.jsPDF) {
+                    const blob = await generateSchedulePdfBlob(lastStudentSubmission);
+                    const fileName = `לוז-${lastStudentSubmission.studentName || 'לוז'}-${(lastStudentSubmission.weekDisplay || '').replace(/[/\s]/g, '-') || 'ללא-תאריך'}.pdf`;
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(() => {
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(link.href);
+                    }, 100);
+                    showToast('הלוז נשמר בהצלחה');
+                } else {
+                    // אם אין PDF, צור קובץ טקסט
+                    let textContent = `לוז שבועי - ${lastStudentSubmission.studentName || 'ללא שם'}\n`;
+                    textContent += `שבוע: ${lastStudentSubmission.weekDisplay || 'לא צוין'}\n\n`;
+                    
+                    const days = scheduleStructure.days || [];
+                    const times = scheduleStructure.times || [];
+                    
+                    const sortedEntries = lastStudentSubmission.scheduleData.slice().sort((a, b) => {
+                        if (a.day !== b.day) return a.day - b.day;
+                        return a.time - b.time;
+                    });
+
+                    sortedEntries.forEach(entry => {
+                        const dayName = days[entry.day] || 'יום לא ידוע';
+                        const timeSlot = times[entry.time] || {};
+                        const timeLabel = timeSlot.time || '';
+                        textContent += `${dayName} ${timeLabel}: ${entry.content}\n`;
+                    });
+
+                    const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+                    const fileName = `לוז-${lastStudentSubmission.studentName || 'לוז'}-${(lastStudentSubmission.weekDisplay || '').replace(/[/\s]/g, '-') || 'ללא-תאריך'}.txt`;
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = fileName;
+                    document.body.appendChild(link);
+                    link.click();
+                    setTimeout(() => {
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(link.href);
+                    }, 100);
+                    showToast('הלוז נשמר כקובץ טקסט');
+                }
             } catch (error) {
-                console.error(error);
-                showToast('שגיאה בשמירת הלוז', 'danger');
+                console.error('Error downloading copy:', error);
+                showToast('שגיאה בשמירת הלוז: ' + (error.message || 'שגיאה לא ידועה'), 'danger');
             }
         }
 
