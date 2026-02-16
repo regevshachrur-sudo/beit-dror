@@ -56,12 +56,12 @@
             position: relative;
         }
 
-        /* רקע עם דמות חמודה - רק לטאב נערים */
+        /* רקע עם דמויות חמודות - רק לטאב נערים */
         #student-tab {
             position: relative;
         }
 
-        /* דמות תחתונה שמאלית */
+        /* דמות תחתונה שמאלית (קיימת) */
         #student-tab::before {
             content: '';
             position: fixed;
@@ -77,7 +77,7 @@
             z-index: 0;
         }
 
-        /* דמות עליונה ימנית */
+        /* דמות עליונה ימנית (קיימת) */
         #student-tab::after {
             content: '';
             position: fixed;
@@ -94,13 +94,32 @@
             animation: floatCharacter 6s ease-in-out infinite;
         }
 
+        /* דמויות חדשות: חד קרן 🦄 וארנב 🐇 */
+        .cute-character {
+            position: fixed;
+            width: 150px;
+            height: 150px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+            animation: floatCharacter 8s ease-in-out infinite;
+        }
+        .unicorn {
+            bottom: 150px;
+            right: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="80" r="40" fill="%23ffe0f0"/><circle cx="85" cy="70" r="5" fill="%23333"/><circle cx="115" cy="70" r="5" fill="%23333"/><path d="M 85 90 Q 100 100 115 90" stroke="%23ff80b0" stroke-width="3" fill="none"/><ellipse cx="100" cy="130" rx="45" ry="55" fill="%23f8c3ff"/><rect x="70" y="180" width="15" height="20" fill="%23ffe0f0" rx="3"/><rect x="115" y="180" width="15" height="20" fill="%23ffe0f0" rx="3"/><path d="M 100 25 L 120 15 L 125 35 L 115 45 L 105 30 L 95 45 L 85 30 L 90 15 L 100 25" fill="%23ffcc00" opacity="0.8"/><circle cx="100" cy="40" r="7" fill="%23ff99cc"/></svg>');
+        }
+        .rabbit {
+            top: 250px;
+            left: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="100" cy="80" r="40" fill="%23f5e6d3"/><circle cx="85" cy="70" r="5" fill="%23333"/><circle cx="115" cy="70" r="5" fill="%23333"/><path d="M 85 90 Q 100 100 115 90" stroke="%23ffaabb" stroke-width="3" fill="none"/><ellipse cx="100" cy="130" rx="45" ry="55" fill="%23f0d5b0"/><rect x="70" y="180" width="15" height="20" fill="%23f5e6d3" rx="3"/><rect x="115" y="180" width="15" height="20" fill="%23f5e6d3" rx="3"/><ellipse cx="70" cy="50" rx="15" ry="30" fill="%23f5e6d3" transform="rotate(-20 70 50)"/><ellipse cx="130" cy="50" rx="15" ry="30" fill="%23f5e6d3" transform="rotate(20 130 50)"/><circle cx="70" cy="45" r="5" fill="%23ffaabb"/><circle cx="130" cy="45" r="5" fill="%23ffaabb"/></svg>');
+        }
+
         @keyframes floatCharacter {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-15px);
-            }
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
         }
 
         .container {
@@ -725,33 +744,25 @@
             font-size: 13px;
         }
 
-        /* משבצות חדשות ותצוגת זמן הגשה */
-        .new-entry-cell {
-            background: #e0f2fe !important;
-            border: 2px solid #3b82f6;
+        .entry-new {
+            background-color: #fff3cd !important;
+            border-left: 4px solid #ffc107;
         }
 
-        .entry-time {
-            display: block;
-            margin-top: 4px;
-            font-size: 11px;
-            color: var(--text-secondary);
+        .merge-checkbox {
+            margin-left: 10px;
+            transform: scale(1.2);
         }
 
         @media (max-width: 768px) {
-            #student-tab::before {
-                width: 120px;
-                height: 120px;
-                bottom: 10px;
-                left: 10px;
-            }
-
-            #student-tab::after {
+            #student-tab::before,
+            #student-tab::after,
+            .cute-character {
                 width: 100px;
                 height: 100px;
-                top: 140px;
-                right: 10px;
             }
+            .unicorn { bottom: 80px; right: 10px; }
+            .rabbit { top: 180px; left: 10px; }
 
             .schedule-table {
                 font-size: 10px;
@@ -823,7 +834,7 @@
             .tabs, .combined-view-controls, .entry-controls, .cell-actions, 
             .btn, .header p, .legend, .submission-header button,
             .structure-editor-controls, #pendingStatusIndicator,
-            .arabic-text, .arabic, .arabic-header {
+            .arabic-text, .arabic, .arabic-header, .cute-character {
                 display: none !important;
             }
             
@@ -927,10 +938,7 @@
                 display: none !important;
             }
 
-            #student-tab::before {
-                display: none !important;
-            }
-
+            #student-tab::before,
             #student-tab::after {
                 display: none !important;
             }
@@ -941,7 +949,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📅 מערכת לוז דיגיטלית - بيت درور🏳️‍🌈</h1>
+            <h1>📅 מערכת לוז דיגיטלית - بيت دרור🏳️‍🌈</h1>
             <p>אנא תמלאו את הלוז השבועי שלכם פעם אחת ותלחצו "שלח לאישור" מקווים שיהיה לכם שבוע מצוין🙂</p>
             <p class="arabic-text">الرجاء ملء الجدول الأسبوعي مرة واحدة والنقر على "إرسال للموافقة" نتمنى لكم أسبوعاً رائعاً🙂</p>
         </div>
@@ -956,6 +964,10 @@
 
         <!-- TAB 1: Student View -->
         <div id="student-tab" class="tab-content active">
+            <!-- שתי דמויות חדשות -->
+            <div class="cute-character unicorn"></div>
+            <div class="cute-character rabbit"></div>
+
             <div class="card">
                 <h2 style="margin-bottom: 8px;">מילוי לוז שבועי</h2>
                 <p class="arabic-text" style="margin-bottom: 20px;">ملء الجدول الأسبوعي</p>
@@ -966,6 +978,11 @@
                         <span class="arabic">الاسم الأول</span>
                     </label>
                     <input type="text" id="studentName" placeholder="הכנס שם פרטי / أدخل الاسم الأول">
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="saveStudentDraft()">💾 שמור לוז</button>
+                    <button class="btn btn-secondary" onclick="loadStudentDraft()">📂 טען לוז אחרון</button>
                 </div>
 
                 <div class="week-display" id="weekDisplay"></div>
@@ -980,7 +997,7 @@
                 </div>
 
                 <button class="btn btn-success" style="margin-top: 20px; width: 100%;" onclick="submitSchedule()">
-                    <div>שׁלח לאישור</div>
+                    <div>שלח לאישור</div>
                     <div style="font-size: 13px; font-weight: 400; margin-top: 2px;">إرسال للموافقة</div>
                 </button>
             </div>
@@ -998,10 +1015,7 @@
                             <option value="">-- כל השבועות --</option>
                         </select>
                     </div>
-                    <div style="display: flex; align-items: flex-end; gap: 8px; flex-wrap: wrap;">
-                        <button class="btn btn-primary btn-sm" onclick="mergeSelectedSubmissions()">איחוד לוזים</button>
-                        <button class="btn btn-secondary btn-sm" onclick="splitSelectedSubmission()">הפרדת לוזים</button>
-                    </div>
+                    <button class="btn btn-primary" onclick="mergeSelectedSubmissions()" style="margin-right: auto;">🔗 איחוד לוזים נבחרים</button>
                 </div>
                 
                 <div id="submissionsList"></div>
@@ -1065,6 +1079,10 @@
                         <div class="legend-item">
                             <div class="legend-box" style="background: #fef9e7; border: 2px dashed #f39c12;"></div>
                             <span>משבצת מוצעת (עם הנחיה - ניתן לשינוי)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-box" style="background: #fff3cd; border-left: 4px solid #ffc107;"></div>
+                            <span>הוספה מאוחרת (אחרי איחוד)</span>
                         </div>
                     </div>
                 </div>
@@ -1240,7 +1258,7 @@
 
     <script>
         // ==============================================
-        // FIREBASE CONFIGURATION
+        // FIREBASE CONFIGURATION (זהה למקור)
         // ==============================================
         const firebaseConfig = {
             apiKey: "AIzaSyD5Ma2GAqiPFKurMedUgU6Qgl-qk_Uop-s",
@@ -1269,7 +1287,7 @@
         }
 
         // ==============================================
-        // DEFAULT SCHEDULE STRUCTURE
+        // DEFAULT SCHEDULE STRUCTURE (זהה למקור)
         // ==============================================
         const defaultScheduleStructure = {
             days: ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'],
@@ -1319,7 +1337,7 @@
         let showPendingInCombined = false;
 
         // ==============================================
-        // COLOR PALETTE
+        // COLOR PALETTE (זהה למקור)
         // ==============================================
         const STUDENT_COLORS = [
             '#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', 
@@ -1500,7 +1518,7 @@
         }
 
         // ==============================================
-        // STUDENT SCHEDULE RENDERING
+        // STUDENT SCHEDULE RENDERING (זהה למקור)
         // ==============================================
         function renderStudentSchedule() {
             const table = document.getElementById('studentScheduleTable');
@@ -1596,7 +1614,42 @@
         }
 
         // ==============================================
-        // QUICK COPY FUNCTIONALITY
+        // SAVE / LOAD DRAFT (חדש)
+        // ==============================================
+        function saveStudentDraft() {
+            const name = document.getElementById('studentName').value.trim();
+            if (!name) {
+                showToast('יש להזין שם לפני שמירה', 'danger');
+                return;
+            }
+            const draft = {
+                name: name,
+                data: studentScheduleData,
+                week: currentWeek.display
+            };
+            localStorage.setItem('studentDraft', JSON.stringify(draft));
+            showToast('הלוז נשמר בזיכרון המקומי');
+        }
+
+        function loadStudentDraft() {
+            const draftJson = localStorage.getItem('studentDraft');
+            if (!draftJson) {
+                showToast('אין לוז שמור', 'danger');
+                return;
+            }
+            try {
+                const draft = JSON.parse(draftJson);
+                document.getElementById('studentName').value = draft.name;
+                studentScheduleData = draft.data || {};
+                renderStudentSchedule();
+                showToast('לוז נטען בהצלחה');
+            } catch (e) {
+                showToast('שגיאה בטעינת הלוז', 'danger');
+            }
+        }
+
+        // ==============================================
+        // QUICK COPY FUNCTIONALITY (זהה למקור)
         // ==============================================
         function showQuickCopyModal() {
             populateQuickCopyTimesList();
@@ -1677,7 +1730,7 @@
         }
 
         // ==============================================
-        // SUBMIT SCHEDULE (עם איחוד אוטומטי)
+        // SUBMIT SCHEDULE (עם שמירה אוטומטית לדראפט)
         // ==============================================
         async function submitSchedule() {
             const studentName = document.getElementById('studentName').value.trim();
@@ -1697,89 +1750,33 @@
                 return;
             }
 
-            const now = new Date().toISOString();
-
-            // משבצות מהטופס הנוכחי
-            const newEntries = Object.keys(studentScheduleData).map(key => {
+            const scheduleArray = Object.keys(studentScheduleData).map(key => {
                 const [day, time] = key.split('-').map(Number);
                 return {
                     day,
                     time,
                     content: studentScheduleData[key],
                     status: 'pending',
-                    submittedAt: now,
-                    isNew: true
+                    submittedAt: new Date().toISOString()  // נוסיף תאריך לכל רשומה
                 };
             });
 
+            const submission = {
+                studentName,
+                weekStart: currentWeek.start.toISOString(),
+                weekEnd: currentWeek.end.toISOString(),
+                weekDisplay: currentWeek.display,
+                submittedAt: new Date().toISOString(),
+                scheduleData: scheduleArray
+            };
+
             try {
-                // בדיקת לוז קיים לאותו נער/ה ולאותו שבוע
-                const snap = await db.ref('submissions')
-                    .orderByChild('studentName')
-                    .equalTo(studentName)
-                    .once('value');
-
-                let existing = null;
-                snap.forEach(child => {
-                    const val = child.val();
-                    if (val && val.weekDisplay === currentWeek.display && !existing) {
-                        existing = { id: child.key, ...val };
-                    }
-                });
-
-                if (!existing) {
-                    // לוז ראשון – יצירת רשומה חדשה
-                    const submissionSubmittedAt = now;
-                    const scheduleArray = newEntries.map(e => ({
-                        ...e,
-                        submittedAt: submissionSubmittedAt,
-                        isNew: false
-                    }));
-
-                    const submission = {
-                        studentName,
-                        weekStart: currentWeek.start.toISOString(),
-                        weekEnd: currentWeek.end.toISOString(),
-                        weekDisplay: currentWeek.display,
-                        submittedAt: submissionSubmittedAt,
-                        scheduleData: scheduleArray
-                    };
-
-                    await db.ref('submissions').push(submission);
-                    showToast('הלוז נשלח בהצלחה!');
-                } else {
-                    // קיים כבר לוז – מאחדים לתוכו
-                    const existingData = Array.isArray(existing.scheduleData) ? existing.scheduleData : [];
-
-                    // נורמליזציה של הנתונים הקיימים (שדות חדשים לפריטים ישנים)
-                    const normalizedExisting = existingData.map(e => ({
-                        ...e,
-                        submittedAt: e.submittedAt || existing.submittedAt || now,
-                        isNew: e.isNew || false
-                    }));
-
-                    // מפה לפי day-time
-                    const bySlot = {};
-                    normalizedExisting.forEach(e => {
-                        bySlot[`${e.day}-${e.time}`] = e;
-                    });
-
-                    // משבצות חדשות מהטופס – דורסות/מעדכנות משבצות קיימות
-                    newEntries.forEach(e => {
-                        bySlot[`${e.day}-${e.time}`] = e;
-                    });
-
-                    const mergedScheduleData = Object.values(bySlot);
-
-                    await db.ref(`submissions/${existing.id}`).update({
-                        scheduleData: mergedScheduleData,
-                        lastUpdatedAt: now
-                    });
-
-                    showToast('הלוז עודכן והתווספו משבצות חדשות!');
-                }
-
-                // איפוס טופס
+                await db.ref('submissions').push(submission);
+                showToast('הלוז נשלח בהצלחה!');
+                
+                // שמירה אוטומטית בדראפט
+                saveStudentDraft();
+                
                 document.getElementById('studentName').value = '';
                 studentScheduleData = {};
                 renderStudentSchedule();
@@ -1790,7 +1787,7 @@
         }
 
         // ==============================================
-        // LOAD SUBMISSIONS
+        // LOAD SUBMISSIONS (עם תמיכה באיחוד)
         // ==============================================
         async function loadSubmissions() {
             if (!firebaseInitialized) {
@@ -1810,6 +1807,13 @@
                         id: childSnapshot.key,
                         ...childSnapshot.val()
                     };
+                    // וודא שלכל רשומה יש תאריך (למקרה שאין)
+                    if (sub.scheduleData) {
+                        sub.scheduleData = sub.scheduleData.map(e => ({
+                            ...e,
+                            submittedAt: e.submittedAt || sub.submittedAt
+                        }));
+                    }
                     submissions.push(sub);
                     if (sub.weekDisplay) {
                         weeks.add(sub.weekDisplay);
@@ -1880,26 +1884,12 @@
             container.innerHTML = html;
         }
 
-        // עיצוב זמן הגשה
-        function formatDateTime(isoString) {
-            if (!isoString) return '';
-            try {
-                const d = new Date(isoString);
-                return d.toLocaleString('he-IL', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            } catch (e) {
-                return isoString;
-            }
-        }
-
         function renderSubmissionCard(submission) {
             const date = new Date(submission.submittedAt);
             const dateStr = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+            
+            // בדיקה אם זה לוז ממוזג
+            const isMerged = submission.mergedSubmissions && submission.mergedSubmissions.length > 0;
             
             if (!submission.scheduleData || !Array.isArray(submission.scheduleData)) {
                 return `
@@ -1911,6 +1901,7 @@
                                 <p style="color: red; margin-top: 8px;">שגיאה: נתוני לוז לא תקינים</p>
                             </div>
                             <div style="display: flex; gap: 8px;">
+                                <input type="checkbox" class="merge-checkbox" value="${submission.id}">
                                 <button class="btn btn-danger btn-sm" onclick="if(confirm('למחוק לוז זה?')) deleteSubmission('${submission.id}')">🗑️ מחק</button>
                             </div>
                         </div>
@@ -1918,22 +1909,27 @@
                 `;
             }
             
+            // מיון רשומות לפי תאריך (החדשות ביותר בסוף? נצבע לפי זה)
+            const sortedEntries = [...submission.scheduleData].sort((a, b) => 
+                new Date(a.submittedAt || submission.submittedAt) - new Date(b.submittedAt || submission.submittedAt)
+            );
+            
             let html = `
                 <div class="submission-card" data-submission-id="${submission.id}">
                     <div class="submission-header">
                         <div>
-                            <h3>
-                                <input type="checkbox" class="merge-select-checkbox" data-submission-id="${submission.id}" style="margin-left: 6px;">
-                                ${submission.studentName}
-                            </h3>
+                            <h3>${submission.studentName} ${isMerged ? '🔗 (ממוזג)' : ''}</h3>
                             <div class="submission-date">נשלח: ${dateStr}</div>
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <input type="checkbox" class="merge-checkbox" value="${submission.id}">
                             <button class="btn btn-primary btn-sm" onclick="showCoordinatorQuickCopy('${submission.id}')">📋 העתק לשעות</button>
                             <button class="btn btn-secondary btn-sm" onclick="renameStudent('${submission.id}', '${submission.studentName}')">✏️ שנה שם</button>
                             <button class="btn btn-secondary btn-sm" onclick="printSingleSchedule('${submission.id}')">🖨️ הדפס</button>
                             <button class="btn btn-secondary btn-sm" onclick="changeSubmissionWeek('${submission.id}', '${submission.weekDisplay}')">📅 שנה תאריכים</button>
                             <button class="btn btn-secondary btn-sm" onclick="archiveSubmission('${submission.id}')">📦 ארכיון</button>
+                            ${isMerged ? `<button class="btn btn-warning btn-sm" onclick="splitSubmission('${submission.id}')">✂️ הפרד לוז</button>` : ''}
+                            <button class="btn btn-success btn-sm" onclick="shareScheduleWhatsApp('${submission.id}')">📲 שתף לווצאפ</button>
                         </div>
                     </div>
                     <div class="table-wrapper">
@@ -1953,71 +1949,42 @@
                 html += `<tr><td class="time-cell">${timeSlot.time}</td>`;
                 
                 scheduleStructure.days.forEach((day, dayIndex) => {
-                    const entry = submission.scheduleData.find(e => e.day === dayIndex && e.time === timeIndex);
-                    const isNew = entry && entry.isNew;
-                    const entryCellClass = isNew ? ' new-entry-cell' : '';
-                    const entrySubmittedAt = entry && (entry.submittedAt || submission.submittedAt);
-                    const entryTimeStr = entrySubmittedAt ? formatDateTime(entrySubmittedAt) : '';
-
+                    const entries = submission.scheduleData.filter(e => e.day === dayIndex && e.time === timeIndex);
+                    
                     if (timeSlot.type === 'fixed' && timeSlot.days && timeSlot.days.includes(dayIndex)) {
                         html += `<td class="fixed-cell">${timeSlot.content}</td>`;
-                    } else if (timeSlot.type === 'suggested' && timeSlot.days && timeSlot.days.includes(dayIndex)) {
-                        if (entry) {
-                            html += `<td class="suggested-cell${entryCellClass}">
-                                <div class="cell-content">
+                    } else if (entries.length > 0) {
+                        // אם יש כמה רשומות באותו תא (יכול לקרות אחרי מיזוג)
+                        html += `<td class="free-cell">`;
+                        entries.forEach((entry, idx) => {
+                            const isNew = entry.submittedAt && submission.mergedSubmissions && 
+                                          submission.mergedSubmissions.length > 0 &&
+                                          new Date(entry.submittedAt) > new Date(submission.submittedAt);
+                            html += `
+                                <div class="cell-content ${isNew ? 'entry-new' : ''}">
                                     <input type="text" 
                                            class="editable-input" 
                                            value="${entry.content}"
-                                           onchange="updateEntryContent('${submission.id}', ${dayIndex}, ${timeIndex}, this.value)">
+                                           onchange="updateEntryContent('${submission.id}', ${dayIndex}, ${timeIndex}, this.value, ${idx})">
                                     <span class="status-badge status-${entry.status}">
                                         ${entry.status === 'pending' ? 'ממתין' : entry.status === 'approved' ? 'אושר' : 'נדחה'}
                                     </span>
-                                    ${entryTimeStr ? `<small class="entry-time">הוגש ב־${entryTimeStr}</small>` : ''}
                                     <div class="cell-actions">
                                         ${entry.status === 'pending' ? `
-                                            <button class="btn btn-success btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'approved')">✓</button>
-                                            <button class="btn btn-danger btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'rejected')">✗</button>
+                                            <button class="btn btn-success btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'approved', ${idx})">✓</button>
+                                            <button class="btn btn-danger btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'rejected', ${idx})">✗</button>
                                         ` : entry.status === 'approved' ? `
-                                            <button class="btn btn-secondary btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'pending')">↩️ בטל אישור</button>
+                                            <button class="btn btn-secondary btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'pending', ${idx})">↩️ בטל אישור</button>
                                         ` : `
-                                            <button class="btn btn-secondary btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'pending')">↩️ בטל דחייה</button>
+                                            <button class="btn btn-secondary btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'pending', ${idx})">↩️ בטל דחייה</button>
                                         `}
-                                        <button class="btn btn-secondary btn-sm" onclick="showMoveEntryModal('${submission.id}', ${dayIndex}, ${timeIndex})">⏰</button>
-                                        <button class="btn btn-danger btn-sm" onclick="deleteEntry('${submission.id}', ${dayIndex}, ${timeIndex})">🗑️</button>
+                                        <button class="btn btn-secondary btn-sm" onclick="showMoveEntryModal('${submission.id}', ${dayIndex}, ${timeIndex}, ${idx})">⏰</button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteEntry('${submission.id}', ${dayIndex}, ${timeIndex}, ${idx})">🗑️</button>
                                     </div>
                                 </div>
-                            </td>`;
-                        } else {
-                            html += `<td class="suggested-cell">
-                                <small style="color: #d68910;">💡 ${timeSlot.content}</small><br>
-                                <button class="btn btn-secondary btn-sm" onclick="showAddEntryModal('${submission.id}', ${dayIndex}, ${timeIndex})">➕ הוסף</button>
-                            </td>`;
-                        }
-                    } else if (entry) {
-                        html += `<td class="free-cell${entryCellClass}">
-                            <div class="cell-content">
-                                <input type="text" 
-                                       class="editable-input" 
-                                       value="${entry.content}"
-                                       onchange="updateEntryContent('${submission.id}', ${dayIndex}, ${timeIndex}, this.value)">
-                                <span class="status-badge status-${entry.status}">
-                                    ${entry.status === 'pending' ? 'ממתין' : entry.status === 'approved' ? 'אושר' : 'נדחה'}
-                                </span>
-                                ${entryTimeStr ? `<small class="entry-time">הוגש ב־${entryTimeStr}</small>` : ''}
-                                <div class="cell-actions">
-                                    ${entry.status === 'pending' ? `
-                                        <button class="btn btn-success btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'approved')">✓</button>
-                                        <button class="btn btn-danger btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'rejected')">✗</button>
-                                    ` : entry.status === 'approved' ? `
-                                        <button class="btn btn-secondary btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'pending')">↩️ בטל אישור</button>
-                                    ` : `
-                                        <button class="btn btn-secondary btn-sm" onclick="updateStatus('${submission.id}', ${dayIndex}, ${timeIndex}, 'pending')">↩️ בטל דחייה</button>
-                                    `}
-                                    <button class="btn btn-secondary btn-sm" onclick="showMoveEntryModal('${submission.id}', ${dayIndex}, ${timeIndex})">⏰</button>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteEntry('${submission.id}', ${dayIndex}, ${timeIndex})">🗑️</button>
-                                </div>
-                            </div>
-                        </td>`;
+                            `;
+                        });
+                        html += '</td>';
                     } else {
                         html += `<td class="free-cell">
                             <button class="btn btn-secondary btn-sm" onclick="showAddEntryModal('${submission.id}', ${dayIndex}, ${timeIndex})">➕ הוסף</button>
@@ -2033,141 +2000,180 @@
         }
 
         // ==============================================
-        // MERGE / SPLIT SUBMISSIONS (רכזת)
+        // מיזוג לוזים
         // ==============================================
-        async function mergeSelectedSubmissions() {
-            if (!firebaseInitialized) return;
-
-            const checked = Array.from(document.querySelectorAll('.merge-select-checkbox:checked'));
-            if (checked.length < 2) {
+        function mergeSelectedSubmissions() {
+            const checkboxes = document.querySelectorAll('.merge-checkbox:checked');
+            const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+            if (selectedIds.length < 2) {
                 showToast('יש לבחור לפחות שני לוזים לאיחוד', 'danger');
                 return;
             }
 
-            const ids = checked.map(cb => cb.dataset.submissionId);
-
-            const snapshot = await db.ref('submissions').once('value');
-            const selectedSubs = [];
-            snapshot.forEach(child => {
-                if (ids.includes(child.key)) {
-                    selectedSubs.push({ id: child.key, ...child.val() });
+            // שליפת הנתונים מהדאטאבייס
+            Promise.all(selectedIds.map(id => db.ref(`submissions/${id}`).once('value'))).then(snapshots => {
+                const subs = snapshots.map((snap, i) => ({ id: selectedIds[i], ...snap.val() }));
+                
+                // בדיקה שכולם מאותו נער ואותו שבוע
+                const first = subs[0];
+                const sameStudent = subs.every(s => s.studentName === first.studentName);
+                const sameWeek = subs.every(s => s.weekDisplay === first.weekDisplay);
+                if (!sameStudent || !sameWeek) {
+                    showToast('ניתן לאחד רק לוזים של אותו נער ואותו שבוע', 'danger');
+                    return;
                 }
-            });
 
-            if (selectedSubs.length < 2) {
-                showToast('לא נמצאו כל הלוזים שנבחרו', 'danger');
-                return;
-            }
-
-            const firstName = selectedSubs[0].studentName;
-            const firstWeek = selectedSubs[0].weekDisplay;
-            const same = selectedSubs.every(s => s.studentName === firstName && s.weekDisplay === firstWeek);
-
-            if (!same) {
-                showToast('ניתן לאחד רק לוזים של אותו נער/ה ולאותו שבוע', 'danger');
-                return;
-            }
-
-            // הסדר לפי זמן הגשה (הראשון = לוז בסיסי)
-            selectedSubs.sort((a, b) => new Date(a.submittedAt || 0) - new Date(b.submittedAt || 0));
-
-            const baseSubmission = selectedSubs[0];
-            const allSlots = {};
-
-            selectedSubs.forEach((sub, index) => {
-                const batchTime = sub.submittedAt || new Date().toISOString();
-                const isNewBatch = index > 0;
-                (sub.scheduleData || []).forEach(entry => {
-                    const key = `${entry.day}-${entry.time}`;
-                    allSlots[key] = {
-                        ...entry,
-                        submittedAt: entry.submittedAt || batchTime,
-                        isNew: isNewBatch
-                    };
-                });
-            });
-
-            const mergedScheduleData = Object.values(allSlots);
-            const now = new Date().toISOString();
-
-            const updates = {};
-            updates[`submissions/${baseSubmission.id}`] = {
-                ...baseSubmission,
-                scheduleData: mergedScheduleData,
-                lastUpdatedAt: now,
-                mergedFromIds: ids.filter(id => id !== baseSubmission.id)
-            };
-
-            ids
-                .filter(id => id !== baseSubmission.id)
-                .forEach(id => {
-                    updates[`submissions/${id}`] = null;
+                // מיזוג רשומות
+                let mergedSchedule = [];
+                const mergedSubmissions = [];
+                subs.forEach(sub => {
+                    mergedSubmissions.push(sub.id);
+                    if (sub.scheduleData) {
+                        mergedSchedule = mergedSchedule.concat(sub.scheduleData.map(e => ({
+                            ...e,
+                            sourceSubmissionId: sub.id,
+                            submittedAt: e.submittedAt || sub.submittedAt
+                        })));
+                    }
                 });
 
-            await db.ref().update(updates);
-            showToast('הלוזים אוחדו בהצלחה');
-            loadSubmissions();
-        }
-
-        async function splitSelectedSubmission() {
-            if (!firebaseInitialized) return;
-
-            const checked = Array.from(document.querySelectorAll('.merge-select-checkbox:checked'));
-            if (checked.length !== 1) {
-                showToast('יש לבחור לוז אחד לפיצול', 'danger');
-                return;
-            }
-
-            const id = checked[0].dataset.submissionId;
-            const snapshot = await db.ref(`submissions/${id}`).once('value');
-            const sub = snapshot.val();
-
-            if (!sub || !Array.isArray(sub.scheduleData) || sub.scheduleData.length === 0) {
-                showToast('אין נתונים לפצל', 'danger');
-                return;
-            }
-
-            const groups = {};
-            const fallbackTime = sub.submittedAt || new Date().toISOString();
-
-            sub.scheduleData.forEach(entry => {
-                const ts = entry.submittedAt || fallbackTime;
-                if (!groups[ts]) groups[ts] = [];
-                groups[ts].push({ ...entry, isNew: false });
-            });
-
-            const timestamps = Object.keys(groups);
-            if (timestamps.length <= 1) {
-                showToast('לא נמצאו כמה הגשות שונות באותו לוז', 'danger');
-                return;
-            }
-
-            const baseData = {
-                studentName: sub.studentName,
-                weekStart: sub.weekStart,
-                weekEnd: sub.weekEnd,
-                weekDisplay: sub.weekDisplay
-            };
-
-            const updates = {};
-            timestamps.forEach(ts => {
-                const newKey = db.ref('submissions').push().key;
-                updates[`submissions/${newKey}`] = {
-                    ...baseData,
-                    submittedAt: ts,
-                    scheduleData: groups[ts]
+                // הסרת כפילויות אפשריות (אותו יום, שעה ומקור? נשאיר את כרגע, אפשר לטפל בהמשך)
+                const mergedSubmission = {
+                    studentName: first.studentName,
+                    weekStart: first.weekStart,
+                    weekEnd: first.weekEnd,
+                    weekDisplay: first.weekDisplay,
+                    submittedAt: new Date().toISOString(),
+                    scheduleData: mergedSchedule,
+                    mergedSubmissions: mergedSubmissions,
+                    mergedAt: new Date().toISOString()
                 };
+
+                // שמירת הלוז הממוזג ומחיקת המקוריים
+                db.ref('submissions').push(mergedSubmission).then(() => {
+                    const deletions = mergedSubmissions.map(id => db.ref(`submissions/${id}`).remove());
+                    return Promise.all(deletions);
+                }).then(() => {
+                    showToast('לוזים אוחדו בהצלחה');
+                    loadSubmissions();
+                }).catch(error => {
+                    showToast('שגיאה באיחוד', 'danger');
+                    console.error(error);
+                });
             });
-
-            updates[`submissions/${id}`] = null;
-
-            await db.ref().update(updates);
-            showToast('הלוז פורק למספר לוזים לפי זמני הגשה');
-            loadSubmissions();
         }
 
-        // כאן ממשיכות כל שאר הפונקציות...
+        // ==============================================
+        // הפרדת לוז ממוזג
+        // ==============================================
+        async function splitSubmission(submissionId) {
+            if (!confirm('להפריד את הלוז בחזרה ללוזים המקוריים?')) return;
 
+            try {
+                const snapshot = await db.ref(`submissions/${submissionId}`).once('value');
+                const merged = snapshot.val();
+                if (!merged || !merged.mergedSubmissions || merged.mergedSubmissions.length === 0) {
+                    showToast('לוז זה אינו ממוזג', 'danger');
+                    return;
+                }
+
+                // מקבץ רשומות לפי sourceSubmissionId
+                const entriesBySource = {};
+                merged.scheduleData.forEach(entry => {
+                    const srcId = entry.sourceSubmissionId;
+                    if (!srcId) return; // אם אין מקור, נשמור תחת מזהה חדש
+                    if (!entriesBySource[srcId]) entriesBySource[srcId] = [];
+                    entriesBySource[srcId].push(entry);
+                });
+
+                // עבור כל מקור, ניצור לוז מחדש (אם אין רשומות, לא)
+                const promises = Object.keys(entriesBySource).map(srcId => {
+                    const subData = {
+                        studentName: merged.studentName,
+                        weekStart: merged.weekStart,
+                        weekEnd: merged.weekEnd,
+                        weekDisplay: merged.weekDisplay,
+                        submittedAt: merged.submittedAt, // נשמור את התאריך המקורי? אפשר לשפר
+                        scheduleData: entriesBySource[srcId].map(e => {
+                            const { sourceSubmissionId, ...rest } = e;
+                            return rest;
+                        })
+                    };
+                    return db.ref('submissions').push(subData);
+                });
+
+                // מחיקת הלוז הממוזג
+                promises.push(db.ref(`submissions/${submissionId}`).remove());
+
+                await Promise.all(promises);
+                showToast('הלוז הופרד בהצלחה');
+                loadSubmissions();
+            } catch (error) {
+                showToast('שגיאה בהפרדה', 'danger');
+                console.error(error);
+            }
+        }
+
+        // ==============================================
+        // שיתוף לווצאפ
+        // ==============================================
+        async function shareScheduleWhatsApp(submissionId) {
+            try {
+                const snapshot = await db.ref(`submissions/${submissionId}`).once('value');
+                const sub = snapshot.val();
+                if (!sub) return;
+
+                const studentName = sub.studentName;
+                const week = sub.weekDisplay;
+
+                // יצירת הודעה
+                const message = `זה הלוז המאושר של ${studentName} לשבוע ${week} שיהיה שבוע מצוין!`;
+
+                // נפתח לווצאפ עם ההודעה
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+
+                // גם ניצור קובץ ICS (כבר קיימת פונקציה)
+                // ניצור אירועים רק מהמאושרים
+                const approvedEvents = sub.scheduleData.filter(e => e.status === 'approved');
+                if (approvedEvents.length > 0) {
+                    // נוכל להשתמש בפונקציה exportToGoogleCalendar עם שינוי קטן
+                    // אבל כאן ניצור קובץ ICS זמני
+                    let ics = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//בית דרור//\nCALNAME:לוז ${week}\n`;
+                    approvedEvents.forEach((ev, i) => {
+                        const date = new Date(sub.weekStart);
+                        date.setDate(date.getDate() + ev.day);
+                        const t = scheduleStructure.times[ev.time];
+                        if (!t) return;
+                        const [h, m] = t.time.split(':');
+                        date.setHours(parseInt(h), parseInt(m), 0);
+                        const end = new Date(date);
+                        end.setHours(date.getHours() + 1);
+                        const fmt = d => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+                        ics += `BEGIN:VEVENT\nUID:${Date.now()}-${i}@beit-dror\nDTSTAMP:${fmt(new Date())}\nDTSTART:${fmt(date)}\nDTEND:${fmt(end)}\nSUMMARY:${ev.content} - ${studentName}\nLOCATION:בית דרור\nEND:VEVENT\n`;
+                    });
+                    ics += 'END:VCALENDAR';
+
+                    const blob = new Blob([ics], { type: 'text/calendar' });
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = `לוז-${studentName}-${week.replace(/\//g, '-')}.ics`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+
+                // גם נציע להדפיס ל-PDF
+                showToast('ההודעה נפתחה בווצאפ, קובץ ICS הורד');
+            } catch (error) {
+                showToast('שגיאה בשליחה לווצאפ', 'danger');
+                console.error(error);
+            }
+        }
+
+        // ==============================================
+        // שאר הפונקציות (archive, rename, delete, וכו') נשארות כמו במקור
+        // ==============================================
         async function archiveSubmission(submissionId) {
             if (!confirm('האם להעביר לוז זה לארכיון?')) return;
             if (!firebaseInitialized) return;
@@ -2215,8 +2221,8 @@
             }
         }
 
-        async function changeSubmissionWeek(submissionId, currentWeekDisplay) {
-            const startDateStr = prompt('הכנס תאריך התחלה (DD/MM/YYYY):', currentWeekDisplay.split(' - ')[0]);
+        async function changeSubmissionWeek(submissionId, currentWeek) {
+            const startDateStr = prompt('הכנס תאריך התחלה (DD/MM/YYYY):', currentWeek.split(' - ')[0]);
             if (!startDateStr) return;
 
             const match = startDateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
@@ -2268,13 +2274,13 @@
             container.innerHTML = html;
         }
 
-        async function updateStatus(subId, day, time, status) {
+        async function updateStatus(subId, day, time, status, entryIndex = 0) {
             if (!firebaseInitialized) return;
             try {
                 const snapshot = await db.ref(`submissions/${subId}`).once('value');
                 const sub = snapshot.val();
-                const updated = sub.scheduleData.map(e => 
-                    e.day === day && e.time === time ? { ...e, status } : e
+                const updated = sub.scheduleData.map((e, i) => 
+                    i === entryIndex && e.day === day && e.time === time ? { ...e, status } : e
                 );
                 await db.ref(`submissions/${subId}/scheduleData`).set(updated);
                 showToast('עודכן');
@@ -2284,30 +2290,28 @@
             }
         }
 
-        async function updateEntryContent(subId, day, time, content) {
+        async function updateEntryContent(subId, day, time, content, entryIndex = 0) {
             if (!firebaseInitialized) return;
             try {
                 const snapshot = await db.ref(`submissions/${subId}`).once('value');
                 const sub = snapshot.val();
-                const updated = sub.scheduleData.map(e => 
-                    e.day === day && e.time === time ? { ...e, content: content.trim() } : e
+                const updated = sub.scheduleData.map((e, i) => 
+                    i === entryIndex && e.day === day && e.time === time ? { ...e, content: content.trim() } : e
                 );
-           
-
-        await db.ref(`submissions/${subId}/scheduleData`).set(updated);
+                await db.ref(`submissions/${subId}/scheduleData`).set(updated);
                 showToast('עודכן');
             } catch (error) {
                 showToast('שגיאה', 'danger');
             }
         }
 
-        async function deleteEntry(subId, day, time) {
+        async function deleteEntry(subId, day, time, entryIndex = 0) {
             if (!confirm('למחוק?')) return;
             if (!firebaseInitialized) return;
             try {
                 const snapshot = await db.ref(`submissions/${subId}`).once('value');
                 const sub = snapshot.val();
-                const updated = sub.scheduleData.filter(e => !(e.day === day && e.time === time));
+                const updated = sub.scheduleData.filter((e, i) => !(i === entryIndex && e.day === day && e.time === time));
                 await db.ref(`submissions/${subId}/scheduleData`).set(updated);
                 showToast('נמחק');
                 loadSubmissions();
@@ -2317,8 +2321,8 @@
         }
 
         let currentMoveEntry = null;
-        function showMoveEntryModal(subId, day, time) {
-            currentMoveEntry = { submissionId: subId, day, time };
+        function showMoveEntryModal(subId, day, time, entryIndex = 0) {
+            currentMoveEntry = { submissionId: subId, day, time, entryIndex };
             populateMoveEntryTimeOptions();
             document.getElementById('moveEntryModal').classList.add('show');
         }
@@ -2354,8 +2358,8 @@
             try {
                 const snapshot = await db.ref(`submissions/${currentMoveEntry.submissionId}`).once('value');
                 const sub = snapshot.val();
-                const updated = sub.scheduleData.map(e => 
-                    e.day === currentMoveEntry.day && e.time === currentMoveEntry.time 
+                const updated = sub.scheduleData.map((e, i) => 
+                    i === currentMoveEntry.entryIndex && e.day === currentMoveEntry.day && e.time === currentMoveEntry.time 
                         ? { ...e, day: newDay, time: newTime } : e
                 );
                 await db.ref(`submissions/${currentMoveEntry.submissionId}/scheduleData`).set(updated);
@@ -2387,14 +2391,12 @@
             try {
                 const snapshot = await db.ref(`submissions/${currentAddEntry.submissionId}`).once('value');
                 const sub = snapshot.val();
-                const now = new Date().toISOString();
                 const newEntry = {
                     day: currentAddEntry.day,
                     time: currentAddEntry.time,
                     content,
                     status: 'pending',
-                    submittedAt: now,
-                    isNew: true
+                    submittedAt: new Date().toISOString()
                 };
                 const updated = [...sub.scheduleData, newEntry];
                 await db.ref(`submissions/${currentAddEntry.submissionId}/scheduleData`).set(updated);
@@ -2469,14 +2471,12 @@
             try {
                 const snapshot = await db.ref(`submissions/${currentCoordQuickCopy}`).once('value');
                 const sub = snapshot.val();
-                const now = new Date().toISOString();
                 const newEntries = times.map(t => ({
                     day: parseInt(day),
                     time: t,
                     content,
                     status: 'pending',
-                    submittedAt: now,
-                    isNew: true
+                    submittedAt: new Date().toISOString()
                 }));
                 const updated = [...sub.scheduleData, ...newEntries];
                 await db.ref(`submissions/${currentCoordQuickCopy}/scheduleData`).set(updated);
@@ -2657,7 +2657,7 @@
                                                    onchange="updateTimeSlotDays(${index})">
                                             <label for="day-${index}-${dayIndex}">${day}</label>
                                         </div>
-                                    ).join('')}
+                                    `).join('')}
                                 </div>
                             </div>
                         ` : timeSlot.type === 'suggested' ? `
@@ -2680,7 +2680,7 @@
                                                    onchange="updateTimeSlotDays(${index})">
                                             <label for="day-${index}-${dayIndex}">${day}</label>
                                         </div>
-                                    ).join('')}
+                                    `).join('')}
                                 </div>
                             </div>
                         ` : ''}
@@ -2911,9 +2911,6 @@
         }
 
         window.addEventListener('DOMContentLoaded', initializeApp);
-
-        console.log('✅ גרסה עם איחוד/פיצול לוזים וזיהוי תוספות נטענה!');
-        console.log('🌈 שתי דמויות קווירי חמודות ברקע');
     </script>
 </body>
 </html>
