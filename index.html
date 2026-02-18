@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📅מערכת לוז בית דרור</title>
+    <title>מערכת לוז דיגיטלית - بيت درور - بيت דרור🏳️‍🌈</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1002,7 +1002,7 @@
 
     <div class="container">
         <div class="header">
-            <h1>📅 מערכת לוז בית דרור - الجدول الرقمي لبيت درور🏳️‍🌈</h1>
+            <h1>📅 מערכת לוז דיגיטלית - بيت דרور🏳️‍🌈</h1>
             <p>אנא תמלאו את הלוז השבועי שלכם פעם אחת ותלחצו "שלח לאישור" מקווים שיהיה לכם שבוע מצוין🙂</p>
             <p class="arabic-text">الرجاء ملء الجدول الأسبوعي مرة واحدة والنقر على "إرسال للموافقة" نتمنى لكم أسبوعاً رائعاً🙂</p>
         </div>
@@ -1104,7 +1104,7 @@
                             <span id="pendingToggleText">👁️ הצג לא מאושרים</span>
                         </button>
                         <button class="btn btn-primary" onclick="exportToGoogleCalendar()">
-                            📅ייצא ליומן דיגיטלי 
+                            📅 ייצא ליומן Google
                         </button>
                         <button class="btn btn-secondary" onclick="printCombinedSchedule()">
                             🖨️ הדפס
@@ -1181,10 +1181,10 @@
 
                 <div class="form-group">
                     <label class="bilingual-label">
-                        <span>בחר יום</span>
-                        <span class="arabic">اختر يوماً</span>
+                        <span>בחר ימים (אפשר לבחור כמה)</span>
+                        <span class="arabic">اختر أياماً (يمكن اختيار عدة)</span>
                     </label>
-                    <select id="quickCopyDay"></select>
+                    <div class="checkbox-list" id="quickCopyDaysList"></div>
                 </div>
 
                 <div class="form-group">
@@ -1779,9 +1779,10 @@
         }
 
         // ==============================================
-        // QUICK COPY FUNCTIONALITY
+        // QUICK COPY FUNCTIONALITY - תמיכה בימים מרובים
         // ==============================================
         function showQuickCopyModal() {
+            populateQuickCopyDaysList();
             populateQuickCopyTimesList();
             document.getElementById('quickCopyModal').classList.add('show');
         }
@@ -1789,30 +1790,46 @@
         function closeQuickCopyModal() {
             document.getElementById('quickCopyModal').classList.remove('show');
             document.getElementById('quickCopyContent').value = '';
-            document.getElementById('quickCopyDay').value = '';
         }
 
-        function populateQuickCopyDaySelect() {
-            const select = document.getElementById('quickCopyDay');
-            select.innerHTML = '<option value="">-- בחר יום --</option>';
+        function populateQuickCopyDaysList() {
+            const list = document.getElementById('quickCopyDaysList');
+            list.innerHTML = '';
             scheduleStructure.days.forEach((day, index) => {
-                select.innerHTML += `<option value="${index}">${day}</option>`;
+                list.innerHTML += `
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="qc-day-${index}" value="${index}" onchange="populateQuickCopyTimesList()">
+                        <label for="qc-day-${index}">${day}</label>
+                    </div>
+                `;
             });
         }
 
         function populateQuickCopyTimesList() {
             const list = document.getElementById('quickCopyTimesList');
-            const selectedDay = parseInt(document.getElementById('quickCopyDay').value);
+            const selectedDays = [];
+            document.querySelectorAll('#quickCopyDaysList input[type="checkbox"]:checked').forEach(cb => {
+                selectedDays.push(parseInt(cb.value));
+            });
             
             list.innerHTML = '';
             
             scheduleStructure.times.forEach((timeSlot, index) => {
-                const isFixed = timeSlot.type === 'fixed' && 
-                               timeSlot.days && 
-                               !isNaN(selectedDay) && 
-                               timeSlot.days.includes(selectedDay);
+                // בדיקה אם השעה קבועה באחד מהימים הנבחרים
+                let isFixed = false;
+                let fixedContent = '';
                 
-                const label = isFixed ? `${timeSlot.time} (קבוע: ${timeSlot.content})` : timeSlot.time;
+                if (selectedDays.length > 0 && timeSlot.type === 'fixed' && timeSlot.days) {
+                    for (const day of selectedDays) {
+                        if (timeSlot.days.includes(day)) {
+                            isFixed = true;
+                            fixedContent = timeSlot.content;
+                            break;
+                        }
+                    }
+                }
+                
+                const label = isFixed ? `${timeSlot.time} (קבוע: ${fixedContent})` : timeSlot.time;
                 
                 list.innerHTML += `
                     <div class="checkbox-item">
@@ -1823,19 +1840,21 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const daySelect = document.getElementById('quickCopyDay');
-            if (daySelect) {
-                daySelect.addEventListener('change', populateQuickCopyTimesList);
-            }
-        });
-
         function applyQuickCopy() {
             const content = document.getElementById('quickCopyContent').value.trim();
-            const day = document.getElementById('quickCopyDay').value;
             
-            if (!content || !day) {
-                showToast('יש למלא את כל השדות', 'danger');
+            if (!content) {
+                showToast('יש למלא את התוכן', 'danger');
+                return;
+            }
+
+            const selectedDays = [];
+            document.querySelectorAll('#quickCopyDaysList input[type="checkbox"]:checked').forEach(cb => {
+                selectedDays.push(parseInt(cb.value));
+            });
+
+            if (selectedDays.length === 0) {
+                showToast('יש לבחור לפחות יום אחד', 'danger');
                 return;
             }
 
@@ -1849,14 +1868,18 @@
                 return;
             }
 
-            selectedTimes.forEach(timeIndex => {
-                const key = `${day}-${timeIndex}`;
-                studentScheduleData[key] = content;
+            let count = 0;
+            selectedDays.forEach(day => {
+                selectedTimes.forEach(timeIndex => {
+                    const key = `${day}-${timeIndex}`;
+                    studentScheduleData[key] = content;
+                    count++;
+                });
             });
 
             renderStudentSchedule();
             closeQuickCopyModal();
-            showToast(`הועתק ל-${selectedTimes.length} שעות`);
+            showToast(`הועתק ל-${selectedDays.length} ימים ו-${selectedTimes.length} שעות (${count} משבצות)`);
         }
 
         // ==============================================
@@ -2124,21 +2147,29 @@
                                     <input type="text" 
                                            class="editable-input" 
                                            value="${(entry.content || '').replace(/"/g, '&quot;')}"
-                                           onchange="updateEntryContent('${submission.id}', '${entryId}', this.value)">
+                                           onchange="updateEntryContent('${submission.id}', '${entryId}', this.value)"
+                                           placeholder="פעילות...">
+                                    
+                                    <textarea 
+                                           class="editable-input" 
+                                           style="min-height: 40px; font-size: 12px; color: #dc2626; border: 1px dashed #dc2626; margin-top: 4px;"
+                                           placeholder="הערת רכזת (אופציונלי)..."
+                                           onchange="updateEntryNote('${submission.id}', '${entryId}', this.value)">${(entry.coordinatorNote || '').replace(/"/g, '&quot;')}</textarea>
+                                    
                                     <span class="status-badge status-${entry.status || 'pending'}">
                                         ${(entry.status || 'pending') === 'pending' ? 'ממתין' : (entry.status || 'pending') === 'approved' ? 'אושר' : 'נדחה'}
                                     </span>
                                     <div class="cell-actions">
                                         ${(entry.status || 'pending') === 'pending' ? `
-                                            <button class="btn btn-success btn-sm" onclick="updateStatus('${submission.id}', '${entryId}', 'approved')">✓</button>
-                                            <button class="btn btn-danger btn-sm" onclick="updateStatus('${submission.id}', '${entryId}', 'rejected')">✗</button>
+                                            <button class="btn btn-success btn-sm" onclick="updateStatus('${submission.id}', '${entryId}', 'approved')">✓ אשר</button>
+                                            <button class="btn btn-danger btn-sm" onclick="updateStatus('${submission.id}', '${entryId}', 'rejected')">✗ דחה</button>
                                         ` : (entry.status || 'pending') === 'approved' ? `
                                             <button class="btn btn-secondary btn-sm" onclick="updateStatus('${submission.id}', '${entryId}', 'pending')">↩️ בטל אישור</button>
                                         ` : `
                                             <button class="btn btn-secondary btn-sm" onclick="updateStatus('${submission.id}', '${entryId}', 'pending')">↩️ בטל דחייה</button>
                                         `}
-                                        <button class="btn btn-secondary btn-sm" onclick="showMoveEntryModal('${submission.id}', '${entryId}')">⏰</button>
-                                        <button class="btn btn-danger btn-sm" onclick="deleteEntry('${submission.id}', '${entryId}')">🗑️</button>
+                                        <button class="btn btn-secondary btn-sm" onclick="showMoveEntryModal('${submission.id}', '${entryId}')">⏰ העבר</button>
+                                        <button class="btn btn-danger btn-sm" onclick="deleteEntry('${submission.id}', '${entryId}')">🗑️ מחק</button>
                                     </div>
                                 </div>
                             `;
@@ -2252,6 +2283,21 @@
                 );
                 await db.ref(`submissions/${subId}/scheduleData`).set(updated);
                 showToast('עודכן');
+            } catch (error) {
+                showToast('שגיאה', 'danger');
+            }
+        }
+
+        async function updateEntryNote(subId, entryId, note) {
+            if (!firebaseInitialized) return;
+            try {
+                const snapshot = await db.ref(`submissions/${subId}`).once('value');
+                const sub = snapshot.val();
+                const updated = sub.scheduleData.map(e => 
+                    e.entryId === entryId ? { ...e, coordinatorNote: note.trim() } : e
+                );
+                await db.ref(`submissions/${subId}/scheduleData`).set(updated);
+                showToast('הערה נשמרה');
             } catch (error) {
                 showToast('שגיאה', 'danger');
             }
@@ -2556,29 +2602,37 @@
                         const timeStr = scheduleStructure.times[entry.time]?.time || '??:??';
                         
                         if (!daysMap[dayName]) {
-                            daysMap[dayName] = { approved: [], pending: [] };
+                            daysMap[dayName] = { approved: [], pending: [], rejected: [] };
+                        }
+                        
+                        let activityText = `${timeStr}: ${entry.content}`;
+                        // הוספת הערת רכזת אם קיימת
+                        if (entry.coordinatorNote && entry.coordinatorNote.trim()) {
+                            activityText += `\n     📝 ${entry.coordinatorNote}`;
                         }
                         
                         if (entry.status === 'approved') {
-                            daysMap[dayName].approved.push(`${timeStr}: ${entry.content}`);
+                            daysMap[dayName].approved.push(activityText);
+                        } else if (entry.status === 'rejected') {
+                            daysMap[dayName].rejected.push(activityText);
                         } else {
-                            daysMap[dayName].pending.push(`${timeStr}: ${entry.content}`);
+                            daysMap[dayName].pending.push(activityText);
                         }
                     });
                 }
 
                 // בניית הודעה מעוצבת עם "אימוג'ים" מתווי מקלדת
-                let message = `━━━━━━━━━━━━━━━\n`;
+                let message = `━━━━━━━━━━━━━━━━━━━━\n`;
                 message += `   לוז של ${studentName}\n`;
                 message += `   ${week}\n`;
-                message += `━━━━━━━━━━━━━━━\n\n`;
+                message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
 
                 if (Object.keys(daysMap).length === 0) {
                     message += 'אין פעילויות בלוז';
                 } else {
                     Object.keys(daysMap).forEach(day => {
-                        message += `☀ יום ${day}\n`;
-                        message += `━━━━━━━━━━━━━━━\n`;
+                        message += `▪ יום ${day}\n`;
+                        message += `━━━━━━━━━━━\n`;
                         
                         if (daysMap[day].approved.length > 0) {
                             daysMap[day].approved.forEach(activity => {
@@ -2588,7 +2642,13 @@
                         
                         if (daysMap[day].pending.length > 0) {
                             daysMap[day].pending.forEach(activity => {
-                                message += `  ✘ ${activity} (ממתין/לא מאושר)\n`;
+                                message += `  ◯ ${activity} (ממתין)\n`;
+                            });
+                        }
+                        
+                        if (daysMap[day].rejected && daysMap[day].rejected.length > 0) {
+                            daysMap[day].rejected.forEach(activity => {
+                                message += `  ✗ ${activity} (נדחה)\n`;
                             });
                         }
                         
@@ -2596,8 +2656,8 @@
                     });
                 }
 
-                message += `━━━━━━━━━━━━━━━\n`;
-                message += 'שבוע מעולה! (◕‿◕) ';
+                message += `━━━━━━━━━━━━━━━━━━━━\n`;
+                message += 'שבוע מעולה! (:';
 
                 // קידוד מלא ונכון של המסר כולל תווי RTL והטקסט בעברית
                 const encodedMessage = encodeURIComponent(message);
@@ -2804,7 +2864,7 @@
             showPendingInCombined = !showPendingInCombined;
             const btn = document.getElementById('pendingToggleText');
             const ind = document.getElementById('pendingStatusIndicator');
-            if (btn) btn.textContent = showPendingInCombined ? '👁️‍🗨️ הסתר ממתינים לאישור' : '👁️ הצג ממתינים לאישור';
+            if (btn) btn.textContent = showPendingInCombined ? '👁️‍🗨️ הסתר לא מאושרים' : '👁️ הצג לא מאושרים';
             if (ind) ind.style.display = showPendingInCombined ? 'block' : 'none';
             const week = document.getElementById('combinedWeekSelect').value;
             if (week) loadCombinedView();
@@ -3329,7 +3389,133 @@
         }
 
         function printCombinedSchedule() {
-            window.print();
+            const week = document.getElementById('combinedWeekSelect').value;
+            if (!week) {
+                showToast('בחר שבוע להדפסה', 'danger');
+                return;
+            }
+            
+            // קבלת תוכן הטבלה הנוכחית
+            const tableContent = document.querySelector('#combinedViewContent .schedule-table');
+            if (!tableContent) {
+                showToast('אין טבלה להדפסה', 'danger');
+                return;
+            }
+            
+            // יצירת חלון הדפסה עם רק הטבלה
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html dir="rtl" lang="he">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>לוז כולל - ${week}</title>
+                    <style>
+                        @page {
+                            size: A4 landscape;
+                            margin: 15mm;
+                        }
+                        
+                        * {
+                            margin: 0;
+                            padding: 0;
+                            box-sizing: border-box;
+                        }
+                        
+                        body {
+                            font-family: 'Heebo', 'Arial', sans-serif;
+                            direction: rtl;
+                            background: white;
+                            padding: 10px;
+                        }
+                        
+                        h1 {
+                            text-align: center;
+                            margin-bottom: 15px;
+                            font-size: 20px;
+                            color: #1e293b;
+                        }
+                        
+                        .schedule-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            font-size: 9px;
+                            margin: 0 auto;
+                        }
+                        
+                        .schedule-table th,
+                        .schedule-table td {
+                            border: 1px solid #333;
+                            padding: 4px 2px;
+                            text-align: center;
+                            vertical-align: top;
+                        }
+                        
+                        .schedule-table th {
+                            background: #f0f0f0;
+                            font-weight: bold;
+                            font-size: 10px;
+                        }
+                        
+                        .schedule-table .time-cell {
+                            background: #e8e8e8;
+                            font-weight: bold;
+                            white-space: nowrap;
+                        }
+                        
+                        .schedule-table .fixed-cell {
+                            background: #f5f5f5;
+                            color: #666;
+                        }
+                        
+                        .student-tag {
+                            display: inline-block;
+                            padding: 1px 4px;
+                            margin: 1px;
+                            font-size: 7px;
+                            border-radius: 3px;
+                            background: #ddd;
+                            color: #333;
+                        }
+                        
+                        .location-name {
+                            font-weight: bold;
+                            font-size: 8px;
+                            margin-bottom: 2px;
+                        }
+                        
+                        .location-group {
+                            margin-bottom: 3px;
+                        }
+                        
+                        @media print {
+                            body {
+                                padding: 0;
+                            }
+                            .schedule-table {
+                                page-break-inside: avoid;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>לוז כולל - שבוע ${week}</h1>
+                    ${tableContent.outerHTML}
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+            
+            // המתנה לטעינה ואז הדפסה
+            printWindow.onload = function() {
+                printWindow.focus();
+                setTimeout(() => {
+                    printWindow.print();
+                    // סגירת החלון אחרי ההדפסה (אופציונלי)
+                    // printWindow.close();
+                }, 250);
+            };
         }
 
         async function downloadStudentCopy() {
