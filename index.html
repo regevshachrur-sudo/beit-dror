@@ -2706,17 +2706,17 @@
                 }
 
                 // בניית הודעה מעוצבת עם "אימוג'ים" מתווי מקלדת
-                let message = `━━━━━━━━━━━━━━━━━━━━\n`;
+                let message = `━━━━━━━━━━━━━━━\n`;
                 message += `   לוז של ${studentName}\n`;
                 message += `   ${week}\n`;
-                message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
+                message += `━━━━━━━━━━━━━━━\n\n`;
 
                 if (Object.keys(daysMap).length === 0) {
                     message += 'אין פעילויות בלוז';
                 } else {
                     Object.keys(daysMap).forEach(day => {
-                        message += `▪ יום ${day}\n`;
-                        message += `━━━━━━━━━━━\n`;
+                        message += ` ☀יום ${day}\n`;
+                        message += `━━━━━━━━━━━━━━━\n`;
                         
                         if (daysMap[day].approved.length > 0) {
                             daysMap[day].approved.forEach(activity => {
@@ -2740,8 +2740,8 @@
                     });
                 }
 
-                message += `━━━━━━━━━━━━━━━━━━━━\n`;
-                message += 'שבוע מעולה! (:';
+                message += `━━━━━━━━━━━━━━━\n`;
+                message += 'שבוע מעולה! (◕‿◕)';
 
                 // קידוד מלא ונכון של המסר כולל תווי RTL והטקסט בעברית
                 const encodedMessage = encodeURIComponent(message);
