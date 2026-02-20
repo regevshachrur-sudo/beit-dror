@@ -2118,7 +2118,7 @@
             container.innerHTML = html;
         }
 
-        function renderSubmissionCard(submission) {
+        function renderSubmissionCard(submission, isArchive = false) {
             const date = new Date(submission.submittedAt);
             const dateStr = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
             
@@ -2134,8 +2134,8 @@
                                 <p style="color: red; margin-top: 8px;">שגיאה: נתוני לוז לא תקינים</p>
                             </div>
                             <div style="display: flex; gap: 8px;">
-                                <input type="checkbox" class="merge-checkbox" value="${submission.id}">
-                                <button class="btn btn-danger btn-sm" onclick="if(confirm('למחוק לוז זה?')) deleteSubmission('${submission.id}')">🗑️ מחק</button>
+                                ${!isArchive ? `<input type="checkbox" class="merge-checkbox" value="${submission.id}">` : ''}
+                                ${!isArchive ? `<button class="btn btn-danger btn-sm" onclick="if(confirm('למחוק לוז זה?')) deleteSubmission('${submission.id}')">🗑️ מחק</button>` : ''}
                             </div>
                         </div>
                     </div>
@@ -2154,10 +2154,14 @@
                 return entry;
             });
             
-            if (needsUpdate && firebaseInitialized) {
+            // Only update database if not in archive
+            if (needsUpdate && firebaseInitialized && !isArchive) {
                 db.ref(`submissions/${submission.id}/scheduleData`).set(updatedScheduleData).catch(err => {
                     console.error('Error updating entryIds:', err);
                 });
+                submission.scheduleData = updatedScheduleData;
+            } else if (needsUpdate) {
+                // Just update the local data for display
                 submission.scheduleData = updatedScheduleData;
             }
             
@@ -2173,14 +2177,14 @@
                             <div class="submission-date">נשלח: ${dateStr}</div>
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <input type="checkbox" class="merge-checkbox" value="${submission.id}">
-                            <button class="btn btn-primary btn-sm" onclick="showCoordinatorQuickCopy('${submission.id}')">📋 העתק לשעות</button>
-                            <button class="btn btn-secondary btn-sm" onclick="renameStudent('${submission.id}', '${submission.studentName}')">✏️ שנה שם</button>
+                            ${!isArchive ? `<input type="checkbox" class="merge-checkbox" value="${submission.id}">` : ''}
+                            ${!isArchive ? `<button class="btn btn-primary btn-sm" onclick="showCoordinatorQuickCopy('${submission.id}')">📋 העתק לשעות</button>` : ''}
+                            ${!isArchive ? `<button class="btn btn-secondary btn-sm" onclick="renameStudent('${submission.id}', '${submission.studentName}')">✏️ שנה שם</button>` : ''}
                             <button class="btn btn-secondary btn-sm" onclick="printSingleSchedule('${submission.id}')">🖨️ הדפס</button>
-                            <button class="btn btn-secondary btn-sm" onclick="changeSubmissionWeek('${submission.id}', '${submission.weekDisplay}')">📅 שנה תאריכים</button>
-                            <button class="btn btn-secondary btn-sm" onclick="archiveSubmission('${submission.id}')">📦 ארכיון</button>
-                            <button class="btn btn-secondary btn-sm" onclick="openMergeSchedules('${submission.id}')">🔗 איחוד לוזים</button>
-                            <button class="btn btn-secondary btn-sm" onclick="openSplitSchedule('${submission.id}')">✂️ פיצול לוז</button>
+                            ${!isArchive ? `<button class="btn btn-secondary btn-sm" onclick="changeSubmissionWeek('${submission.id}', '${submission.weekDisplay}')">📅 שנה תאריכים</button>` : ''}
+                            ${!isArchive ? `<button class="btn btn-secondary btn-sm" onclick="archiveSubmission('${submission.id}')">📦 ארכיון</button>` : `<button class="btn btn-secondary btn-sm" onclick="unarchiveSubmission('${submission.id}')">📤 החזר מהארכיון</button>`}
+                            ${!isArchive ? `<button class="btn btn-secondary btn-sm" onclick="openMergeSchedules('${submission.id}')">🔗 איחוד לוזים</button>` : ''}
+                            ${!isArchive ? `<button class="btn btn-secondary btn-sm" onclick="openSplitSchedule('${submission.id}')">✂️ פיצול לוז</button>` : ''}
                             <button class="btn btn-success btn-sm" onclick="shareScheduleToWhatsApp('${submission.id}')">📲 שתף לווצאפ</button>
                         </div>
                     </div>
@@ -2219,22 +2223,22 @@
                             }
                             html += `
                                 <div class="cell-content${newClass}${mergedClass}">
-                                    <input type="text" 
+                                    ${!isArchive ? `<input type="text" 
                                            class="editable-input" 
                                            value="${escapeHtml(entry.content || '')}"
                                            onchange="updateEntryContent('${submission.id}', '${entryId}', this.value)"
-                                           placeholder="פעילות...">
+                                           placeholder="פעילות...">` : `<div style="padding: 8px; background: #f5f5f5; border-radius: 4px;">${escapeHtml(entry.content || '')}</div>`}
                                     
-                                    <textarea 
+                                    ${!isArchive ? `<textarea 
                                            class="editable-input" 
                                            style="min-height: 40px; font-size: 12px; color: #dc2626; border: 1px dashed #dc2626; margin-top: 4px;"
                                            placeholder="הערת רכזת (אופציונלי)..."
-                                           onchange="updateEntryNote('${submission.id}', '${entryId}', this.value)">${escapeHtml(entry.coordinatorNote || '')}</textarea>
+                                           onchange="updateEntryNote('${submission.id}', '${entryId}', this.value)">${escapeHtml(entry.coordinatorNote || '')}</textarea>` : entry.coordinatorNote ? `<div style="padding: 4px; font-size: 12px; color: #dc2626; margin-top: 4px;">${escapeHtml(entry.coordinatorNote)}</div>` : ''}
                                     
                                     <span class="status-badge status-${entry.status || 'pending'}">
                                         ${(entry.status || 'pending') === 'pending' ? 'ממתין' : (entry.status || 'pending') === 'approved' ? 'אושר' : 'נדחה'}
                                     </span>
-                                    <div class="cell-actions">
+                                    ${!isArchive ? `<div class="cell-actions">
                                         ${(entry.status || 'pending') === 'pending' ? `
                                             <button class="btn btn-success btn-sm" onclick="updateStatus('${submission.id}', '${entryId}', 'approved')">✓ אשר</button>
                                             <button class="btn btn-danger btn-sm" onclick="updateStatus('${submission.id}', '${entryId}', 'rejected')">✗ דחה</button>
@@ -2245,14 +2249,14 @@
                                         `}
                                         <button class="btn btn-secondary btn-sm" onclick="showMoveEntryModal('${submission.id}', '${entryId}')">⏰ העבר</button>
                                         <button class="btn btn-danger btn-sm" onclick="deleteEntry('${submission.id}', '${entryId}')">🗑️ מחק</button>
-                                    </div>
+                                    </div>` : ''}
                                 </div>
                             `;
                         });
                         html += '</td>';
                     } else {
                         html += `<td class="free-cell">
-                            <button class="btn btn-secondary btn-sm" onclick="showAddEntryModal('${submission.id}', ${dayIndex}, ${timeIndex})">➕ הוסף</button>
+                            ${!isArchive ? `<button class="btn btn-secondary btn-sm" onclick="showAddEntryModal('${submission.id}', ${dayIndex}, ${timeIndex})">➕ הוסף</button>` : ''}
                         </td>`;
                     }
                 });
@@ -2658,8 +2662,13 @@
         async function shareScheduleToWhatsApp(submissionId) {
             if (!firebaseInitialized) return;
             try {
-                const snapshot = await db.ref(`submissions/${submissionId}`).once('value');
-                const submission = snapshot.val();
+                // Try submissions first, then archive
+                let snapshot = await db.ref(`submissions/${submissionId}`).once('value');
+                let submission = snapshot.val();
+                if (!submission) {
+                    snapshot = await db.ref(`archive/${submissionId}`).once('value');
+                    submission = snapshot.val();
+                }
                 if (!submission) {
                     showToast('הלוז לא נמצא', 'danger');
                     return;
@@ -2771,6 +2780,27 @@
             }
         }
 
+        async function unarchiveSubmission(submissionId) {
+            if (!confirm('האם להחזיר לוז זה מהארכיון?')) return;
+            if (!firebaseInitialized) return;
+
+            try {
+                const snapshot = await db.ref(`archive/${submissionId}`).once('value');
+                const data = snapshot.val();
+                if (!data) return;
+                
+                // Remove archivedAt field before restoring
+                const { archivedAt, ...restoredData } = data;
+                
+                await db.ref(`submissions/${submissionId}`).set(restoredData);
+                await db.ref(`archive/${submissionId}`).remove();
+                showToast('✅ הוחזר מהארכיון');
+                loadArchiveTab();
+            } catch (error) {
+                showToast('שגיאה', 'danger');
+            }
+        }
+
         async function renameStudent(submissionId, currentName) {
             const newName = prompt('הכנס שם חדש:', currentName);
             if (!newName || newName === currentName) return;
@@ -2844,9 +2874,14 @@
             }
             let html = '';
             archived.forEach(sub => {
-                html += `<div class="submission-card"><h3>${sub.studentName}</h3></div>`;
+                html += renderArchiveCard(sub);
             });
             container.innerHTML = html;
+        }
+
+        function renderArchiveCard(submission) {
+            // Use the same rendering logic as regular submissions, but mark as archive
+            return renderSubmissionCard(submission, true);
         }
 
         let currentCoordQuickCopy = null;
@@ -3344,11 +3379,25 @@
                 showToast('Firebase לא מחובר', 'danger');
                 return;
             }
+            // Try submissions first, then archive
             db.ref(`submissions/${subId}`).once('value').then(snapshot => {
-                const submission = snapshot.val();
+                let submission = snapshot.val();
                 if (!submission) {
-                    showToast('הלוז לא נמצא', 'danger');
-                    return;
+                    // Try archive
+                    return db.ref(`archive/${subId}`).once('value').then(archiveSnapshot => {
+                        submission = archiveSnapshot.val();
+                        if (!submission) {
+                            showToast('הלוז לא נמצא', 'danger');
+                            return;
+                        }
+                        submission.id = subId;
+                        const printHtml = generatePrintHtml(submission);
+                        const printWindow = window.open('', '_blank');
+                        printWindow.document.write(printHtml);
+                        printWindow.document.close();
+                        printWindow.focus();
+                        printWindow.print();
+                    });
                 }
                 submission.id = subId;
                 const printHtml = generatePrintHtml(submission);
