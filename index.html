@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת לוז דיגיטלית</title>
+    <title>מערכת לוז דיגיטלית - بيت درور - بيت דרור🏳️‍🌈</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1002,7 +1002,7 @@
 
     <div class="container">
         <div class="header">
-            <h1>📅 מערכת לוז דיגיטלית - نظام الجدول الزمني الرقمي🏳️‍🌈</h1>
+            <h1>📅 מערכת לוז דיגיטלית - بيت דרور🏳️‍🌈</h1>
             <p>אנא תמלאו את הלוז השבועי שלכם פעם אחת ותלחצו "שלח לאישור" מקווים שיהיה לכם שבוע מצוין🙂</p>
             <p class="arabic-text">الرجاء ملء الجدول الأسبوعي مرة واحدة والنقر على "إرسال للموافقة" نتمنى لكم أسبوعاً رائعاً🙂</p>
         </div>
@@ -1557,37 +1557,79 @@
         
         const PASSWORD_HASH = '34ff3bb3732ca5436824c18fc789ff0507ae31807ca3f782b7d7740235d5d719';
         const PASSWORD_STORAGE_KEY = 'regevPasswordHash';
+        const PASSWORD_TIMESTAMP_KEY = 'regevPasswordTimestamp';
+        const PASSWORD_VALIDITY_MS = 15 * 60 * 1000; // 15 minutes in milliseconds
         let isAuthenticated = false;
+        
+        function isPasswordValid() {
+            try {
+                const storedHash = localStorage.getItem(PASSWORD_STORAGE_KEY);
+                const storedTimestamp = localStorage.getItem(PASSWORD_TIMESTAMP_KEY);
+                
+                if (storedHash !== PASSWORD_HASH) {
+                    return false;
+                }
+                
+                if (!storedTimestamp) {
+                    return false;
+                }
+                
+                const timestamp = parseInt(storedTimestamp, 10);
+                const now = Date.now();
+                const elapsed = now - timestamp;
+                
+                // Check if password is still valid (within 15 minutes)
+                return elapsed < PASSWORD_VALIDITY_MS;
+            } catch (e) {
+                return false;
+            }
+        }
+        
+        function setPasswordAuthenticated() {
+            try {
+                localStorage.setItem(PASSWORD_STORAGE_KEY, PASSWORD_HASH);
+                localStorage.setItem(PASSWORD_TIMESTAMP_KEY, Date.now().toString());
+                isAuthenticated = true;
+            } catch (e) {}
+        }
+        
+        function clearPasswordAuth() {
+            try {
+                localStorage.removeItem(PASSWORD_STORAGE_KEY);
+                localStorage.removeItem(PASSWORD_TIMESTAMP_KEY);
+                isAuthenticated = false;
+            } catch (e) {}
+        }
         
         async function switchTab(tabName, clickedTab) {
             if (['coordinator', 'archive', 'combined', 'editor'].includes(tabName)) {
-                if (!isAuthenticated) {
+                // Check if password is still valid
+                if (!isPasswordValid()) {
+                    isAuthenticated = false;
+                    // Clear expired authentication (but keep other data intact)
                     try {
-                        const storedHash = localStorage.getItem(PASSWORD_STORAGE_KEY);
-                        if (storedHash === PASSWORD_HASH) {
-                            isAuthenticated = true;
-                        }
+                        localStorage.removeItem(PASSWORD_STORAGE_KEY);
+                        localStorage.removeItem(PASSWORD_TIMESTAMP_KEY);
                     } catch (e) {}
-
-                    if (!isAuthenticated) {
-                        const password = prompt('הכנס סיסמה:');
-                        
-                        if (!password) {
-                            return;
-                        }
-                        
-                        const inputHash = await hashPassword(password);
-                        
-                        if (inputHash !== PASSWORD_HASH) {
-                            showToast('סיסמה שגויה', 'danger');
-                            return;
-                        }
-
-                        isAuthenticated = true;
-                        try {
-                            localStorage.setItem(PASSWORD_STORAGE_KEY, inputHash);
-                        } catch (e) {}
+                } else {
+                    isAuthenticated = true;
+                }
+                
+                if (!isAuthenticated) {
+                    const password = prompt('הכנס סיסמה:');
+                    
+                    if (!password) {
+                        return;
                     }
+                    
+                    const inputHash = await hashPassword(password);
+                    
+                    if (inputHash !== PASSWORD_HASH) {
+                        showToast('סיסמה שגויה', 'danger');
+                        return;
+                    }
+
+                    setPasswordAuthenticated();
                 }
             }
 
@@ -2900,12 +2942,17 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            try {
-                const storedHash = localStorage.getItem(PASSWORD_STORAGE_KEY);
-                if (storedHash === PASSWORD_HASH) {
-                    isAuthenticated = true;
-                }
-            } catch (e) {}
+            // Check if password is still valid on page load
+            if (isPasswordValid()) {
+                isAuthenticated = true;
+            } else {
+                isAuthenticated = false;
+                // Clear expired authentication (but keep other data intact)
+                try {
+                    localStorage.removeItem(PASSWORD_STORAGE_KEY);
+                    localStorage.removeItem(PASSWORD_TIMESTAMP_KEY);
+                } catch (e) {}
+            }
 
             const cds = document.getElementById('coordQuickCopyDay');
             if (cds) cds.addEventListener('change', populateCoordQuickCopyTimesList);
